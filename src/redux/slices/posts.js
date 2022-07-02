@@ -35,7 +35,20 @@ const postSlice = createSlice({
             state.posts.items = [];
             state.posts.status="error";
         },
+        [fetchTags.pending]:(state)=>{
+            state.tags.status="loading";
+        },
+        [fetchTags.fulfilled]:(state,action)=>{
+            state.tags.items = action.payload;
+            state.tags.status="loaded";
+        },
+        [fetchTags.rejected]:(state)=>{
+            state.tags.items = [];
+            state.tags.status="error";
+        },
     }
 })
+
+
 
 export const postsReducer = postSlice.reducer;
