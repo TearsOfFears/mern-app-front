@@ -10,10 +10,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts, fetchTags } from "./../redux/slices/posts";
 export const Home = () => {
 	const dispatch = useDispatch();
+	const userData = useSelector((state) => state.auth.data);
 	const { posts } = useSelector((state) => state.posts);
 	const { tags } = useSelector((state) => state.posts);
 	const isPostLoading = posts.status === "loading";
-	const isTagsLoading= tags.status === "loading";
+	const isTagsLoading = tags.status === "loading";
 	useEffect(() => {
 		dispatch(fetchPosts());
 		dispatch(fetchTags());
@@ -32,29 +33,26 @@ export const Home = () => {
 			</Tabs>
 			<Grid container spacing={4}>
 				<Grid xs={8} item>
-					{(isPostLoading ? [...Array(5)] :posts.items).map((data, index) =>
+					{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>
 						isPostLoading ? (
 							<Post key={index} isLoading={true} />
 						) : (
 							<Post
 								id={data._id}
 								title={data.title}
-								imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+								imageUrl={data.imageURL ? data.imageURL : ""}
 								user={data.author}
 								createdAt={data.createdAt}
 								viewsCount={data.vievsCount}
 								commentsCount={3}
 								tags={data.tags}
-								isEditable
+								isEditable={userData?._id === data.author._id}
 							/>
 						)
 					)}
 				</Grid>
 				<Grid xs={4} item>
-					<TagsBlock
-						items={tags.items}
-						isLoading={isTagsLoading}
-					/>
+					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
 					<CommentsBlock
 						items={[
 							{

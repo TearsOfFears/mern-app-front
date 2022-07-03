@@ -5,6 +5,7 @@ import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import axios from "./../axios.js";
 import { useDispatch } from "react-redux";
+import ReactMarkdown from "react-markdown";
 
 export const FullPost = () => {
 	const { id } = useParams();
@@ -24,12 +25,13 @@ export const FullPost = () => {
 	if (isloading) {
 		return <Post isLoading={isloading} isFullPost />;
 	}
+	console.log(post);
 	return (
 		<>
 			<Post
 				id={post._id}
 				title={post.title}
-				imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+				imageUrl={post.imageURL}
 				user={post.author}
 				createdAt={post.createdAt}
 				viewsCount={post.vievsCount}
@@ -37,7 +39,7 @@ export const FullPost = () => {
 				tags={post.tags}
 				isFullPost
 			>
-				<p>{post.text}</p>
+				<ReactMarkdown children={post.text} />
 			</Post>
 			<CommentsBlock
 				items={[

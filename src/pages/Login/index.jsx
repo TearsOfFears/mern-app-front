@@ -27,7 +27,7 @@ export const Login = () => {
 	const onSubmit = async (values) => {
 		const data = await dispatch(fetchAuthData(values));
 		if (!data.payload) {
-			return alert("Не вдалось авторизуватись");
+			return alert("Не вдалось увійти");
 		}
 		if ("token" in data.payload)
 			window.localStorage.setItem("token", data.payload.token);
@@ -60,10 +60,20 @@ export const Login = () => {
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 				/>
-				<Button type="submit" size="large" variant="contained" fullWidth>
+				<Button type="submit" disabled={!isValid} size="large" variant="contained" fullWidth>
 					Войти
 				</Button>
 			</form>
+			<Button
+			style={{marginTop:"15px"}}
+					size="large"
+					variant="contained"
+					fullWidth
+					type="submit"
+					disabled={!isValid}
+				>
+					Відновити пароль
+				</Button>
 		</Paper>
 	);
 };

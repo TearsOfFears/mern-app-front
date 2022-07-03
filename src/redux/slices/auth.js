@@ -5,8 +5,12 @@ export const fetchAuthData = createAsyncThunk('auth/fetchAuthData', async(params
   return data;
 })
 
-export const fetchAuthUser = createAsyncThunk('auth/fetchAuthUser', async(params) => {
+export const fetchAuthUser = createAsyncThunk('auth/fetchAuthUser', async() => {
   const {data} = await axios.get('/auth/user');
+  return data;
+})
+export const userRegister = createAsyncThunk('auth/userRegister', async(params) => {
+  const {data} = await axios.post('/auth/register', params);
   return data;
 })
 
@@ -19,9 +23,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout:(state)=>{
-      state.data=null;
-      window.localStorage.removeItem("token")
+    logout: (state) => {
+      state.data = null;
+      window
+        .localStorage
+        .removeItem("token")
     }
   },
   extraReducers: {
@@ -48,12 +54,25 @@ const authSlice = createSlice({
     [fetchAuthUser.rejected]: (state) => {
       state.data = null;
       state.status = "error";
+    },
+    [userRegister.pending]: (state) => {
+      state.data = null;
+      state.status = "loading";
+    },
+    [userRegister.fulfilled]: (state, action) => {
+      state.data = action.payload;
+      state.status = "loaded";
+    },
+    [userRegister.rejected]: (state) => {
+      state.data = null;
+      state.status = "error";
     }
   }
 })
 
-
-export const selectIsAuth = state=>Boolean(state.auth.data);
+export const selectIsAuth = state => Boolean(state.auth.data);
 
 export const authReducer = authSlice.reducer;
-export const {logout} = authSlice.actions;
+export const {
+  logout
+} = authSlice.actions;
