@@ -8,6 +8,7 @@ import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts, fetchTags } from "./../redux/slices/posts";
+import RenderPosts from "../components/RenderPosts/RenderPosts.jsx";
 export const Home = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
@@ -15,55 +16,57 @@ export const Home = () => {
 	const { tags } = useSelector((state) => state.posts);
 	const isPostLoading = posts.status === "loading";
 	const isTagsLoading = tags.status === "loading";
+	const [sort, setSort] = useState("latest");
+
 	useEffect(() => {
-		dispatch(fetchPosts());
+		dispatch(fetchPosts(sort));
 		dispatch(fetchTags());
 	}, []);
-	console.log(posts);
-	// console.log(tags.items);
+	console.log(sort);
+	const arr = [
+		{
+			label: "Новые",
+			value: "latest",
+		},
+		{ label: "Популярные", value: "popularity" },
+	];
+	const configRender = {
+		isPostLoading,
+		posts,
+		userData,
+	};
 	return (
 		<>
 			<Tabs
 				style={{ marginBottom: 15 }}
-				value={0}
+				value={sort}
 				aria-label="basic tabs example"
 			>
-				<Tab label="Новые" />
-				<Tab label="Популярные" />
+				{arr.map((data, index) => (
+					<Tab
+						label={data.label}
+						value={data.value}
+						onClick={(e) => {
+							setSort(data.value);
+						}}
+					/>
+				))}
 			</Tabs>
 			<Grid container spacing={4}>
-				<Grid xs={8} item>
-					{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>
-						isPostLoading ? (
-							<Post key={index} isLoading={true} />
-						) : (
-							<Post
-								id={data._id}
-								title={data.title}
-								imageUrl={data.imageURL ? data.imageURL : ""}
-								user={data.author}
-								createdAt={data.createdAt}
-								viewsCount={data.vievsCount}
-								commentsCount={3}
-								tags={data.tags}
-								isEditable={userData?._id === data.author._id}
-							/>
-						)
-					)}
-				</Grid>
+				<RenderPosts {...configRender} />
 				<Grid xs={4} item>
 					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
 					<CommentsBlock
 						items={[
 							{
-								user: {
+								author: {
 									fullName: "Вася Пупкин",
 									avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
 								},
 								text: "Это тестовый комментарий",
 							},
 							{
-								user: {
+								author: {
 									fullName: "Иван Иванов",
 									avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
 								},
