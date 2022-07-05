@@ -2,27 +2,34 @@ import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
-import axios from "./../axios.js";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts, fetchTags } from "./../redux/slices/posts";
 import RenderPosts from "../components/RenderPosts/RenderPosts.jsx";
+import axios from "./../axios.js";
+import { fetchComments } from "../redux/slices/comments";
 export const Home = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
 	const { posts } = useSelector((state) => state.posts);
 	const { tags } = useSelector((state) => state.posts);
+	const { comments } = useSelector((state) => state.comments);
 	const isPostLoading = posts.status === "loading";
 	const isTagsLoading = tags.status === "loading";
 	const [sort, setSort] = useState("latest");
+	const isLoadingComments = comments.status === "loading";
 
 	useEffect(() => {
-		dispatch(fetchPosts(sort));
-		dispatch(fetchTags());
+		const params = { sort: sort };
+		dispatch(fetchPosts(params));
+	}, [sort]);
+
+	useEffect(() => {
+		dispatch(fetchComments());
 	}, []);
-	console.log(sort);
+	console.log(comments.items);
 	const arr = [
 		{
 			label: "Новые",
@@ -56,25 +63,7 @@ export const Home = () => {
 				<RenderPosts {...configRender} />
 				<Grid xs={4} item>
 					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
-					<CommentsBlock
-						items={[
-							{
-								author: {
-									fullName: "Вася Пупкин",
-									avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-								},
-								text: "Это тестовый комментарий",
-							},
-							{
-								author: {
-									fullName: "Иван Иванов",
-									avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-								},
-								text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-							},
-						]}
-						isLoading={false}
-					/>
+					<CommentsBlock items={comments.items} isLoading={isLoadingComments} />
 				</Grid>
 			</Grid>
 		</>

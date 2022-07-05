@@ -2,7 +2,8 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import { Post } from "./../../components/Post";
 
-function RenderPosts({ isPostLoading, posts, userData }) {
+const RenderPosts = ({ isPostLoading, posts, userData }) => {
+	console.log(posts);
 	return (
 		<Grid xs={8} item>
 			{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>
@@ -24,6 +25,6 @@ function RenderPosts({ isPostLoading, posts, userData }) {
 			)}
 		</Grid>
 	);
-}
+};
 
 export default RenderPosts;
