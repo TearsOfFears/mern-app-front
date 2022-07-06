@@ -43,7 +43,7 @@ export const FullPost = () => {
 				user={post.author}
 				createdAt={post.createdAt}
 				viewsCount={post.vievsCount}
-				commentsCount={3}
+				commentsCount={post.commentsCount}
 				tags={post.tags}
 				isFullPost
 			>
@@ -52,6 +52,7 @@ export const FullPost = () => {
 			<CommentsBlock
 				items={currentComments.items}
 				isLoading={isLoadingComments}
+				// isEditable={userData?._id === data.author._id}
 			>
 				<Index />
 			</CommentsBlock>

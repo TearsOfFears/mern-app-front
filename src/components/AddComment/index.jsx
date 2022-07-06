@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import styles from "./AddComment.module.scss";
 
@@ -8,20 +8,21 @@ import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "./../../axios";
 import { useParams } from "react-router-dom";
-import { createComment,fetchCommentsById } from "../../redux/slices/comments";
+import { createComment, fetchCommentsById } from "../../redux/slices/comments";
+import { fetchPosts } from "../../redux/slices/posts";
 export const Index = () => {
-	// const {user} = useSelector(state=>state.user)
 	const [text, setText] = useState("");
 	const { id } = useParams();
 	const dispatch = useDispatch();
-	const handleSendComment = async() => {
+	const handleSendComment = async () => {
 		const params = {
 			postId: id,
 			text,
 		};
+		setText("");
 		await dispatch(createComment(params));
-    setText("")
-    await dispatch(fetchCommentsById(id));
+		await dispatch(fetchCommentsById(id));
+		await dispatch(fetchPosts(id));
 	};
 
 	return (

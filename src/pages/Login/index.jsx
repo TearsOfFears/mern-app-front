@@ -19,7 +19,7 @@ export const Login = () => {
 		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: {
-			email: "nazarTest1@gmail.com",
+			email: "nazarTest6@gmail.com",
 			password: "nazar12345",
 		},
 		mode: "onChange",
@@ -60,20 +60,26 @@ export const Login = () => {
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 				/>
-				<Button type="submit" disabled={!isValid} size="large" variant="contained" fullWidth>
+				<Button
+					type="submit"
+					disabled={!isValid}
+					size="large"
+					variant="contained"
+					fullWidth
+				>
 					Войти
 				</Button>
 			</form>
 			<Button
-			style={{marginTop:"15px"}}
-					size="large"
-					variant="contained"
-					fullWidth
-					type="submit"
-					disabled={!isValid}
-				>
-					Відновити пароль
-				</Button>
+				style={{ marginTop: "15px" }}
+				size="large"
+				variant="contained"
+				fullWidth
+				type="submit"
+				disabled={!isValid}
+			>
+				Відновити пароль
+			</Button>
 		</Paper>
 	);
 };

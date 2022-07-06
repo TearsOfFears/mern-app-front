@@ -63,7 +63,10 @@ export const Home = () => {
 				<RenderPosts {...configRender} />
 				<Grid xs={4} item>
 					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
-					<CommentsBlock items={comments.items} isLoading={isLoadingComments} />
+					<CommentsBlock
+						items={comments.items}
+						isLoading={isLoadingComments}
+					/>
 				</Grid>
 			</Grid>
 		</>

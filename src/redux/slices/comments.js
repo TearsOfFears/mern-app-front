@@ -13,6 +13,9 @@ export const fetchCommentsById = createAsyncThunk('posts/fetchCommentsById', asy
 export const createComment = createAsyncThunk('comments/createComment', async(params) => {
   await axios.post(`/comment`, params);
 })
+export const deleteComment = createAsyncThunk('comments/deleteComment', async(id) => {
+  await axios.delete(`/commentDelete/${id}`);
+})
 
 const initialState = {
   comments: {
@@ -61,6 +64,11 @@ const commentsSlice = createSlice({
       state.currentComments.items = [];
       state.currentComments.status = "loading";
     },
+    ///////////////
+    // [deleteComment.pending]: (state, action) => {
+    //   state.currentComments.items = [];
+    //   state.currentComments.status = "loading";
+    // },
   }
 })
 
