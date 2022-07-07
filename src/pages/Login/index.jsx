@@ -6,11 +6,12 @@ import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAuthData, selectIsAuth } from "../../redux/slices/auth";
+import { loginUser, selectIsAuth } from "../../redux/auth/auth.actions";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
 	const dispatch = useDispatch();
 	const isAuth = useSelector(selectIsAuth);
+	const data = useSelector(state => state.auth.data);
 	const navigate = useNavigate();
 	const {
 		register,
@@ -25,12 +26,12 @@ export const Login = () => {
 		mode: "onChange",
 	});
 	const onSubmit = async (values) => {
-		const data = await dispatch(fetchAuthData(values));
+		 await dispatch(loginUser(values));
+	
+		console.log("data:", data);
 		if (!data.payload) {
 			return alert("Не вдалось увійти");
 		}
-		if ("token" in data.payload)
-			window.localStorage.setItem("token", data.payload.token);
 	};
 	if (isAuth) {
 		return navigate("/");

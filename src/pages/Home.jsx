@@ -6,10 +6,10 @@ import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchTags } from "./../redux/slices/posts";
+import {fetchPosts} from "./../redux/posts/posts.actions"
 import RenderPosts from "../components/RenderPosts/RenderPosts.jsx";
 import axios from "./../axios.js";
-import { fetchComments } from "../redux/slices/comments";
+import { fetchComments } from "../redux/comments/comments.actions";
 export const Home = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
@@ -20,7 +20,7 @@ export const Home = () => {
 	const isTagsLoading = tags.status === "loading";
 	const [sort, setSort] = useState("latest");
 	const isLoadingComments = comments.status === "loading";
-
+	console.log(comments);
 	useEffect(() => {
 		const params = { sort: sort };
 		dispatch(fetchPosts(params));
@@ -29,7 +29,6 @@ export const Home = () => {
 	useEffect(() => {
 		dispatch(fetchComments());
 	}, []);
-	console.log(comments.items);
 	const arr = [
 		{
 			label: "Новые",
@@ -63,10 +62,7 @@ export const Home = () => {
 				<RenderPosts {...configRender} />
 				<Grid xs={4} item>
 					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
-					<CommentsBlock
-						items={comments.items}
-						isLoading={isLoadingComments}
-					/>
+					<CommentsBlock items={comments.items} isLoading={isLoadingComments} />
 				</Grid>
 			</Grid>
 		</>

@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import { Post } from "./../../components/Post";
 
 const RenderPosts = ({ isPostLoading, posts, userData }) => {
+	console.log("isPostLoading",isPostLoading);
 	return (
 		<Grid xs={8} item>
 			{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>

@@ -4,8 +4,8 @@ import {Routes,Route} from "react-router-dom"
 import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import {useDispatch,useSelector} from "react-redux";
-import { fetchAuthUser, selectIsAuth } from "./redux/slices/auth";
-
+// import { fetchAuthUser, selectIsAuth } from "./redux/slices/auth";
+import {fetchAuthUser,selectIsAuth} from "./redux/auth/auth.actions"
 function App() {
   const dispatch = useDispatch(); 
   const isAuth = useSelector(selectIsAuth);
@@ -20,6 +20,7 @@ function App() {
           <Route path="/" element={<Home />}/>
           <Route path="/posts/:id" element={<FullPost />}/>
           <Route path="/posts/:id/edit" element={<AddPost/>}/>
+          <Route path="/posts/editComment/:idEdit" element={<FullPost />}/>
           <Route path="/addPost" element={<AddPost />}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/register" element={<Registration />}/>

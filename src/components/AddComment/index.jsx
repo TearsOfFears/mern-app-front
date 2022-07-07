@@ -8,8 +8,8 @@ import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "./../../axios";
 import { useParams } from "react-router-dom";
-import { createComment, fetchCommentsById } from "../../redux/slices/comments";
-import { fetchPosts } from "../../redux/slices/posts";
+import { createComment, fetchCommentsById } from "../../redux/comments/comments.actions";
+import { fetchPosts } from "../../redux/posts/posts.actions";
 export const Index = () => {
 	const [text, setText] = useState("");
 	const { id } = useParams();

@@ -4,13 +4,16 @@ import { Link } from "react-router-dom";
 import styles from "./Header.module.scss";
 import Container from "@mui/material/Container";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, selectIsAuth } from "../../redux/slices/auth";
+import { fetchAuthUser, logout, selectIsAuth } from "../../redux/auth/auth.actions";
 
 export const Header = () => {
 	const isAuth = useSelector(selectIsAuth);
 	const dispatch = useDispatch();
 	const onClickLogout = () => {
-		if (window.confirm("Ви точно хочете вийти?")) dispatch(logout());
+		if (window.confirm("Ви точно хочете вийти?")) {
+			dispatch(logout())
+			dispatch(fetchAuthUser())
+		};
 	};
 
 	return (

@@ -10,7 +10,7 @@ import styles from './Post.module.scss';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
 import { useDispatch } from 'react-redux';
-import { deletePost } from '../../redux/slices/posts';
+import { deletePost } from '../../redux/posts/posts.actions';
 
 export const Post = ({
   id,
@@ -31,8 +31,8 @@ export const Post = ({
     return <PostSkeleton />;
   }
 
-  const onClickRemove = (id) => {
-    if (window.confirm("Ви точно хочете видалити статтю?"))   dispatch(deletePost(id));
+  const onClickRemove = async (id) => {
+    if (window.confirm("Ви точно хочете видалити статтю?"))   await dispatch(deletePost(id));
   
   };
 

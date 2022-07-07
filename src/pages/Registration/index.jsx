@@ -7,10 +7,9 @@ import Avatar from "@mui/material/Avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
-	fetchAuthData,
 	selectIsAuth,
 	userRegister,
-} from "../../redux/slices/auth";
+} from "../../redux/auth/auth.actions";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.scss";
 

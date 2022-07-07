@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SideBlock } from "./SideBlock";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { fetchTags } from "../redux/slices/posts";
+import { fetchTags } from "../redux/posts/posts.actions";
 
 export const TagsBlock = () => {
 	const dispatch = useDispatch();
@@ -21,7 +21,7 @@ export const TagsBlock = () => {
 	console.log(isLoading);
 
 	console.log(tags);
-  useLayoutEffect(() => {
+	useLayoutEffect(() => {
 		dispatch(fetchTags());
 	}, []);
 	return (

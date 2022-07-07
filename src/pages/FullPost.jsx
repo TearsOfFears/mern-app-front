@@ -6,34 +6,49 @@ import { CommentsBlock } from "../components/CommentsBlock";
 import axios from "./../axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import ReactMarkdown from "react-markdown";
-import { fetchComments, fetchCommentsById } from "../redux/slices/comments";
+import { fetchComments, fetchCommentsById } from "../redux/comments/comments.actions";
+import { fetchPosts } from "../redux/slices/posts";
 
 export const FullPost = () => {
-	const { id } = useParams();
+	const { id, idEdit } = useParams();
 	const [post, setPost] = useState();
 	const [isloading, setLoading] = useState(true);
 	const dispatch = useDispatch();
 	const { currentComments } = useSelector((state) => state.comments);
 	const isLoadingComments = currentComments.status === "loading";
-
+	console.log(currentComments);
 	useEffect(() => {
-		dispatch(fetchCommentsById(id));
-		const params = {
-			id: id,
-		};
-		axios
-			.post(`/getPosts`, params)
-			.then((res) => {
-				setPost(res.data);
-				setLoading(false);
-			})
-			.catch((err) => console.log(err));
+		if (idEdit) {
+			dispatch(fetchComments(idEdit));
+			const params = {
+				id: idEdit,
+			};
+			axios
+				.post(`/getPosts`, params)
+				.then((res) => {
+					setPost(res.data);
+					setLoading(false);
+				})
+				.catch((err) => console.log(err));
+		} else {
+			const params = {
+				id: id,
+			};
+			dispatch(fetchCommentsById(id));
+			axios
+				.post(`/getPosts`, params)
+				.then((res) => {
+					setPost(res.data);
+					setLoading(false);
+				})
+				.catch((err) => console.log(err));
+		}
 	}, []);
 
 	if (isloading) {
 		return <Post isLoading={isloading} isFullPost />;
 	}
-	console.log(currentComments);
+	
 	return (
 		<>
 			<Post

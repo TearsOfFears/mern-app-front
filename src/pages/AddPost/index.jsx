@@ -6,10 +6,9 @@ import SimpleMDE from "react-simplemde-editor";
 import { useSelector } from "react-redux";
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { selectIsAuth } from "../../redux/slices/auth";
+import { selectIsAuth } from "../../redux/auth/auth.actions";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../axios";
-import { SettingsRemoteOutlined } from "@mui/icons-material";
 const initialState = {
 	title: "",
 	tags: [],
@@ -29,7 +28,6 @@ export const AddPost = () => {
 			const formData = new FormData();
 			formData.append("image", e.target.files[0]);
 			const { data } = await axios.post("upload", formData);
-			console.log(data);
 			setImageUrl(`http://localhost:4444${data.url}`);
 		} catch (err) {
 			console.log(err);
@@ -39,7 +37,6 @@ export const AddPost = () => {
 	};
 	const isEdit = Boolean(id);
 	const inputFileRef = useRef(null);
-  console.log(isEdit);
 	const onClickRemoveImage = async (event) => {
 		setImageUrl("");
 	};

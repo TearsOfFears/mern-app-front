@@ -15,27 +15,32 @@ import EditIcon from "@mui/icons-material/Edit";
 import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { deleteComment, fetchComments } from "../../redux/slices/comments";
+import {
+	deleteComment,
+	fetchComments,
+	fetchCommentsById,
+} from "../../redux/comments/comments.actions";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./CommentsBlock.module.scss";
-import { fetchPosts } from "../../redux/slices/posts";
-import { selectIsAuth } from "../../redux/slices/auth";
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
-	const onClickRemoveComment = async (id) => {
-		await dispatch(deleteComment(id));
+	const { id } = useParams();
+	const onClickRemoveComment = async (commenId) => {
+		await dispatch(deleteComment(commenId));
 		await dispatch(fetchComments());
+		if (id) {
+			await dispatch(fetchCommentsById(id));
+		}
 	};
 
 	return (
 		<SideBlock title="Комментарии">
 			<List className={clsx(styles.root)}>
 				{(isLoading ? [...Array(5)] : items).map((obj, index) => {
-					
-					const isEditable = !isLoading && userData?._id === obj.author._id
-				
+					const isEditable = !isLoading && userData?._id === obj.author._id;
+
 					return (
 						<React.Fragment key={index}>
 							<ListItem
@@ -75,7 +80,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 								</div>
 								{!isLoading && isEditable && (
 									<div className={styles.editButtons}>
-										<Link to={`/posts/${obj._id}/edit`}>
+										<Link to={`/posts/editComment/${obj.postId}`}>
 											<IconButton color="primary">
 												<EditIcon />
 											</IconButton>
