@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
@@ -6,10 +6,13 @@ import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useDispatch, useSelector } from "react-redux";
-import {fetchPosts} from "./../redux/posts/posts.actions"
+import { fetchPosts } from "./../redux/posts/posts.actions";
 import RenderPosts from "../components/RenderPosts/RenderPosts.jsx";
 import axios from "./../axios.js";
 import { fetchComments } from "../redux/comments/comments.actions";
+import { Typography } from "@mui/material";
+import { useLocation, useSearchParams } from "react-router-dom";
+import queryString from "query-string";
 export const Home = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
@@ -18,13 +21,23 @@ export const Home = () => {
 	const { comments } = useSelector((state) => state.comments);
 	const isPostLoading = posts.status === "loading";
 	const isTagsLoading = tags.status === "loading";
-	const [sort, setSort] = useState("latest");
+
 	const isLoadingComments = comments.status === "loading";
-	console.log(comments);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [sort, setSort] = useState(
+		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
+	);
+	const search = useLocation().search;
+	const queryStringSeach = queryString.parse(useLocation().search);
 	useEffect(() => {
-		const params = { sort: sort };
-		dispatch(fetchPosts(params));
+		const params = { sort: sort};
+		setSearchParams(params);
 	}, [sort]);
+	useEffect(() => {
+		if (searchParams) {
+			dispatch(fetchPosts(queryStringSeach));
+		}
+	}, [searchParams]);
 
 	useEffect(() => {
 		dispatch(fetchComments());
@@ -43,6 +56,9 @@ export const Home = () => {
 	};
 	return (
 		<>
+			<Typography variant="h4" gutterBottom={false}>
+				Всі
+			</Typography>
 			<Tabs
 				style={{ marginBottom: 15 }}
 				value={sort}

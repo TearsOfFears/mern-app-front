@@ -44,17 +44,20 @@ const commentsReducer = (state = initialState, action) => {
           errors: []
         }
       }
-      case postsTypes.DELETE_POST:
-        return {
-          ...state,
-          posts: {
-            ...state.posts,
-            items: state.posts,
-            errors: [],
-            // status: "loaded",
-          }
+    case postsTypes.DELETE_POST:
+      return {
+        ...state,
+        posts: {
+          ...state.posts,
+          items: state.posts.items = state
+            .posts
+            .items
+            .filter(obj => obj._id !== action.payload.postId),
+          errors: [],
+           status: "loaded",
         }
-    ////////////////////////////////
+      }
+      ////////////////////////////////
     case postsTypes.FETCH_TAGS_LOADING:
       return {
         ...state,
@@ -85,7 +88,7 @@ const commentsReducer = (state = initialState, action) => {
           errors: []
         }
       }
-    
+
     default:
       return state;
   }

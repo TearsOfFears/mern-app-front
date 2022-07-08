@@ -45,7 +45,7 @@ export const AddPost = () => {
 		if (id) {
       const params = {id:id}
 			axios
-				.post('/getPosts',params)
+				.get('/getPosts',{params})
 				.then(({ data }) => {
 					setTitle(data.title);
 					setImageUrl(data.imageURL);

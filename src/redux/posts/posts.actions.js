@@ -2,11 +2,12 @@ import { postsTypes } from "./posts.types"
 import axios from "./../../axios";
 
 export const fetchPosts = (params) => {
+    console.log(params);
     return async (dispatch) => {
         dispatch({
             type: postsTypes.FETCH_POSTS_LOADING
         });
-        await axios.post('/getPosts',params)
+        await axios.get(`/getPosts`,{params})
             .then(res => setTimeout(() => {
                 dispatch({
                     type: postsTypes.FETCH_POSTS_LOADED,
