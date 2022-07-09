@@ -5,6 +5,7 @@ import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import {useDispatch,useSelector} from "react-redux";
 import {fetchAuthUser,selectIsAuth} from "./redux/auth/auth.actions"
+import { Account } from "./pages/Account";
 function App() {
   const dispatch = useDispatch(); 
   const isAuth = useSelector(selectIsAuth);
@@ -17,7 +18,7 @@ function App() {
       <Container maxWidth="lg">
         <Routes>
           <Route path="/" element={<Home />}/>
-          {/* <Route path="/tags/:tag" element={<Home />}/> */}
+          <Route path="/account/:id" element={<Account/>}/>
           <Route path="/posts/:id" element={<FullPost />}/>
           <Route path="/posts/:id/edit" element={<AddPost/>}/>
           <Route path="/posts/editComment/:idEdit" element={<FullPost />}/>

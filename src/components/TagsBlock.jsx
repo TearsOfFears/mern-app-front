@@ -9,24 +9,23 @@ import ListItemText from "@mui/material/ListItemText";
 import Skeleton from "@mui/material/Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { SideBlock } from "./SideBlock";
-import { Link, useSearchParams,useLocation } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { fetchPosts, fetchTags } from "../redux/posts/posts.actions";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import queryString from "query-string";
 export const TagsBlock = () => {
 	const dispatch = useDispatch();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const { tags } = useSelector((state) => state.posts);
 	const isLoading = tags.status === "loading";
-	const [tag, setTag] = useState();
+	const [tag, setTag] = useState("");
 	const search = useLocation().search;
 	const queryStringSeach = queryString.parse(useLocation().search);
 	useEffect(() => {
 		dispatch(fetchTags());
 	}, []);
 	useEffect(() => {
-		const params = { tag: tag };
-		searchParams.set(tag,tag)
+		searchParams.set("tag", tag);
 		setSearchParams(searchParams);
 	}, [tag]);
 	useEffect(() => {
@@ -34,29 +33,41 @@ export const TagsBlock = () => {
 			dispatch(fetchPosts(queryStringSeach));
 		}
 	}, [searchParams]);
-	console.log();
 	return (
-		<SideBlock title="Тэги">
+		<SideBlock>
+			<div style={{ display: "flex", flexDirection: "row", alignItems:"center",justifyContent:"space-between",padding:"15px 15px 0 15px" }}>
+				<Typography variant="h5">Тэги</Typography>
+				<Button
+					variant="contained"
+					color="inherit"
+					size="medium"
+					onClick={(e) => setTag("")}
+				>
+					Очистити
+				</Button>
+			</div>
+
 			<List style={{ display: "flex", flexDirection: "column" }}>
 				{(isLoading ? [...Array(5)] : tags.items).map((name, i) => (
-					<Button
-						style={{ textDecoration: "none", color: "black" }}
-						onClick={(e) => setTag(name)}
-						select
-					>
-						<ListItem key={i} disablePadding>
-							<ListItemButton>
-								<ListItemIcon>
-									<TagIcon />
-								</ListItemIcon>
-								{isLoading ? (
-									<Skeleton width={100} />
-								) : (
-									<ListItemText primary={name} />
-								)}
-							</ListItemButton>
-						</ListItem>
-					</Button>
+					<ListItem key={i} disablePadding>
+						<ListItemButton
+							onClick={(e) => setTag(name)}
+							style={
+								name === tag
+									? { backgroundColor: "#F5F5F5" }
+									: { color: "black" }
+							}
+						>
+							<ListItemIcon>
+								<TagIcon />
+							</ListItemIcon>
+							{isLoading ? (
+								<Skeleton width={100} />
+							) : (
+								<ListItemText primary={name} />
+							)}
+						</ListItemButton>
+					</ListItem>
 				))}
 			</List>
 		</SideBlock>

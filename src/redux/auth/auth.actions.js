@@ -62,3 +62,5 @@ export const logout = () => ({
     type:authTypes.USER_LOGOUT
 })
 export const selectIsAuth = state => Boolean(state.auth.data);
+
+export const getDataUser = state => state.auth.data;

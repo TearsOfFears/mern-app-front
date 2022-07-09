@@ -13,6 +13,7 @@ import { fetchComments } from "../redux/comments/comments.actions";
 import { Typography } from "@mui/material";
 import { useLocation, useSearchParams } from "react-router-dom";
 import queryString from "query-string";
+import { useMemo } from "react";
 export const Home = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.auth.data);
@@ -29,12 +30,21 @@ export const Home = () => {
 	);
 	const search = useLocation().search;
 	const queryStringSeach = queryString.parse(useLocation().search);
+	const getTag = useMemo(()=>{
+		const tag  = searchParams.get("tag")
+		if(tag===null || tag==="" ){
+			return "Всі"
+		}else{
+			return `#${tag}`
+		}
+	})
 	useEffect(() => {
-		const params = { sort: sort};
-		setSearchParams(params);
+		searchParams.set("sort", sort);
+		setSearchParams(searchParams);
 	}, [sort]);
 	useEffect(() => {
 		if (searchParams) {
+			console.log(queryStringSeach);
 			dispatch(fetchPosts(queryStringSeach));
 		}
 	}, [searchParams]);
@@ -57,7 +67,7 @@ export const Home = () => {
 	return (
 		<>
 			<Typography variant="h4" gutterBottom={false}>
-				Всі
+				{getTag}
 			</Typography>
 			<Tabs
 				style={{ marginBottom: 15 }}
