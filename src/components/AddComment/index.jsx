@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-
 import styles from "./AddComment.module.scss";
-
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "./../../axios";
 import { useParams } from "react-router-dom";
-import { createComment, fetchCommentsById } from "../../redux/comments/comments.actions";
+import {
+	createComment,
+	fetchCommentsById,
+} from "../../redux/comments/comments.actions";
 import { fetchPosts } from "../../redux/posts/posts.actions";
-export const Index = () => {
+export const Index = ({ textEdit }) => {
 	const [text, setText] = useState("");
-	const { id } = useParams();
+	const { id, commentId } = useParams();
+	const { currentComments } = useSelector((state) => state.comments);
+	const isLoadingComments = currentComments.status === "loading";
 	const dispatch = useDispatch();
 	const handleSendComment = async () => {
 		const params = {
@@ -24,7 +26,15 @@ export const Index = () => {
 		await dispatch(fetchCommentsById(id));
 		await dispatch(fetchPosts(id));
 	};
-
+	useEffect(() => {
+		if (commentId) {
+			currentComments.items
+				.filter((obj) => commentId === obj._id)
+				.map((data) => setText(data.text));
+		} else {
+			setText("");
+		}
+	}, [commentId]);
 	return (
 		<>
 			<div className={styles.root}>

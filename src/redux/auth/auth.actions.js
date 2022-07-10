@@ -58,6 +58,27 @@ export const userRegister = (params) => {
             }))
     }
 }
+
+export const updateUserInfo = (params) => {
+    return async (dispatch) => {
+        dispatch({
+            type: authTypes.AUTH_DATA_LOADED
+        });
+        await axios.patch('/auth/register', params)
+            .then(res => 
+                dispatch({
+                    type: authTypes.USER_REGISTER,
+                    payload: res.data,
+                })
+           )
+            .catch(e => dispatch({
+                type: authTypes.AUTH_DATA_ERRORS,
+                payload: e,
+            }))
+    }
+}
+
+
 export const logout = () => ({
     type:authTypes.USER_LOGOUT
 })

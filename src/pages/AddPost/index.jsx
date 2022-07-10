@@ -33,7 +33,6 @@ export const AddPost = () => {
 			console.log(err);
 			alert("Помилка при загрузці картинки");
 		}
-		console.log();
 	};
 	const isEdit = Boolean(id);
 	const inputFileRef = useRef(null);

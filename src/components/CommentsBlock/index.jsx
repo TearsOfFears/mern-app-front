@@ -80,11 +80,14 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 								</div>
 								{!isLoading && isEditable && (
 									<div className={styles.editButtons}>
-										<Link to={`/posts/editComment/${obj.postId}`}>
-											<IconButton color="primary">
-												<EditIcon />
-											</IconButton>
-										</Link>
+										{id && (
+											<Link to={`/posts/${obj.postId}/${obj._id}`}>
+												<IconButton color="primary">
+													<EditIcon />
+												</IconButton>
+											</Link>
+										)}
+
 										<IconButton
 											onClick={(e) => {
 												onClickRemoveComment(obj._id);

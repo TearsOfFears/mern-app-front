@@ -19,16 +19,14 @@ export const FullPost = () => {
 	const dispatch = useDispatch();
 	const { currentComments } = useSelector((state) => state.comments);
 	const isLoadingComments = currentComments.status === "loading";
-	// const [searchParams, setSearchParams] = useSearchParams();
-	// console.log(currentComments);
 	useEffect(() => {
 		if (idEdit) {
-			dispatch(fetchComments(idEdit));
+			dispatch(fetchCommentsById(idEdit));
 			const params = {
 				id: idEdit,
 			};
 			axios
-				.post(`/getPosts`, params)
+				.get(`/getPosts`, { params })
 				.then((res) => {
 					setPost(res.data);
 					setLoading(false);
@@ -38,14 +36,14 @@ export const FullPost = () => {
 			const params = {
 				id: id,
 			};
-				dispatch(fetchCommentsById(id));
-				axios
-					.get(`/getPosts`, { params })
-					.then((res) => {
-						setPost(res.data);
-						setLoading(false);
-					})
-					.catch((err) => console.log(err));
+			dispatch(fetchCommentsById(id));
+			axios
+				.get(`/getPosts`, { params })
+				.then((res) => {
+					setPost(res.data);
+					setLoading(false);
+				})
+				.catch((err) => console.log(err));
 		}
 	}, []);
 

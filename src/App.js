@@ -20,8 +20,9 @@ function App() {
           <Route path="/" element={<Home />}/>
           <Route path="/account/:id" element={<Account/>}/>
           <Route path="/posts/:id" element={<FullPost />}/>
+          <Route path="/posts/:id/:commentId" element={<FullPost />}/>
           <Route path="/posts/:id/edit" element={<AddPost/>}/>
-          <Route path="/posts/editComment/:idEdit" element={<FullPost />}/>
+          {/* <Route path="/posts/editComment/:idEdit/:commentId" element={<FullPost />}/> */}
           <Route path="/addPost" element={<AddPost />}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/register" element={<Registration />}/>
