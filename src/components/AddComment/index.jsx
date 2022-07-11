@@ -4,25 +4,37 @@ import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	createComment,
 	fetchCommentsById,
 } from "../../redux/comments/comments.actions";
 import { fetchPosts } from "../../redux/posts/posts.actions";
+import axios from "./../../axios";
 export const Index = ({ textEdit }) => {
 	const [text, setText] = useState("");
 	const { id, commentId } = useParams();
+	const navigate = useNavigate();
 	const { currentComments } = useSelector((state) => state.comments);
 	const isLoadingComments = currentComments.status === "loading";
 	const dispatch = useDispatch();
 	const handleSendComment = async () => {
-		const params = {
-			postId: id,
-			text,
-		};
 		setText("");
-		await dispatch(createComment(params));
+		if (commentId) {
+			const fields = { postId: id, text };
+
+			axios.patch(`/comment/${commentId}`, fields).then(() => {
+				setText("");
+				navigate(`/posts/${id}`);
+			});
+		} else {
+			const params = {
+				postId: id,
+				text,
+			};
+			await dispatch(createComment(params));
+		}
+
 		await dispatch(fetchCommentsById(id));
 		await dispatch(fetchPosts(id));
 	};
