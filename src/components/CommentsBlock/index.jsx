@@ -22,6 +22,7 @@ import {
 } from "../../redux/comments/comments.actions";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./CommentsBlock.module.scss";
+import { Typography } from "@mui/material";
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -38,6 +39,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 	return (
 		<SideBlock title="Комментарии">
 			<List className={clsx(styles.root)}>
+			{!isLoading && items.length===0 && <Typography variant="h6" textAlign="center">Немає коментарів</Typography>}
 				{(isLoading ? [...Array(5)] : items).map((obj, index) => {
 					const isEditable = !isLoading && userData?._id === obj.author._id;
 

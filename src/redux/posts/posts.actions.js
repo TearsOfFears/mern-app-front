@@ -21,6 +21,28 @@ export const fetchPosts = (params) => {
     }
 }
 
+
+export const fetchPostsByUser = (id) => {
+    console.log(id);
+    return async (dispatch) => {
+        dispatch({
+            type: postsTypes.FETCH_POSTS_LOADING
+        });
+        await axios.get(`/posts/${id}`)
+            .then(res => setTimeout(() => {
+                dispatch({
+                    type: postsTypes.FETCH_POSTS_BYUSER,
+                    payload: res.data,
+                })
+            }, 200))
+            .catch(e => dispatch({
+                type: postsTypes.FETCH_POSTS_ERRORS,
+                payload: e,
+            }))
+    }
+}
+
+
 export const deletePost = (params) => {
     return async (dispatch) => {
         await axios.delete(`/posts/${params}`)

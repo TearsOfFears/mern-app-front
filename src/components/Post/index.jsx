@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import EyeIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import ThumbUp from '@mui/icons-material/ThumbUpOffAlt';
 import CommentIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import {Link} from "react-router-dom"
 import styles from './Post.module.scss';
@@ -25,6 +26,7 @@ export const Post = ({
   isFullPost,
   isLoading,
   isEditable,
+  likesCount
 }) => {
   const dispatch = useDispatch();
   if (isLoading) {
@@ -79,6 +81,10 @@ export const Post = ({
             <li>
               <CommentIcon />
               <span>{commentsCount}</span>
+            </li>
+            <li>
+              <ThumbUp />
+              <span>{likesCount}</span>
             </li>
           </ul>
         </div>

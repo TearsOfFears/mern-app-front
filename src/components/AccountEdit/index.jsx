@@ -4,6 +4,8 @@ import axios from "../../axios";
 import { useParams } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./AccountEdit.module.scss";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import {theme} from "./../../theme";
 function AccountEdit({ data, isLoading }) {
 	const [fullName, setFullname] = useState("");
 	const [avatarURL, setAvatarURL] = useState("");
@@ -11,7 +13,7 @@ function AccountEdit({ data, isLoading }) {
 	const [edit, setEdit] = useState(true);
 	const { id } = useParams();
 	const inputFileRef = useRef(null);
-	
+
 	useEffect(() => {
 		setEmail(data.email);
 		setFullname(data.fullName);
@@ -30,7 +32,8 @@ function AccountEdit({ data, isLoading }) {
 		}
 	};
 
-	const updateUserInfo = () => {
+	const updateUserInfo = (e) => {
+		e.preventDefault();
 		console.log(avatarURL);
 		const fields = {
 			email,
@@ -47,28 +50,39 @@ function AccountEdit({ data, isLoading }) {
 	console.log(data);
 	return (
 		<Grid item xs={5} spacing={2}>
+			<Typography variant="h4" marginBottom={2}>
+				Профіль
+			</Typography>
 			<Box className={clsx(styles.root)}>
-				<div>
-					<Avatar
-						alt={fullName}
-						src={avatarURL}
-						sx={{ width: 150, height: 150 }}
-					/>
+				<form onSubmit={updateUserInfo}>
+					<div className={!edit ? styles.avatarWrapper : ""}>
+						<Avatar
+							alt={fullName}
+							src={avatarURL}
+							sx={{ width: 150, height: 150 }}
+							className={!edit ? styles.avatar : ""}
+						/>
+						<div className={styles.avatarChange}>
+							<Button
+								onClick={() => inputFileRef.current.click()}
+								variant="text"
+								style={{ backgroundColor: "transparent" }}
+								disableRipple={true} 
+								color="white"
+							>
+								<AddAPhotoIcon color="inherit" fontSize="large" />
+							</Button>
+						</div>
+					</div>
+
 					{!edit && (
-						<Button
-							variant="outlined"
-							size="large"
-							onClick={() => inputFileRef.current.click()}
-						>
-							Завантажити інше фото
-						</Button>
+						<input
+							type="file"
+							ref={inputFileRef}
+							onChange={handleChangeFile}
+							hidden
+						/>
 					)}
-					<input
-						type="file"
-						ref={inputFileRef}
-						onChange={handleChangeFile}
-						hidden
-					/>{" "}
 					<Input
 						value={fullName}
 						disabled={edit}
@@ -79,6 +93,7 @@ function AccountEdit({ data, isLoading }) {
 						value={email}
 						disabled={edit}
 						className={styles.input}
+						type="email"
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 					{edit && (
@@ -87,8 +102,8 @@ function AccountEdit({ data, isLoading }) {
 						</Button>
 					)}
 					{!edit && (
-						<div>
-							<Button onClick={(e) => updateUserInfo()} variant="contained">
+						<div className={styles.wrapperUpdate}>
+							<Button variant="contained" type="submit">
 								Зберегти
 							</Button>
 							<Button onClick={(e) => setEdit(true)} variant="contained">
@@ -96,7 +111,7 @@ function AccountEdit({ data, isLoading }) {
 							</Button>
 						</div>
 					)}
-				</div>
+				</form>
 			</Box>
 		</Grid>
 	);

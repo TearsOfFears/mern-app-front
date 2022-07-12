@@ -6,6 +6,9 @@ export const theme = createTheme({
     primary: {
       main: "#4361ee",
     },
+    white: {
+      main: "#fff",
+    },
   },
   typography: {
     button: {

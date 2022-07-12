@@ -20,6 +20,8 @@ export const Header = () => {
 		if (window.confirm("Ви точно хочете вийти?")) {
 			dispatch(logout());
 			dispatch(fetchAuthUser());
+
+			navigate("/")
 		}
 	};
 	console.log("data",);

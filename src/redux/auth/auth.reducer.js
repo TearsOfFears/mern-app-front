@@ -2,11 +2,21 @@ import {authTypes} from "./auth.types"
 const initialState = {
   data: null,
   status: 'loading',
-  errors: []
+  errors: [],
+  errorsAuth: [],
+  statusAuth:'loading',
 }
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
+
+    case authTypes.CLEAR_STORE:
+      return {
+        ...state,
+        data: null,
+        status: 'loading',
+        errors: []
+      }
     case authTypes.AUTH_DATA_LOADED:
       return {
         ...state,
@@ -21,9 +31,16 @@ const authReducer = (state = initialState, action) => {
         data: null,
         errors: action.payload
       }
+    case authTypes.USER_LOGIN_REGISTER_ERRORS:
+      return {
+        ...state,
+        statusAuth: 'error',
+        data: null,
+        errorsAuth: action.payload
+      }
     case authTypes.FETCH_LOGIN_USER:
-      if ("token" in action.payload)
-			window.localStorage.setItem("token", action.payload.token);
+      if ("token" in action.payload) 
+        window.localStorage.setItem("token", action.payload.token);
       return {
         ...state,
         status: 'loaded',
@@ -38,14 +55,18 @@ const authReducer = (state = initialState, action) => {
         errors: []
       }
     case authTypes.USER_REGISTER:
+      if ("token" in action.payload) 
+        window.localStorage.setItem("token", action.payload.token);
       return {
         ...state,
         status: 'loaded',
         data: action.payload,
         errors: []
       }
-      case authTypes.USER_LOGOUT:
-        window.localStorage.removeItem("token")
+    case authTypes.USER_LOGOUT:
+      window
+        .localStorage
+        .removeItem("token")
         return {
           ...state,
           status: 'loading',

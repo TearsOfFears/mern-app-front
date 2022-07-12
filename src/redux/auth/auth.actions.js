@@ -2,9 +2,6 @@ import { authTypes } from "./auth.types"
 import axios from "./../../axios";
 export const loginUser = (params) => {
     return async (dispatch) => {
-        dispatch({
-            type: authTypes.AUTH_DATA_LOADED
-        });
         await axios.post('/auth/login', params)
             .then(res => 
                 dispatch({
@@ -13,7 +10,7 @@ export const loginUser = (params) => {
                 })
             )
             .catch(e => dispatch({
-                type: authTypes.AUTH_DATA_ERRORS,
+                type: authTypes.USER_LOGIN_REGISTER_ERRORS,
                 payload: e,
             }))
     }
@@ -42,9 +39,6 @@ export const fetchAuthUser = () => {
 export const userRegister = (params) => {
     
     return async (dispatch) => {
-        dispatch({
-            type: authTypes.AUTH_DATA_LOADED
-        });
         await axios.post('/auth/register', params)
             .then(res => 
                 dispatch({
@@ -53,7 +47,7 @@ export const userRegister = (params) => {
                 })
            )
             .catch(e => dispatch({
-                type: authTypes.AUTH_DATA_ERRORS,
+                type: authTypes.USER_LOGIN_REGISTER_ERRORS,
                 payload: e,
             }))
     }
@@ -82,6 +76,12 @@ export const updateUserInfo = (params) => {
 export const logout = () => ({
     type:authTypes.USER_LOGOUT
 })
+
+export const clearState = () => ({
+    type:authTypes.CLEAR_STORE
+})
+
+
 export const selectIsAuth = state => Boolean(state.auth.data);
 
 export const getDataUser = state => state.auth.data;

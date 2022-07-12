@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
@@ -6,12 +6,19 @@ import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, selectIsAuth } from "../../redux/auth/auth.actions";
+import {
+	clearState,
+	loginUser,
+	selectIsAuth,
+} from "../../redux/auth/auth.actions";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
 	const dispatch = useDispatch();
 	const isAuth = useSelector(selectIsAuth);
-	const data = useSelector(state => state.auth.data);
+	const data = useSelector((state) => state.auth);
+	const [errorsPayload, setErrorsPayload] = useState("");
+	// const [isError, setErrorAuth] = useState(false);
+	const isError = data.statusAuth === "error";
 	const navigate = useNavigate();
 	const {
 		register,
@@ -25,18 +32,20 @@ export const Login = () => {
 		},
 		mode: "onChange",
 	});
-	const onSubmit = async (values) => {
-		 await dispatch(loginUser(values));
-	
-		console.log("data:", data);
-		if (!data.payload) {
-			return alert("Не вдалось увійти");
+	useEffect(() => {
+		if (isError && data.errorsAuth.response.data.message.length>0) {
+			setErrorsPayload(`Не вдалось увійти ${data.errorsAuth.response.data.message}`);
 		}
+	}, [isError]);
+	const onSubmit = async (values) => {
+		await dispatch(loginUser(values));
 	};
 	if (isAuth) {
 		return navigate("/");
 	}
 
+	console.log("isError", isError);
+	console.log("errorsPayload", errorsPayload);
 	return (
 		<Paper classes={{ root: styles.root }}>
 			<Typography classes={{ root: styles.title }} variant="h5">
@@ -61,6 +70,12 @@ export const Login = () => {
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 				/>
+				{isError && (
+					<Typography variant="h6" textAlign="center" marginBottom={1}>
+						{" "}
+						{errorsPayload}
+					</Typography>
+				)}
 				<Button
 					type="submit"
 					disabled={!isValid}

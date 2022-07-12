@@ -44,6 +44,16 @@ const commentsReducer = (state = initialState, action) => {
           errors: []
         }
       }
+      case postsTypes.FETCH_POSTS_BYUSER:
+        return {
+          ...state,
+          posts: {
+            ...state.posts,
+            status: 'loaded',
+            items: action.payload,
+            errors: []
+          }
+        }
     case postsTypes.DELETE_POST:
       return {
         ...state,
