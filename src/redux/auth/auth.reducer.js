@@ -63,6 +63,20 @@ const authReducer = (state = initialState, action) => {
         data: action.payload,
         errors: []
       }
+      case authTypes.ADD_USER_LIKE:
+        return {
+          ...state,
+          status: 'loaded',
+          data: action.payload,
+          errors: []
+        }
+        case authTypes.UPDATE_USER_INFO:
+          return {
+           
+            status: 'loaded',
+            data: action.payload,
+            errors: []
+          }
     case authTypes.USER_LOGOUT:
       window
         .localStorage

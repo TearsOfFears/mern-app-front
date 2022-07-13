@@ -6,6 +6,8 @@ import clsx from "clsx";
 import styles from "./AccountEdit.module.scss";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import {theme} from "./../../theme";
+import { useDispatch } from "react-redux";
+import { fetchAuthUser,updateUserInfo } from "../../redux/auth/auth.actions";
 function AccountEdit({ data, isLoading }) {
 	const [fullName, setFullname] = useState("");
 	const [avatarURL, setAvatarURL] = useState("");
@@ -13,7 +15,7 @@ function AccountEdit({ data, isLoading }) {
 	const [edit, setEdit] = useState(true);
 	const { id } = useParams();
 	const inputFileRef = useRef(null);
-
+	const dispatch = useDispatch();
 	useEffect(() => {
 		setEmail(data.email);
 		setFullname(data.fullName);
@@ -32,29 +34,29 @@ function AccountEdit({ data, isLoading }) {
 		}
 	};
 
-	const updateUserInfo = (e) => {
+	const updateUserInfoSubmit = (e) => {
 		e.preventDefault();
-		console.log(avatarURL);
 		const fields = {
 			email,
 			fullName,
 			avatarURL,
 		};
-		axios.patch(`/auth/${id}`, fields);
+		dispatch(updateUserInfo(id,fields))
 		setEdit(true);
+		
 	};
 
 	if (isLoading) {
 		return <Typography>Laoding User Info</Typography>;
 	}
-	console.log(data);
+
 	return (
 		<Grid item xs={5} spacing={2}>
 			<Typography variant="h4" marginBottom={2}>
 				Профіль
 			</Typography>
 			<Box className={clsx(styles.root)}>
-				<form onSubmit={updateUserInfo}>
+				<form onSubmit={updateUserInfoSubmit}>
 					<div className={!edit ? styles.avatarWrapper : ""}>
 						<Avatar
 							alt={fullName}

@@ -53,22 +53,40 @@ export const userRegister = (params) => {
     }
 }
 
-export const updateUserInfo = (params) => {
+export const updateUserInfo = (id,fields) => {
     return async (dispatch) => {
         dispatch({
             type: authTypes.AUTH_DATA_LOADED
         });
-        await axios.patch('/auth/register', params)
-            .then(res => 
+        await axios.patch(`/auth/${id}`, fields)
+            .then(res => setTimeout(()=>{
                 dispatch({
-                    type: authTypes.USER_REGISTER,
+                    type: authTypes.UPDATE_USER_INFO,
                     payload: res.data,
                 })
+            },500)
            )
             .catch(e => dispatch({
                 type: authTypes.AUTH_DATA_ERRORS,
                 payload: e,
             }))
+    }
+}
+
+
+export const setUserLike = (params) => {
+    return async (dispatch) => {
+        await axios.patch('/auth/user/setLike', params)
+            .then(res => 
+                dispatch({
+                    type: authTypes.ADD_USER_LIKE,
+                    payload: res.data,
+                })
+           )
+           .catch(e => dispatch({
+            type: authTypes.AUTH_DATA_ERRORS,
+            payload: e,
+        }))
     }
 }
 

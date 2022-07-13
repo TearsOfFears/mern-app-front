@@ -24,7 +24,13 @@ $blue: #4361ee;
       box-shadow: none;
     }
   }
+  .likes{
+    padding: 0px;
+    min-width: 0px ;
+    color:inherit;
+  }
 }
+
 
 .image {
   width: 100%;
@@ -53,6 +59,7 @@ $blue: #4361ee;
 .indention {
   padding-left: 40px;
 }
+
 
 .title {
   font-size: 28px;
@@ -156,3 +163,5 @@ $blue: #4361ee;
   opacity: 0;
   transition: all 0.15s ease-in-out;
 }
+
+

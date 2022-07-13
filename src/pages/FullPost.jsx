@@ -10,7 +10,6 @@ import {
 	fetchComments,
 	fetchCommentsById,
 } from "../redux/comments/comments.actions";
-import { fetchPosts } from "../redux/slices/posts";
 
 export const FullPost = () => {
 	const { id, idEdit } = useParams();
