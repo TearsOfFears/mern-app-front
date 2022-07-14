@@ -29,7 +29,7 @@ export const Header = () => {
 		<div className={styles.root}>
 			<Container maxWidth="lg">
 				<div className={styles.inner}>
-					<Link className={styles.logo} to="/">
+					<Link className={styles.logo} to="/?sort=latest">
 						<div>Nazar BLOG</div>
 					</Link>
 					<div className={styles.buttons}>

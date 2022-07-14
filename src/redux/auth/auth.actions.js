@@ -91,6 +91,23 @@ export const setUserLike = (params) => {
 }
 
 
+export const setUserDisLike = (params) => {
+    return async (dispatch) => {
+        await axios.patch('/auth/user/setDisLike', params)
+            .then(res => 
+                dispatch({
+                    type: authTypes.ADD_USER_LIKE,
+                    payload: res.data,
+                })
+           )
+           .catch(e => dispatch({
+            type: authTypes.AUTH_DATA_ERRORS,
+            payload: e,
+        }))
+    }
+}
+
+
 export const logout = () => ({
     type:authTypes.USER_LOGOUT
 })

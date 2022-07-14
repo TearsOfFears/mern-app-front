@@ -60,6 +60,7 @@ export const FullPost = () => {
 				createdAt={post.createdAt}
 				viewsCount={post.vievsCount}
 				likesCount={post.likesCount}
+				disLikesCount={post.disLikesCount}
 				commentsCount={post.commentsCount}
 				tags={post.tags}
 				isFullPost

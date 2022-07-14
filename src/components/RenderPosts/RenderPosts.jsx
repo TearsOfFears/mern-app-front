@@ -27,6 +27,7 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 									viewsCount={data.vievsCount}
 									commentsCount={data.commentsCount}
 									likesCount={data.likesCount}
+									disLikesCount={data.disLikesCount}
 									tags={data.tags}
 									isEditable={userData?._id === data.author._id}
 								/>
@@ -49,6 +50,7 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 								viewsCount={data.vievsCount}
 								commentsCount={data.commentsCount}
 								likesCount={data.likesCount}
+								disLikesCount={data.disLikesCount}
 								tags={data.tags}
 								isEditable={userData?._id === data.author._id}
 							/>

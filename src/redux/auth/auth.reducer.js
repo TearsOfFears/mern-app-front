@@ -70,6 +70,13 @@ const authReducer = (state = initialState, action) => {
           data: action.payload,
           errors: []
         }
+        case authTypes.ADD_USER_DISLIKE:
+          return {
+            ...state,
+            status: 'loaded',
+            data: action.payload,
+            errors: []
+          }
         case authTypes.UPDATE_USER_INFO:
           return {
            
