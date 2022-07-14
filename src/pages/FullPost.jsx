@@ -18,6 +18,7 @@ export const FullPost = () => {
 	const dispatch = useDispatch();
 	const { currentComments } = useSelector((state) => state.comments);
 	const isLoadingComments = currentComments.status === "loading";
+	
 	useEffect(() => {
 		if (idEdit) {
 			dispatch(fetchCommentsById(idEdit));
@@ -25,7 +26,7 @@ export const FullPost = () => {
 				id: idEdit,
 			};
 			axios
-				.get(`/getPosts`, { params })
+				.get(`/getCurrentPost`, { params })
 				.then((res) => {
 					setPost(res.data);
 					setLoading(false);
@@ -37,7 +38,7 @@ export const FullPost = () => {
 			};
 			dispatch(fetchCommentsById(id));
 			axios
-				.get(`/getPosts`, { params })
+				.get(`/getCurrentPost`, { params })
 				.then((res) => {
 					setPost(res.data);
 					setLoading(false);

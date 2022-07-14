@@ -28,8 +28,12 @@ $blue: #4361ee;
     padding: 0px;
     min-width: 0px ;
     color:inherit;
+    &:disabled{
+      color:$blue ;
+    }
   }
 }
+
 
 
 .image {
@@ -163,5 +167,6 @@ $blue: #4361ee;
   opacity: 0;
   transition: all 0.15s ease-in-out;
 }
+
 
 

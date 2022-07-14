@@ -42,9 +42,9 @@ export const AddPost = () => {
 
 	useEffect(() => {
 		if (id) {
-      const params = {id:id}
+			const params = { id: id };
 			axios
-				.get('/getPosts',{params})
+				.get("/getCurrentPost", { params })
 				.then(({ data }) => {
 					setTitle(data.title);
 					setImageUrl(data.imageURL);
@@ -56,7 +56,7 @@ export const AddPost = () => {
 				});
 		}
 	}, []);
-  console.log(isEdit);
+	console.log(isEdit);
 	const onSubmit = async () => {
 		try {
 			setIsLoading(true);

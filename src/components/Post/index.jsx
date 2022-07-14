@@ -44,6 +44,7 @@ export const Post = ({
 	const isLoadingUser = useSelector(selectIsAuth);
 	const [disLikesCounter, setDisLikesCounter] = useState(0);
 	const [likesCounter, setLikesCounter] = useState(0);
+	
 	const addLikePost = (id) => {
 		const fields = {
 			postId: id,
@@ -138,6 +139,7 @@ export const Post = ({
 						</li>
 						<li>
 							<Button
+							
 								className={styles.likes}
 								onClick={(e) => addDisLikePost(id)}
 								disabled={isLoadingUser && data.disLikesPostArray.includes(id)}
