@@ -10,8 +10,11 @@ import {
 	clearState,
 	loginUser,
 	selectIsAuth,
+	loginGoogle
 } from "../../redux/auth/auth.actions";
+import { GoogleLogin  } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
+import { Modal } from "@mui/material";
 export const Login = () => {
 	const dispatch = useDispatch();
 	const isAuth = useSelector(selectIsAuth);
@@ -43,7 +46,23 @@ export const Login = () => {
 	if (isAuth) {
 		return navigate("/");
 	}
-
+	const handleLoginGoogle = async (credentialResponse) => {
+		const values= {
+			token:credentialResponse.credential
+		}
+		const data = await dispatch(loginGoogle(values));
+		if (!data.payload) {
+			return alert("Не вдалось зареєестурватись");
+		}
+		if ("token" in data.payload)
+			window.localStorage.setItem("token", data.payload.token);
+	};
+	const handleLoginFail = (result) => {
+		console.log(result);
+		<Modal open={true}>
+			<Typography>{result}</Typography>
+		</Modal>;
+	};
 	console.log("isError", isError);
 	console.log("errorsPayload", errorsPayload);
 	return (
@@ -86,6 +105,12 @@ export const Login = () => {
 					Войти
 				</Button>
 			</form>
+			<GoogleLogin 
+					onSuccess={credentialResponse => handleLoginGoogle(credentialResponse)}
+					
+					onError={handleLoginFail}
+					cookiePolicy={'single_host_origin'}
+				/>
 			<Button
 				style={{ marginTop: "15px" }}
 				size="large"

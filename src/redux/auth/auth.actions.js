@@ -53,6 +53,41 @@ export const userRegister = (params) => {
     }
 }
 
+export const registrGoogle = (params) => {
+    
+    return async (dispatch) => {
+        await axios.post('/auth/registrGoogle', params)
+            .then(res => 
+                dispatch({
+                    type: authTypes.REGISTR_GOOGLE,
+                    payload: res.data,
+                })
+           )
+            .catch(e => dispatch({
+                type: authTypes.USER_LOGIN_REGISTER_ERRORS,
+                payload: e,
+            }))
+    }
+}
+
+export const loginGoogle = (params) => {
+    return async (dispatch) => {
+        await axios.post('/auth/loginGoogle', params)
+            .then(res => 
+                dispatch({
+                    type: authTypes.LOGIN_GOOGLE,
+                    payload: res.data,
+                })
+            )
+            .catch(e => dispatch({
+                type: authTypes.USER_LOGIN_REGISTER_ERRORS,
+                payload: e,
+            }))
+    }
+}
+
+
+
 export const updateUserInfo = (id,fields) => {
     return async (dispatch) => {
         dispatch({

@@ -64,7 +64,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 										) : (
 											<Avatar
 												alt={obj.author.fullName}
-												src={obj.author.avatarUrl}
+												src={obj.author.avatarURL}
 											/>
 										)}
 									</ListItemAvatar>

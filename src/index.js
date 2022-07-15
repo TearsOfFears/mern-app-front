@@ -8,15 +8,19 @@ import "./index.scss";
 import {ThemeProvider} from "@mui/material";
 import {theme} from "./theme";
 import store from "./redux/createStore";
-const root = ReactDOM.createRoot(document.getElementById("root"));
+import { GoogleOAuthProvider  } from '@react-oauth/google';
+const  {REACT_APP_GOOGLE_AUTH} = process.env
 
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
     <CssBaseline/>
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Provider store={store}>
+          <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_AUTH}>
           <App/>
+          </GoogleOAuthProvider>
         </Provider>
       </BrowserRouter>
     </ThemeProvider>

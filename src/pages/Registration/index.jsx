@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
@@ -6,12 +6,12 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import {
-	selectIsAuth,
-	userRegister,
-} from "../../redux/auth/auth.actions";
+import { loginGoogle, registrGoogle, selectIsAuth, userRegister } from "../../redux/auth/auth.actions";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.scss";
+import jwt_decode from "jwt-decode"
+import { GoogleLogin  } from '@react-oauth/google';
+import { Modal } from "@mui/material";
 
 export const Registration = () => {
 	const dispatch = useDispatch();
@@ -39,6 +39,29 @@ export const Registration = () => {
 		if ("token" in data.payload)
 			window.localStorage.setItem("token", data.payload.token);
 	};
+
+
+	const handleRegistr = async (credentialResponse) => {
+		const userObject = jwt_decode(credentialResponse.credential);
+		console.log(userObject);
+		const values= {
+			token:credentialResponse.credential
+		}
+
+		const data = await dispatch(registrGoogle(values));
+		if (!data.payload) {
+			return alert("Не вдалось зареєестурватись");
+		}
+		if ("token" in data.payload)
+			window.localStorage.setItem("token", data.payload.token);
+	};
+	const handleRegistrFail = (result) => {
+		console.log(result);
+		<Modal open={true}>
+			<Typography>{result}</Typography>
+		</Modal>;
+	};
+
 	if (isAuth) {
 		return navigate("/");
 	}
@@ -72,7 +95,7 @@ export const Registration = () => {
 				<TextField
 					className={styles.field}
 					label="Пароль"
-          type="password"
+					type="password"
 					fullWidth
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
@@ -87,9 +110,13 @@ export const Registration = () => {
 				>
 					Зарегистрироваться
 				</Button>
-
+				<GoogleLogin 
+					onSuccess={credentialResponse => handleRegistr(credentialResponse)}
+					
+					onError={handleRegistrFail}
+					cookiePolicy={'single_host_origin'}
+				/>
 			</form>
-      
 		</Paper>
 	);
 };

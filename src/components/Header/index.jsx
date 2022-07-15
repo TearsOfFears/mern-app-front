@@ -21,7 +21,7 @@ export const Header = () => {
 			dispatch(logout());
 			dispatch(fetchAuthUser());
 
-			navigate("/")
+			navigate("/?sort=latest")
 		}
 	};
 	console.log("data",);

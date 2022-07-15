@@ -63,6 +63,25 @@ const authReducer = (state = initialState, action) => {
         data: action.payload,
         errors: []
       }
+      case authTypes.REGISTR_GOOGLE:
+        if ("token" in action.payload) 
+          window.localStorage.setItem("token", action.payload.token);
+        return {
+          ...state,
+          status: 'loaded',
+          data: action.payload,
+          errors: []
+        }
+
+      case authTypes.LOGIN_GOOGLE:
+        if ("token" in action.payload) 
+          window.localStorage.setItem("token", action.payload.token);
+        return {
+          ...state,
+          status: 'loaded',
+          data: action.payload,
+          errors: []
+        }
       case authTypes.ADD_USER_LIKE:
         return {
           ...state,

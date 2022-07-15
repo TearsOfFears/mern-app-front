@@ -51,8 +51,13 @@ export const Post = ({
 			userId: data._id,
 		};
 		dispatch(setUserLike(fields));
-		setLikesCounter(likesCounter + 1);
-		setDisLikesCounter(disLikesCounter - 1);
+
+		if (!data.disLikesPostArray.includes(id)) {
+			setLikesCounter(likesCounter + 1);
+		} else {
+			setLikesCounter(likesCounter + 1);
+			setDisLikesCounter(disLikesCounter - 1);
+		}
 	};
 	const addDisLikePost = (id) => {
 		const fields = {
@@ -60,18 +65,21 @@ export const Post = ({
 			userId: data._id,
 		};
 		dispatch(setUserDisLike(fields));
-		setLikesCounter(likesCounter - 1);
-		setDisLikesCounter(disLikesCounter + 1);
+
+		if (!data.likesPostArray.includes(id)) {
+			setDisLikesCounter(disLikesCounter + 1);
+		} else {
+			setLikesCounter(likesCounter - 1);
+			setDisLikesCounter(disLikesCounter + 1);
+		}
 	};
 	const onClickRemove = async (id) => {
 		if (window.confirm("Ви точно хочете видалити статтю?"))
 			await dispatch(deletePost(id));
 	};
-
 	if (isLoading) {
 		return <PostSkeleton />;
-	}
-	console.log("disLikesCount", disLikesCount);
+	}console.log();
 	return (
 		<div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
 			{isEditable && (
@@ -125,9 +133,9 @@ export const Post = ({
 						</li>
 						<li>
 							<Button
-								className={styles.likes}
+								className={isLoadingUser ? styles.likes : styles.likesDisabled}
 								onClick={(e) => addLikePost(id)}
-								disabled={isLoadingUser && data.likesPostArray.includes(id)}
+								disabled={data !==null ? isLoadingUser   && data.likesPostArray.includes(id) : true}
 							>
 								{isLoadingUser && data.likesPostArray.includes(id) ? (
 									<ThumbUpFill />
@@ -139,10 +147,9 @@ export const Post = ({
 						</li>
 						<li>
 							<Button
-							
-								className={styles.likes}
+								className={isLoadingUser ? styles.likes : styles.likesDisabled}
 								onClick={(e) => addDisLikePost(id)}
-								disabled={isLoadingUser && data.disLikesPostArray.includes(id)}
+								disabled={data !==null ? isLoadingUser   && data.disLikesPostArray.includes(id) : true}
 							>
 								{isLoadingUser && data.disLikesPostArray.includes(id) ? (
 									<ThumbDownFill />

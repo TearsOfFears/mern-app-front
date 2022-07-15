@@ -32,6 +32,14 @@ $blue: #4361ee;
       color:$blue ;
     }
   }
+  .likesDisabled{
+    padding: 0px;
+    min-width: 0px ;
+    color:inherit;
+    &:disabled{
+      color:inherit ;
+    }
+  }
 }
 
 

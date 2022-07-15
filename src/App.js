@@ -6,6 +6,7 @@ import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import {useDispatch,useSelector} from "react-redux";
 import {fetchAuthUser,selectIsAuth} from "./redux/auth/auth.actions"
 import { Account } from "./pages/Account";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import WithAuth from "./HOC/WithAuth"
 function App() {
   const dispatch = useDispatch(); 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/posts/:id/edit" element={<AddPost/>}/>
           <Route path="/addPost" element={<AddPost />}/>
           <Route path="/login" element={<Login />}/>
+          
           <Route path="/register" element={<Registration />}/>
         </Routes>
       </Container>
