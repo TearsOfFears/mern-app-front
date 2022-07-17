@@ -30,14 +30,14 @@ export const Home = () => {
 	);
 	const search = useLocation().search;
 	const queryStringSeach = queryString.parse(useLocation().search);
-	const getTag = useMemo(()=>{
-		const tag  = searchParams.get("tag")
-		if(tag===null || tag==="" ){
-			return "Всі"
-		}else{
-			return `#${tag}`
+	const getTag = useMemo(() => {
+		const tag = searchParams.get("tag");
+		if (tag === null || tag === "") {
+			return "Всі";
+		} else {
+			return `#${tag}`;
 		}
-	})
+	});
 	useEffect(() => {
 		searchParams.set("sort", sort);
 		setSearchParams(searchParams);
