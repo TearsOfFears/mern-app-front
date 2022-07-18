@@ -1,77 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { Post } from "../components/Post";
 import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
-import axios from "./../axios.js";
-import { useDispatch, useSelector } from "react-redux";
 import ReactMarkdown from "react-markdown";
-import {
-	fetchComments,
-	fetchCommentsById,
-} from "../redux/comments/comments.actions";
+import { useFetchCurrentPost } from "../reactQuery/posts/posts.hooks";
+import { useCommentsById } from "../reactQuery/comments/comments.hooks";
+import UserContext from "../reactQuery/context";
 
 export const FullPost = () => {
 	const { id, idEdit } = useParams();
-	const [post, setPost] = useState();
-	const [isloading, setLoading] = useState(true);
-	const dispatch = useDispatch();
-	const { currentComments } = useSelector((state) => state.comments);
-	const isLoadingComments = currentComments.status === "loading";
-	
+
+	const params = {
+		id: id,
+	};
+
+	const post = useFetchCurrentPost({ params });
+	const comments = useCommentsById(id);
+	const { user } = useContext(UserContext);
 	useEffect(() => {
 		if (idEdit) {
-			dispatch(fetchCommentsById(idEdit));
+			// dispatch(fetchCommentsById(idEdit));
 			const params = {
 				id: idEdit,
 			};
-			axios
-				.get(`/getCurrentPost`, { params })
-				.then((res) => {
-					setPost(res.data);
-					setLoading(false);
-				})
-				.catch((err) => console.log(err));
+			//  const {data,isLoading} =  useFetchCurrentPost()
+			// axios
+			// 	.get(`/getCurrentPost`, { params })
+			// 	.then((res) => {
+			// 		setPost(res.data);
+			// 		setLoading(false);
+			// 	})
+			// 	.catch((err) => console.log(err));
 		} else {
-			const params = {
-				id: id,
-			};
-			dispatch(fetchCommentsById(id));
-			axios
-				.get(`/getCurrentPost`, { params })
-				.then((res) => {
-					setPost(res.data);
-					setLoading(false);
-				})
-				.catch((err) => console.log(err));
+			// dispatch(fetchCommentsById(id));
+			// axios
+			// 	.get(`/getCurrentPost`, { params })
+			// 	.then((res) => {
+			// 		setPost(res.data);
+			// 		setLoading(false);
+			// 	})
+			// 	.catch((err) => console.log(err));
 		}
 	}, []);
 
-	if (isloading) {
-		return <Post isLoading={isloading} isFullPost />;
+	if (post.isLoading) {
+		return <Post isLoading={post.isLoading} isFullPost />;
 	}
 
 	return (
 		<>
 			<Post
-				id={post._id}
-				title={post.title}
-				imageUrl={post.imageURL}
-				user={post.author}
-				createdAt={post.createdAt}
-				viewsCount={post.vievsCount}
-				likesCount={post.likesCount}
-				disLikesCount={post.disLikesCount}
-				commentsCount={post.commentsCount}
-				tags={post.tags}
+				id={post.data.id}
+				title={post.data.title}
+				imageUrl={post.data.imageURL}
+				user={post.data.author}
+				createdAt={post.data.createdAt}
+				viewsCount={post.data.vievsCount}
+				likesCount={post.data.likesCount}
+				disLikesCount={post.data.disLikesCount}
+				commentsCount={post.data.commentsCount}
+				tags={post.data.tags}
 				isFullPost
 			>
-				<ReactMarkdown children={post.text} />
+				<ReactMarkdown children={post.data.text} />
 			</Post>
 			<CommentsBlock
-				items={currentComments.items}
-				isLoading={isLoadingComments}
-				// isEditable={userData?._id === data.author._id}
+				items={comments.data}
+				isLoading={comments.isLoading}
+				isEditable={user?.id === post?.data.author._id}
 			>
 				<Index />
 			</CommentsBlock>

@@ -1,13 +1,10 @@
 import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
-  shadows: Array(25).fill('none'),
+  shadows: ["none"],
   palette: {
     primary: {
       main: "#4361ee",
-    },
-    white: {
-      main: "#fff",
     },
   },
   typography: {

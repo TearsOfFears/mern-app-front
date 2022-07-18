@@ -5,23 +5,25 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	clearState,
-	loginUser,
-	selectIsAuth,
-	loginGoogle
-} from "../../redux/auth/auth.actions";
-import { GoogleLogin  } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
-import { Modal } from "@mui/material";
+import { useQuery } from "react-query";
+import { userSevice } from "../../reactQuery/auth/user.service";
+import { useContext } from "react";
+import UserContext from "../../reactQuery/context";
+import { useAuth } from "../../hooks/useAuth";
+import { useLogin } from "../../reactQuery/auth/user.hooks";
+// import { userLogin } from "../../reactQuery/services/auth/user.actions";
+
 export const Login = () => {
-	const dispatch = useDispatch();
-	const isAuth = useSelector(selectIsAuth);
-	const data = useSelector((state) => state.auth);
 	const [errorsPayload, setErrorsPayload] = useState("");
-	// const [isError, setErrorAuth] = useState(false);
-	const isError = data.statusAuth === "error";
+	const [values, setValues] = useState();
+	const {isAuth} = useAuth()
+	// const { isLoading, data, refetch } = useQuery(
+	// 	["login user", values],
+	// 	() => userSevice.loginUser(values),
+	// 	{ enabled: false }
+	// );
+	const {data,refetch} = useLogin(values)
 	const navigate = useNavigate();
 	const {
 		register,
@@ -35,36 +37,20 @@ export const Login = () => {
 		},
 		mode: "onChange",
 	});
-	useEffect(() => {
-		if (isError && data.errorsAuth.response.data.message.length>0) {
-			setErrorsPayload(`Не вдалось увійти ${data.errorsAuth.response.data.message}`);
-		}
-	}, [isError]);
-	const onSubmit = async (values) => {
-		await dispatch(loginUser(values));
+	
+	const { user, setUser } = useContext(UserContext);
+	if (data) {
+		setUser(data);
+	}
+	const onSubmit = (values) => {
+		setValues(values);
+		refetch();
 	};
+
 	if (isAuth) {
 		return navigate("/");
 	}
-	const handleLoginGoogle = async (credentialResponse) => {
-		const values= {
-			token:credentialResponse.credential
-		}
-		const data = await dispatch(loginGoogle(values));
-		if (!data.payload) {
-			return alert("Не вдалось зареєестурватись");
-		}
-		if ("token" in data.payload)
-			window.localStorage.setItem("token", data.payload.token);
-	};
-	const handleLoginFail = (result) => {
-		console.log(result);
-		<Modal open={true}>
-			<Typography>{result}</Typography>
-		</Modal>;
-	};
-	console.log("isError", isError);
-	console.log("errorsPayload", errorsPayload);
+
 	return (
 		<Paper classes={{ root: styles.root }}>
 			<Typography classes={{ root: styles.title }} variant="h5">
@@ -89,12 +75,11 @@ export const Login = () => {
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 				/>
-				{isError && (
+				{/* {isError && (
 					<Typography variant="h6" textAlign="center" marginBottom={1}>
-						{" "}
 						{errorsPayload}
 					</Typography>
-				)}
+				)} */}
 				<Button
 					type="submit"
 					disabled={!isValid}
@@ -105,22 +90,6 @@ export const Login = () => {
 					Войти
 				</Button>
 			</form>
-			<GoogleLogin 
-					onSuccess={credentialResponse => handleLoginGoogle(credentialResponse)}
-					
-					onError={handleLoginFail}
-					cookiePolicy={'single_host_origin'}
-				/>
-			<Button
-				style={{ marginTop: "15px" }}
-				size="large"
-				variant="contained"
-				fullWidth
-				type="submit"
-				disabled={!isValid}
-			>
-				Відновити пароль
-			</Button>
 		</Paper>
 	);
 };

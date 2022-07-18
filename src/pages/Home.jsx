@@ -1,35 +1,34 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useState, useEffect, useMemo,useContext } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts } from "./../redux/posts/posts.actions";
-import RenderPosts from "../components/RenderPosts/RenderPosts.jsx";
-import axios from "./../axios.js";
-import { fetchComments } from "../redux/comments/comments.actions";
+import { useQuery, QueryCache } from "react-query";
+import { postsService } from "../reactQuery/posts/posts.service";
+import { commentsSevice } from "../reactQuery/comments/comments.service";
 import { Typography } from "@mui/material";
-import { useLocation, useSearchParams } from "react-router-dom";
 import queryString from "query-string";
-import { useMemo } from "react";
-export const Home = () => {
-	const dispatch = useDispatch();
-	const userData = useSelector((state) => state.auth.data);
-	const { posts } = useSelector((state) => state.posts);
-	const { tags } = useSelector((state) => state.posts);
-	const { comments } = useSelector((state) => state.comments);
-	const isPostLoading = posts.status === "loading";
-	const isTagsLoading = tags.status === "loading";
+import UserContext from "../reactQuery/context";
+import { useFetchPosts, useFetchTags } from "../reactQuery/posts/posts.hooks";
+import { useComments } from "../reactQuery/comments/comments.hooks";
 
-	const isLoadingComments = comments.status === "loading";
+export const Home = () => {
+	const params = { sort: "latest" };
+	const search = useLocation().search;
+	const queryStringSeach = queryString.parse(useLocation().search);
 	const [searchParams, setSearchParams] = useSearchParams();
+	const {user, setUser } = useContext(UserContext);
+	const posts = useFetchPosts(queryStringSeach)
+	const tags = useFetchTags();
+	const getAllComments = useComments()
+	
 	const [sort, setSort] = useState(
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
-	const search = useLocation().search;
-	const queryStringSeach = queryString.parse(useLocation().search);
+
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {
@@ -38,20 +37,12 @@ export const Home = () => {
 			return `#${tag}`;
 		}
 	});
+
 	useEffect(() => {
 		searchParams.set("sort", sort);
 		setSearchParams(searchParams);
 	}, [sort]);
-	useEffect(() => {
-		if (searchParams) {
-			console.log(queryStringSeach);
-			dispatch(fetchPosts(queryStringSeach));
-		}
-	}, [searchParams]);
 
-	useEffect(() => {
-		dispatch(fetchComments());
-	}, []);
 	const arr = [
 		{
 			label: "Новые",
@@ -59,13 +50,12 @@ export const Home = () => {
 		},
 		{ label: "Популярные", value: "popularity" },
 	];
-	const configRender = {
-		isPostLoading,
-		posts,
-		userData,
-	};
+
 	return (
 		<>
+			<Typography variant="h4" gutterBottom={false}>
+				{getTag}
+			</Typography>
 			<Typography variant="h4" gutterBottom={false}>
 				{getTag}
 			</Typography>
@@ -85,10 +75,35 @@ export const Home = () => {
 				))}
 			</Tabs>
 			<Grid container spacing={4}>
-				<RenderPosts {...configRender} />
+				<Grid xs={8} item style={{ maxWidth: "100%" }}>
+					{(posts.isLoading ? [...Array(5)] : posts?.data).map((data, index) =>
+						posts.isLoading ? (
+							<Post key={index} isLoading={true} />
+						) : (
+							
+							<Post
+								id={data._id}
+								title={data.title}
+								imageUrl={data.imageURL ? data.imageURL : null}
+								user={data.author}
+								createdAt={data.createdAt}
+								viewsCount={data.vievsCount}
+								commentsCount={data.commentsCount}
+								likesCount={data.likesCount}
+								disLikesCount={data.disLikesCount}
+								tags={data.tags}
+								isLoading={posts.isLoading}
+								isEditable={user?._id === data.author._id}
+							/>
+						)
+					)}
+				</Grid>
 				<Grid xs={4} item>
-					<TagsBlock items={tags.items} isLoading={isTagsLoading} />
-					<CommentsBlock items={comments.items} isLoading={isLoadingComments} />
+					<TagsBlock items={tags.data} isLoading={tags.isLoading} />
+					<CommentsBlock
+						items={getAllComments.data}
+						isLoading={getAllComments.isLoading}
+					/>
 				</Grid>
 			</Grid>
 		</>

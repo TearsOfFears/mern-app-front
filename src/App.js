@@ -1,27 +1,30 @@
 import Container from "@mui/material/Container";
-import { useEffect } from "react";
+import { useEffect,useContext } from "react";
 import {Routes,Route} from "react-router-dom"
 import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
-import {useDispatch,useSelector} from "react-redux";
-import {fetchAuthUser,selectIsAuth} from "./redux/auth/auth.actions"
-import { Account } from "./pages/Account";
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import WithAuth from "./HOC/WithAuth"
+import { userService } from "./reactQuery/auth/user.service";
+import { useQuery } from "react-query";
+import UserContext from "./reactQuery/context";
+import { useFetchUser } from "./reactQuery/auth/user.hooks";
+import { Typography } from "@mui/material";
+// import { Account } from "./pages/Account";
+
 function App() {
-  const dispatch = useDispatch(); 
-  const isAuth = useSelector(selectIsAuth);
-  useEffect(()=>{
-    dispatch(fetchAuthUser());
-  },[])
+ const {data,isLoading} = useFetchUser()
+ const { setUser } = useContext(UserContext);
+  if(data){
+    setUser(data)
+  }
+  if(isLoading)
+  return <Typography> Loading </Typography>
   return (
     <>
       <Header />
       <Container maxWidth="lg">
         <Routes>
-       
           <Route path="/" element={   <Home /> }/>
-          <Route path="/account/:id" element={<Account/> }/>
+          {/* <Route path="/account/:id" element={<Account/> }/> */}
           <Route path="/posts/:id" element={<FullPost />}/>
           <Route path="/posts/:id/:commentId" element={<FullPost />}/>
           <Route path="/posts/:id/edit" element={<AddPost/>}/>
