@@ -13,11 +13,15 @@ import { Typography } from "@mui/material";
 function App() {
  const {data,isLoading} = useFetchUser()
  const { setUser } = useContext(UserContext);
+
   if(data){
     setUser(data)
   }
+
+
   if(isLoading)
   return <Typography> Loading </Typography>
+  
   return (
     <>
       <Header />

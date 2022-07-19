@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { SideBlock } from "../SideBlock";
 import ListItem from "@mui/material/ListItem";
@@ -15,33 +15,43 @@ import EditIcon from "@mui/icons-material/Edit";
 import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import {
-	deleteComment,
-	fetchComments,
-	fetchCommentsById,
-} from "../../redux/comments/comments.actions";
-import { useDispatch, useSelector } from "react-redux";
 import styles from "./CommentsBlock.module.scss";
 import { Typography } from "@mui/material";
+import UserContext from "./../../reactQuery/context";
+import {
+	useComments,
+	useCommentsById,
+	useDeleteComment,
+} from "./../../reactQuery/comments/comments.hooks";
+
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const userData = useSelector((state) => state.auth.data);
+	const { user } = useContext(UserContext);
 	const { id } = useParams();
-	const onClickRemoveComment = async (commenId) => {
-		await dispatch(deleteComment(commenId));
-		await dispatch(fetchComments());
+
+	const [deleteComment,setDeleteComment] = useState();
+	const commentDelete = useDeleteComment(deleteComment);
+	const commentById = useCommentsById(id);
+	const comment = useComments();
+	// comment.refetch()
+	const onClickRemoveComment = async () => {
+		commentDelete.refetch();
+		comment.refetch();
 		if (id) {
-			await dispatch(fetchCommentsById(id));
+			commentById.refetch();
 		}
 	};
 
 	return (
 		<SideBlock title="Комментарии">
 			<List className={clsx(styles.root)}>
-			{!isLoading && items.length===0 && <Typography variant="h6" textAlign="center">Немає коментарів</Typography>}
+				{!isLoading && items.length === 0 && (
+					<Typography variant="h6" textAlign="center">
+						Немає коментарів
+					</Typography>
+				)}
 				{(isLoading ? [...Array(5)] : items).map((obj, index) => {
-					const isEditable = !isLoading && userData?._id === obj.author._id;
+					const isEditable = !isLoading && user?._id === obj.author._id;
 
 					return (
 						<React.Fragment key={index}>
@@ -93,6 +103,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 										<IconButton
 											onClick={(e) => {
 												onClickRemoveComment(obj._id);
+												setDeleteComment(obj._id)
 											}}
 											color="secondary"
 										>
