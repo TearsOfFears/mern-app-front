@@ -10,7 +10,6 @@ export const commentsSevice = {
         return await axios.get(`/comment/${postId}`).then((res)=>{return res.data})
     },
     async deleteComment(id){
-        console.log("id",id);
-        return await axios.delete(`/commentDelete/${id}`).then((res)=>{return res.data})
+        return await axios.delete(`/commentDelete/${id}`)
     },
 }

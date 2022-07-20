@@ -23,25 +23,29 @@ import {
 	useCommentsById,
 	useDeleteComment,
 } from "./../../reactQuery/comments/comments.hooks";
+import { useMutation } from "react-query";
+import { commentsSevice } from "../../reactQuery/comments/comments.service";
+import axios from "./../../axios";
+import { useRefresh } from "../../hooks/useRefresh";
 
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
 	const { id } = useParams();
-
-	const [deleteComment,setDeleteComment] = useState();
-	const commentDelete = useDeleteComment(deleteComment);
+	const refresh = useRefresh();
 	const commentById = useCommentsById(id);
 	const comment = useComments();
-	// comment.refetch()
-	const onClickRemoveComment = async () => {
-		commentDelete.refetch();
-		comment.refetch();
+
+	const removeComment = useMutation(commentsSevice.deleteComment);
+
+	const onClickRemoveComment = async (id) => {
+		await removeComment.mutateAsync(id);
+		refresh("fetch comments");
 		if (id) {
-			commentById.refetch();
+		await commentById.refetch();
 		}
 	};
-
+	
 	return (
 		<SideBlock title="Комментарии">
 			<List className={clsx(styles.root)}>
@@ -102,8 +106,8 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 
 										<IconButton
 											onClick={(e) => {
+										
 												onClickRemoveComment(obj._id);
-												setDeleteComment(obj._id)
 											}}
 											color="secondary"
 										>

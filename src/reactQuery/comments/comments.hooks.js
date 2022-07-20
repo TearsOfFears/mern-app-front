@@ -1,9 +1,9 @@
-import { useQuery, QueryCache } from "react-query";
+import { useQuery, QueryCache, useMutation } from "react-query";
 import { commentsSevice } from "./comments.service";
 
 
 export const useComments = ()=> {
-  return useQuery( ["fetch comments"], () => commentsSevice.getAllComments(),{ enabled:true });
+  return useQuery( ["fetch comments"], () => commentsSevice.getAllComments(),{refetchIntervalInBackground:true });
 }
 
 
@@ -12,5 +12,5 @@ export const useCommentsById = (values)=> {
 }
 
 export const useDeleteComment = (id)=> {
-  return useQuery( ["delete comments by Id",id], () => commentsSevice.deleteComment(id),{ enabled:false });
+  return useMutation( ["delete comments by Id",id], () => commentsSevice.deleteComment(id),{ enabled:false });
 }
