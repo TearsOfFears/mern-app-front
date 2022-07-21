@@ -30,7 +30,6 @@ export const Home = () => {
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
 	
-	
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {
@@ -39,7 +38,6 @@ export const Home = () => {
 			return `#${tag}`;
 		}
 	});
-	// useMemo(()=>getAllComments.refetch())
 
 	useEffect(() => {
 		searchParams.set("sort", sort);
@@ -84,7 +82,7 @@ export const Home = () => {
 								id={data._id}
 								title={data.title}
 								imageUrl={data.imageURL ? data.imageURL : null}
-								user={data.author}
+								author={data.author}
 								createdAt={data.createdAt}
 								viewsCount={data.vievsCount}
 								commentsCount={data.commentsCount}

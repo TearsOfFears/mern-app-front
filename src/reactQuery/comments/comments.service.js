@@ -11,5 +11,15 @@ export const commentsSevice = {
     },
     async deleteComment(id){
         return await axios.delete(`/commentDelete/${id}`)
+    }, 
+    async setUserLike(params){
+       return await axios.patch('/auth/user/setLike', params)
+        
+    },
+    async setUserDisLike(params){
+      return  await axios.patch('/auth/user/setDisLike', params)
+    },
+    async createComment(params){
+        return await axios.post(`/comment`, params)
     },
 }

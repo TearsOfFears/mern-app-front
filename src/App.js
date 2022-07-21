@@ -18,9 +18,8 @@ function App() {
     setUser(data)
   }
 
-
   if(isLoading)
-  return <Typography> Loading </Typography>
+  return <Typography> Loading... </Typography>
   
   return (
     <>

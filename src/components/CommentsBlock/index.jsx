@@ -34,10 +34,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 	const { id } = useParams();
 	const refresh = useRefresh();
 	const commentById = useCommentsById(id);
-	const comment = useComments();
-
 	const removeComment = useMutation(commentsSevice.deleteComment);
-
 	const onClickRemoveComment = async (id) => {
 		await removeComment.mutateAsync(id);
 		refresh("fetch comments");

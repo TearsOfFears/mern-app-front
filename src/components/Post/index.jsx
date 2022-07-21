@@ -13,13 +13,21 @@ import { Link } from 'react-router-dom';
 import styles from './Post.module.scss';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
+import { Button } from '@mui/material';
+import { useContext } from 'react';
+import UserContext from '../../reactQuery/context';
+import { useAuth } from '../../hooks/useAuth';
+import { useMutation, useQuery } from 'react-query';
+import { commentsSevice } from '../../reactQuery/comments/comments.service';
+import { useRefresh,mutateAsync } from '../../hooks/useRefresh';
+import { useFetchUser } from '../../reactQuery/auth/user.hooks';
 
 export const Post = ({
   id,
   title,
   createdAt,
   imageUrl,
-  user,
+  author,
   viewsCount,
   commentsCount,
   tags,
@@ -27,52 +35,60 @@ export const Post = ({
   isFullPost,
   isLoading,
   isEditable,
+  likesCount,
+	disLikesCount,
 }) => {
   const [disLikesCounter, setDisLikesCounter] = useState(0);
 	const [likesCounter, setLikesCounter] = useState(0);
-	
+ const {data,isAuth} =  useAuth()
+ const user = useFetchUser()
+ const refresh =  useRefresh();
 
+ const setLikeUser = useMutation(commentsSevice.setUserLike,{onSuccess:()=>{
+ refresh("fetch User")
+ }})
+ const setDisLikeUser = useMutation(commentsSevice.setUserDisLike,{onSuccess:()=>{
+  refresh("fetch User")
+ }})
 
-	// const addLikePost = (id) => {
-	// 	const fields = {
-	// 		postId: id,
-	// 		userId: data._id,
-	// 	};
-	// 	dispatch(setUserLike(fields));
+	const addLikePost = async (id) => {
+		const fields = {
+			postId: id,
+			userId: data._id,
+		};
+    await setLikeUser.mutateAsync(fields)
+    
+		if (!data.disLikesPostArray.includes(id)) {
+			setLikesCounter(likesCounter + 1);
+		} else {
+			setLikesCounter(likesCounter + 1);
+			setDisLikesCounter(disLikesCounter - 1);
+		}
+	};
+	const addDisLikePost = async(id) => {
+		const fields = {
+			postId: id,
+			userId: data._id,
+		};
+    await setDisLikeUser.mutateAsync(fields)
 
-	// 	if (!data.disLikesPostArray.includes(id)) {
-	// 		setLikesCounter(likesCounter + 1);
-	// 	} else {
-	// 		setLikesCounter(likesCounter + 1);
-	// 		setDisLikesCounter(disLikesCounter - 1);
-	// 	}
-	// };
-	// const addDisLikePost = (id) => {
-	// 	const fields = {
-	// 		postId: id,
-	// 		userId: data._id,
-	// 	};
-	// 	dispatch(setUserDisLike(fields));
-
-	// 	if (!data.likesPostArray.includes(id)) {
-	// 		setDisLikesCounter(disLikesCounter + 1);
-	// 	} else {
-	// 		setLikesCounter(likesCounter - 1);
-	// 		setDisLikesCounter(disLikesCounter + 1);
-	// 	}
-	// };
+		if (!data.likesPostArray.includes(id)) {
+			setDisLikesCounter(disLikesCounter + 1);
+		} else {
+			setLikesCounter(likesCounter - 1);
+			setDisLikesCounter(disLikesCounter + 1);
+		}
+	};
 
 	const onClickRemove = async (id) => {
 		if (window.confirm("Ви точно хочете видалити статтю?"))
 			await console.log(id);;
 	};
-	// if (isLoading) {
-	// 	return <PostSkeleton />;
-	// }
+
   if (isLoading) {
     return <PostSkeleton />;
   }
-  console.log("_id",id);
+
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
@@ -95,7 +111,7 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...user} additionalText={createdAt} />
+        <UserInfo {...author} additionalText={createdAt} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
@@ -117,13 +133,13 @@ export const Post = ({
               <CommentIcon />
               <span>{commentsCount}</span>
             </li>
-            {/* <li>
+            <li>
 							<Button
-								className={isLoadingUser ? styles.likes : styles.likesDisabled}
+								className={isAuth ? styles.likes : styles.likesDisabled}
 								onClick={(e) => addLikePost(id)}
-								disabled={data !==null ? isLoadingUser   && data.likesPostArray.includes(id) : true}
+								disabled={data !==null ? isAuth  && data.likesPostArray.includes(id) : true}
 							>
-								{isLoadingUser && data.likesPostArray.includes(id) ? (
+								{isAuth && data.likesPostArray.includes(id) ? (
 									<ThumbUpFill />
 								) : (
 									<ThumbUp />
@@ -133,18 +149,18 @@ export const Post = ({
 						</li>
 						<li>
 							<Button
-								className={isLoadingUser ? styles.likes : styles.likesDisabled}
+								className={isAuth? styles.likes : styles.likesDisabled}
 								onClick={(e) => addDisLikePost(id)}
-								disabled={data !==null ? isLoadingUser   && data.disLikesPostArray.includes(id) : true}
+								disabled={data !==null ? isAuth   && data.disLikesPostArray.includes(id) : true}
 							>
-								{isLoadingUser && data.disLikesPostArray.includes(id) ? (
+								{isAuth && data.disLikesPostArray.includes(id) ? (
 									<ThumbDownFill />
 								) : (
 									<ThumbDown />
 								)}
 							</Button>
 							<span>{disLikesCount + disLikesCounter}</span>
-						</li> */}
+						</li>
           </ul>
         </div>
       </div>

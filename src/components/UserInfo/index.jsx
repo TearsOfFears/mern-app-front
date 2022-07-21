@@ -7,7 +7,7 @@ export const UserInfo = ({ avatarURL, fullName, additionalText }) => {
       <img className={styles.avatar} src={avatarURL || '/noavatar.png'} alt={fullName} />
       <div className={styles.userDetails}>
         <span className={styles.userName}>{fullName}</span>
-        <span className={styles.additional}>{moment(additionalText).format("dddd, MM, HH:MM")}</span>
+        <span className={styles.additional}>{moment(additionalText).format("DD.MM.YY, HH:MM")}</span>
       </div>
     </div>
   );
