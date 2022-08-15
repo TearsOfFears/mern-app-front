@@ -47,7 +47,7 @@ export const AddPost = () => {
 
     const uploadImage = async (base64EncodedImage) => {
         try {
-			const {data} = 	await axios.post("/api/upload", {data:base64EncodedImage});
+			const {data} = 	await axios.post("/upload", {data:base64EncodedImage});
 			setImageUrl(data);
             setFileInputState('');
             setPreviewSource('');

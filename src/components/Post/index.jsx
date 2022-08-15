@@ -21,6 +21,7 @@ import { useMutation, useQuery } from 'react-query';
 import { commentsSevice } from '../../reactQuery/comments/comments.service';
 import { useRefresh,mutateAsync } from '../../hooks/useRefresh';
 import { useFetchUser } from '../../reactQuery/auth/user.hooks';
+import { postsService } from '../../reactQuery/posts/posts.service';
 
 export const Post = ({
   id,
@@ -47,6 +48,10 @@ export const Post = ({
  const setLikeUser = useMutation(commentsSevice.setUserLike,{onSuccess:()=>{
  refresh("fetch User")
  }})
+ const deletePost = useMutation(postsService.deleteCurrentPost,{onSuccess:()=>{
+  refresh("fetch Posts")
+  }})
+  
  const setDisLikeUser = useMutation(commentsSevice.setUserDisLike,{onSuccess:()=>{
   refresh("fetch User")
  }})
@@ -82,7 +87,7 @@ export const Post = ({
 
 	const onClickRemove = async (id) => {
 		if (window.confirm("Ви точно хочете видалити статтю?"))
-			await console.log(id);;
+			await deletePost.mutateAsync(id);
 	};
 
   if (isLoading) {
@@ -98,7 +103,7 @@ export const Post = ({
               <EditIcon />
             </IconButton>
           </Link>
-          <IconButton onClick={onClickRemove} color="secondary">
+          <IconButton onClick={()=>onClickRemove(id)} color="secondary">
             <DeleteIcon />
           </IconButton>
         </div>

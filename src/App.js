@@ -16,10 +16,11 @@ function App() {
 
   if(data){
     setUser(data)
+    if(isLoading)
+    return <Typography> Loading... </Typography>
   }
 
-  if(isLoading)
-  return <Typography> Loading... </Typography>
+
   
   return (
     <>

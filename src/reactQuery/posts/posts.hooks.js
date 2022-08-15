@@ -1,4 +1,4 @@
-import {useQuery, QueryCache} from "react-query";
+import {useQuery, QueryCache, useMutation} from "react-query";
 import {postsService} from "./posts.service";
 
 export const useFetchPosts = (values) => {
@@ -20,4 +20,7 @@ export const useFetchTags = () => {
     cacheTime: Infinity,
     staleTime: 30000
   });
+}
+export const useDeletePost = (values) => {
+  return useMutation(["delete Post",values], () => postsService.deleteCurrentPost(values));
 }

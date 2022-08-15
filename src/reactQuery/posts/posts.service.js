@@ -2,15 +2,32 @@ import axios from "../../axios"
 
 
 export const postsService = {
-    async getAll(params){
+    async getAll(params) {
         console.log(params);
-        return await axios.get(`/getPosts`,{params}).then((res)=>{return res.data})
+        return await axios.get(`/getPosts`, {
+            params
+        }).then((res) => {
+            return res.data
+        })
     },
-    async getCurrentPost({params}){
-        return await axios.get("/getCurrentPost",{params}).then((res)=>{return res.data})
+    async getCurrentPost({
+        params
+    }) {
+        return await axios.get("/getCurrentPost", {
+            params
+        }).then((res) => {
+            return res.data
+        })
     },
-    async getAllTags(){
-        return await  await axios.get('/tags').then((res)=>{return res.data})
+    async getAllTags() {
+        return await axios.get('/tags').then((res) => {
+            return res.data
+        })
+    },
+    async deleteCurrentPost(params) {
+        console.log(params);
+        return await axios.delete(`/posts/${params}`);
+
     }
 }
 
