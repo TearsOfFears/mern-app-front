@@ -39,7 +39,6 @@ export const AddPost = () => {
             uploadImage(reader.result);
         };
         reader.onerror = () => {
-            console.error('AHHHHHHHH!!');
             setErrMsg('something went wrong!');
         };
         setFileInputState(e.target.value);
@@ -47,7 +46,7 @@ export const AddPost = () => {
 
     const uploadImage = async (base64EncodedImage) => {
         try {
-			const {data} = 	await axios.post("/upload", {data:base64EncodedImage});
+			const {data} = 	await axios.post("/upload", {data:base64EncodedImage,dest:"posts"});
 			setImageUrl(data);
             setFileInputState('');
             setPreviewSource('');

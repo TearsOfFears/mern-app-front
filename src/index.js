@@ -9,6 +9,8 @@ import {theme} from "./theme";
 import UserContext from "./reactQuery/context";
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from 'react-query'
+import { GoogleOAuthProvider  } from '@react-oauth/google';
+const  {REACT_APP_GOOGLE_AUTH} = process.env
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -28,17 +30,17 @@ const Main = () => {
     <CssBaseline >
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-
           <QueryClientProvider client={queryClient}>
             <UserContext.Provider
               value={{
               user,
               setUser
             }}>
+              <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_AUTH}>
               <App/>
+              </GoogleOAuthProvider>
             </UserContext.Provider>
             <ReactQueryDevtools initialIsOpen={false}/>
-
           </QueryClientProvider>
         </BrowserRouter>
       </ThemeProvider>

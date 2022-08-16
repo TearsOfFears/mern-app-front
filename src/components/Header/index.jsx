@@ -1,45 +1,73 @@
-import React from 'react';
-import Button from '@mui/material/Button';
+import React, { useContext, useEffect } from "react";
+import Button from "@mui/material/Button";
 
-import styles from './Header.module.scss';
-import Container from '@mui/material/Container';
-import {Link} from "react-router-dom";
-import { useAuth } from '../../hooks/useAuth';
-import { userService } from './../../reactQuery/auth/user.service';
+import styles from "./Header.module.scss";
+import Container from "@mui/material/Container";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { userService } from "./../../reactQuery/auth/user.service";
+import { useRefresh } from "../../hooks/useRefresh";
+import UserContext from "../../reactQuery/context";
+import { useFetchUser } from "../../reactQuery/auth/user.hooks";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 export const Header = () => {
- 
-  const {isAuth} = useAuth()
-  const onClickLogout = () => {userService.logout()};
-  return (
-    <div className={styles.root}>
-      <Container maxWidth="lg">
-        <div className={styles.inner}>
-          <Link className={styles.logo} to="/">
-            <div>Nazar BLOG</div>
-          </Link>
-          <div className={styles.buttons}>
-            {isAuth ? (
-              <>
-                <Link to="/addPost">
-                  <Button variant="contained">Написать статью</Button>
-                </Link>
-                <Button onClick={onClickLogout} variant="contained" color="error">
-                  Выйти
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="outlined">Войти</Button>
-                </Link>
-                <Link to="/register">
-                  <Button variant="contained">Создать аккаунт</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </Container>
-    </div>
-  );
+	const refresh = useRefresh();
+	const navigate = useNavigate();
+	const { setUser } = useContext(UserContext);
+	const { refetch, isError } = useFetchUser();
+	const { data, isAuth } = useAuth();
+
+	const onClickLogout = () => {
+		userService.logout();
+		setUser(null);
+		refetch();
+		if (!window.localStorage.getItem("token") && isError) {
+			setUser(null);
+			refetch();
+		}
+	};
+
+	return (
+		<div className={styles.root}>
+			<Container maxWidth="lg">
+				<div className={styles.inner}>
+					<Link className={styles.logo} to="/">
+						<div>Nazar BLOG</div>
+					</Link>
+					<div className={styles.buttons}>
+						{isAuth ? (
+							<>
+								<Button
+									variant="contained"
+									style={{ background: "black" }}
+									onClick={(e) => navigate(`/account/${data._id}`)}
+								>
+									<AccountCircle color="inherit" />
+								</Button>
+								<Link to="/addPost">
+									<Button variant="contained">Написати статтю</Button>
+								</Link>
+								<Button
+									onClick={onClickLogout}
+									variant="contained"
+									color="error"
+								>
+									Вийти
+								</Button>
+							</>
+						) : (
+							<>
+								<Link to="/login">
+									<Button variant="outlined">Ввійти</Button>
+								</Link>
+								<Link to="/register">
+									<Button variant="contained">Створити аккаунт</Button>
+								</Link>
+							</>
+						)}
+					</div>
+				</div>
+			</Container>
+		</div>
+	);
 };

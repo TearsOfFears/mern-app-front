@@ -46,10 +46,10 @@ export const Home = () => {
 
 	const arr = [
 		{
-			label: "Новые",
+			label: "Нові",
 			value: "latest",
 		},
-		{ label: "Популярные", value: "popularity" },
+		{ label: "Популярні", value: "popularity" },
 	];
 
 	return (

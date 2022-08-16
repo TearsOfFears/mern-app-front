@@ -8,13 +8,13 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 	const { id } = useParams();
 	return (
 		<>
-			{id ? (
+			{id && (
 				<Grid item xs={7}>
 					<Typography variant="h4" marginBottom={2}>
 						Ваші пости
 					</Typography>
 					<Grid xs={8} item style={{ maxWidth: "100%" }}>
-						{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>
+						{(isPostLoading ? [...Array(5)] : posts).map((data, index) =>
 							isPostLoading ? (
 								<Post key={index} isLoading={true} />
 							) : (
@@ -34,28 +34,6 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 							)
 						)}
 					</Grid>
-				</Grid>
-			) : (
-				<Grid xs={8} item style={{ maxWidth: "100%" }}>
-					{(isPostLoading ? [...Array(5)] : posts.items).map((data, index) =>
-						isPostLoading ? (
-							<Post key={index} isLoading={true} />
-						) : (
-							<Post
-								id={data._id}
-								title={data.title}
-								imageUrl={data.imageURL ? data.imageURL : ""}
-								user={data.author}
-								createdAt={data.createdAt}
-								viewsCount={data.vievsCount}
-								commentsCount={data.commentsCount}
-								likesCount={data.likesCount}
-								disLikesCount={data.disLikesCount}
-								tags={data.tags}
-								isEditable={userData?._id === data.author._id}
-							/>
-						)
-					)}
 				</Grid>
 			)}
 		</>

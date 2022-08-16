@@ -24,6 +24,12 @@ export const postsService = {
             return res.data
         })
     },
+    async getPostByUser(id) {
+        return await axios.get(`/posts/${id}`)
+            .then((res) => {
+                return res.data
+            })
+    },
     async deleteCurrentPost(params) {
         console.log(params);
         return await axios.delete(`/posts/${params}`);

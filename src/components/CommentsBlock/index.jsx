@@ -44,7 +44,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 	};
 	
 	return (
-		<SideBlock title="Комментарии">
+		<SideBlock title="Коментарі">
 			<List className={clsx(styles.root)}>
 				{!isLoading && items.length === 0 && (
 					<Typography variant="h6" textAlign="center">

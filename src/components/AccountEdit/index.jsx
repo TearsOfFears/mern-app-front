@@ -4,51 +4,85 @@ import axios from "../../axios";
 import { useParams } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./AccountEdit.module.scss";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import {theme} from "./../../theme";
-import { useDispatch } from "react-redux";
-import { fetchAuthUser,updateUserInfo } from "../../redux/auth/auth.actions";
-function AccountEdit({ data, isLoading }) {
+import AddPhotoIcon from "@mui/icons-material/AddAPhoto";
+import { theme } from "./../../theme";
+import { useMutation } from "react-query";
+import { userService } from "../../reactQuery/auth/user.service";
+function AccountEdit({ userData }) {
 	const [fullName, setFullname] = useState("");
 	const [avatarURL, setAvatarURL] = useState("");
 	const [email, setEmail] = useState("");
 	const [edit, setEdit] = useState(true);
 	const { id } = useParams();
 	const inputFileRef = useRef(null);
-	const dispatch = useDispatch();
+	const changeInfo = useMutation(userService.changeUserInfo);
+	const [fileInputState, setFileInputState] = useState('');
+    const [previewSource, setPreviewSource] = useState('');
+    const [selectedFile, setSelectedFile] = useState();
+    const [successMsg, setSuccessMsg] = useState('');
+    const [errMsg, setErrMsg] = useState('');
+
+
+    const handleFileInputChange = (e) => {
+        const file = e.target.files[0];
+        setSelectedFile(file);
+		if (!selectedFile) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(selectedFile);
+        reader.onloadend = () => {
+            uploadImage(reader.result);
+        };
+        reader.onerror = () => {
+            setErrMsg('something went wrong!');
+        };
+        setFileInputState(e.target.value);
+    };
+
+    const uploadImage = async (base64EncodedImage) => {
+        try {
+			const {data} = 	await axios.post("/upload", {data:base64EncodedImage,dest:"users"});
+			setAvatarURL(data);
+            setFileInputState('');
+            setPreviewSource('');
+        } catch (err) {
+            console.error(err);
+            setErrMsg('Something went wrong!');
+        }
+    };
+
 	useEffect(() => {
-		setEmail(data.email);
-		setFullname(data.fullName);
-		setAvatarURL(data.avatarURL);
+		setEmail(userData.email);
+		setFullname(userData.fullName);
+		setAvatarURL(userData.avatarURL);
 	}, []);
 
-	const handleChangeFile = async (e) => {
-		try {
-			const formData = new FormData();
-			formData.append("image", e.target.files[0]);
-			const { data } = await axios.post("upload", formData);
-			setAvatarURL(`http://localhost:4444${data.url}`);
-		} catch (err) {
-			console.log(err);
-			alert("Помилка при загрузці картинки");
-		}
-	};
+	// const handleChangeFile = async (e) => {
+	// 	try {
+	// 		const formData = new FormData();
+	// 		formData.append("image", e.target.files[0]);
+	// 		const { data } = await axios.post("upload", formData);
+	// 		setAvatarURL(`http://localhost:4444${data.url}`);
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 		alert("Помилка при загрузці картинки");
+	// 	}
+	// };
 
-	const updateUserInfoSubmit = (e) => {
+	const updateUserInfoSubmit = async (e) => {
 		e.preventDefault();
 		const fields = {
 			email,
 			fullName,
 			avatarURL,
 		};
-		dispatch(updateUserInfo(id,fields))
-		setEdit(true);
+		const passProps = {
+			fields,
+			id
+		}
 		
+		changeInfo.mutateAsync(passProps);
+		setEdit(true);
 	};
-
-	if (isLoading) {
-		return <Typography>Laoding User Info</Typography>;
-	}
 
 	return (
 		<Grid item xs={5} spacing={2}>
@@ -72,16 +106,15 @@ function AccountEdit({ data, isLoading }) {
 								disableRipple={true} 
 								color="white"
 							>
-								<AddAPhotoIcon color="inherit" fontSize="large" />
+								<AddPhotoIcon color="inherit" fontSize="large" />
 							</Button>
 						</div>
 					</div>
-
 					{!edit && (
 						<input
 							type="file"
 							ref={inputFileRef}
-							onChange={handleChangeFile}
+							onChange={handleFileInputChange}
 							hidden
 						/>
 					)}

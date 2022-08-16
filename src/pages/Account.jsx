@@ -6,20 +6,15 @@ import { fetchPosts, fetchPostsByUser } from "../redux/posts/posts.actions";
 import { Grid, Typography, Item, Input } from "@mui/material";
 import RenderPosts from "../components/RenderPosts/RenderPosts";
 import AccountEdit from "../components/AccountEdit/index.jsx";
+import { useQuery } from "react-query";
+import { postsService } from "../reactQuery/posts/posts.service.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { userService } from "../reactQuery/auth/user.service.js";
 export const Account = () => {
 	const { id } = useParams();
-	const dispatch = useDispatch();
-	const userData = useSelector((state) => state.auth.data);
-	const { data, status } = useSelector((state) => state.auth);
-	const { posts } = useSelector((state) => state.posts);
-	const { comments } = useSelector((state) => state.comments);
-	const isPostLoading = posts.status === "loading";
-	const isLoadingComments = comments.status === "loading";
-	const isLoading = status === "loading";
-
-	useEffect(() => {
-		dispatch(fetchPostsByUser(id));
-	}, []);
+	const {data:userData,isAuth} = useAuth();
+	const {data:posts,isLoading:isPostLoading} = useQuery(["fetch post user",id],()=>postsService.getPostByUser(id))
+	// const {data,isLoading} = useQuery(["fetch user",id],()=>userService.authUser))
 
 	const configRender = {
 		isPostLoading,
@@ -27,12 +22,12 @@ export const Account = () => {
 		userData,
 	};
 	const configRenderAccount = {
-		data,
-		isLoading,
+		userData,
 	};
-	if (isLoading) {
-		return <Typography>Laoding All...</Typography>;
+	if (!isAuth) {
+		return <Typography>Loading All...</Typography>;
 	}
+
 	return (
 		<>
 			<Grid container spacing={3}>

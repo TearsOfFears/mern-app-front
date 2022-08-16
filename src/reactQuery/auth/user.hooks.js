@@ -7,5 +7,5 @@ export const useLogin = (values)=> {
 }
 
 export const useFetchUser = ()=> {
-  return useQuery( ["fetch User"], () => userService.authUser(),{ cacheTime: Infinity, staleTime: 30000 });
+  return useQuery( ["fetch User"], () => userService.authUser(),{refetchOnWindowFocus:true});
 }

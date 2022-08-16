@@ -5,5 +5,5 @@ export const useAuth = ()=>{
     const {user, setUser} = useContext(UserContext)
     const isAuth = Boolean(user);
     const data = user;
-    return {isAuth,data}
+    return {isAuth,data,setUser}
 }

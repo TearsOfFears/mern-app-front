@@ -31,7 +31,7 @@ export const TagsBlock = ({ items, isLoading }) => {
   return (
     <SideBlock>
     <div style={{ display: "flex", flexDirection: "row", alignItems:"center",justifyContent:"space-between",padding:"15px 15px 0 15px" }}>
-      <Typography variant="h5">Тэги</Typography>
+      <Typography variant="h5">Теги</Typography>
       <Button
         variant="contained"
         color="inherit"
