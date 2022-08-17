@@ -1,26 +1,30 @@
 .root {
-  display: flex;
-  align-items: center;
-}
+	display: flex;
+	align-items: center;
 
-.avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-  margin-right: 10px;
-}
+	.avatar {
+		width: 30px;
+		height: 30px;
+		border-radius: 30px;
+		margin-right: 10px;
+		border: 1px solid beige;
+		&:hover {
+			border: 1px solid red;
+		}
+	}
 
-.userName {
-  font-weight: 500;
-  font-size: 14px;
-}
+	.userName {
+		font-weight: 500;
+		font-size: 14px;
+	}
 
-.userDetails {
-  display: flex;
-  flex-direction: column;
-}
+	.userDetails {
+		display: flex;
+		flex-direction: column;
+	}
 
-.additional {
-  font-size: 12px;
-  opacity: 0.6;
+	.additional {
+		font-size: 12px;
+		opacity: 0.6;
+	}
 }

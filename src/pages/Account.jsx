@@ -12,10 +12,17 @@ import { useAuth } from "../hooks/useAuth.js";
 import { userService } from "../reactQuery/auth/user.service.js";
 export const Account = () => {
 	const { id } = useParams();
-	const {data:userData,isAuth} = useAuth();
-	const {data:posts,isLoading:isPostLoading} = useQuery(["fetch post user",id],()=>postsService.getPostByUser(id))
-	// const {data,isLoading} = useQuery(["fetch user",id],()=>userService.authUser))
 
+	const { data: userData, isFetched,isLoading,refetch } = useQuery(
+		["fetch Current user", id],
+		() => userService.getCurrentUserProfile(id)
+	);
+	const { data: posts, isLoading: isPostLoading } = useQuery(
+		["fetch post user", id],
+		() => postsService.getPostByUser(id)
+	);
+	
+	if (isLoading) return <h3>Loading..</h3>;
 	const configRender = {
 		isPostLoading,
 		posts,
@@ -23,10 +30,11 @@ export const Account = () => {
 	};
 	const configRenderAccount = {
 		userData,
+		isLoading,
+		isFetched
 	};
-	if (!isAuth) {
-		return <Typography>Loading All...</Typography>;
-	}
+	
+	
 
 	return (
 		<>

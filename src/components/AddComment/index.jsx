@@ -18,29 +18,33 @@ import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import { useCommentsById } from "../../reactQuery/comments/comments.hooks";
 import { Typography } from "@mui/material";
 export const Index = ({ textEdit }) => {
-  const {user} = useContext(UserContext);
+	const { user } = useContext(UserContext);
 	const [text, setText] = useState("");
 	const { id, commentId } = useParams();
 	const navigate = useNavigate();
-  const refresh = useRefresh();
-  const currentComments = useCommentsById(id);
-  const createComments = useMutation(commentsSevice.createComment)
+	const currentComments = useCommentsById(id);
+	const createComments = useMutation(commentsSevice.createComment,{onSuccess:()=>{
+		currentComments.refetch()
+	}});
 
 	const handleSendComment = async () => {
 		setText("");
 		if (commentId) {
 			const fields = { postId: id, text };
-			axios.patch(`/comment/${commentId}`, fields).then(() => {
-				setText("");
-				navigate(`/posts/${id}`);
-			}).then(()=> refresh("fetch comments by ID Post"))
+			axios
+				.patch(`/comment/${commentId}`, fields)
+				.then(() => {
+					setText("");
+					navigate(`/posts/${id}`);
+					currentComments.refetch()
+				})
+
 		} else {
 			const params = {
 				postId: id,
 				text,
 			};
-      await createComments.mutateAsync(params);
-      refresh("fetch comments by ID Post");
+			await createComments.mutateAsync(params);
 		}
 	};
 
@@ -53,16 +57,12 @@ export const Index = ({ textEdit }) => {
 			setText("");
 		}
 	}, [commentId]);
-if(currentComments.isLoading)
-return <Typography> Loading...</Typography>
+	if (currentComments.isLoading) return <Typography> Loading...</Typography>;
 
 	return (
 		<>
 			<div className={styles.root}>
-				<Avatar
-					classes={{ root: styles.avatar }}
-					src={user.avatarURL}
-				/>
+				<Avatar classes={{ root: styles.avatar }} src={user.avatarURL} />
 				<div className={styles.form}>
 					<TextField
 						label="Написать комментарий"

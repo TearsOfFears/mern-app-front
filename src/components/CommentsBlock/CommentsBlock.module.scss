@@ -8,12 +8,14 @@ $blue: #4361ee;
     background-color: #fff;
     border: 1px solid transparent;
     border-radius: 6px;
-  
+    transition: .3s;
     &:hover {
       border: 1px solid $blue;
       box-shadow: 0 0 0 1px $blue;
       border: 1px solid #dedede;
       border-radius: 6px;
+      transition: .3s;
+      cursor: pointer;
       .divider{
         border:none;
       }
@@ -25,6 +27,14 @@ $blue: #4361ee;
       width: 100%;
       display: flex;
       flex-direction: row;
+    }
+    .avatar{
+      border:2px solid transparent;
+      transition: .3s;
+      &:hover{
+        border: 2px solid $blue;
+        transition: .3s;
+      }
     }
   }
   

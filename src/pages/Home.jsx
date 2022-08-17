@@ -82,7 +82,7 @@ export const Home = () => {
 								id={data._id}
 								title={data.title}
 								imageUrl={data.imageURL ? data.imageURL : null}
-								author={data.author}
+								authorData={data.author}
 								createdAt={data.createdAt}
 								viewsCount={data.vievsCount}
 								commentsCount={data.commentsCount}

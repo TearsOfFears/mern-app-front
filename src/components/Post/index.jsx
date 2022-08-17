@@ -28,7 +28,7 @@ export const Post = ({
   title,
   createdAt,
   imageUrl,
-  author,
+  authorData,
   viewsCount,
   commentsCount,
   tags,
@@ -116,7 +116,7 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...author} additionalText={createdAt} />
+        <UserInfo {...authorData} additionalText={createdAt} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}

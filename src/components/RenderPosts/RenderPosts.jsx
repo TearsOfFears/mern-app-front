@@ -13,6 +13,11 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 					<Typography variant="h4" marginBottom={2}>
 						Ваші пости
 					</Typography>
+					{!isPostLoading && posts.length === 0 && (
+						<Typography variant="h5" marginBottom={2} marginTop={5}>
+							У вас немає постів
+						</Typography>
+					)}
 					<Grid xs={8} item style={{ maxWidth: "100%" }}>
 						{(isPostLoading ? [...Array(5)] : posts).map((data, index) =>
 							isPostLoading ? (
@@ -22,7 +27,7 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 									id={data._id}
 									title={data.title}
 									imageUrl={data.imageURL ? data.imageURL : ""}
-									user={data.author}
+									authorData={data.author}
 									createdAt={data.createdAt}
 									viewsCount={data.vievsCount}
 									commentsCount={data.commentsCount}

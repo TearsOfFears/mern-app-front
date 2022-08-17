@@ -28,6 +28,12 @@ export const userService = {
         return res.data
       })
   },
+  async getCurrentUserProfile(id) {
+    return await axios.get(`/auth/${id}`)
+      .then((res) => {
+        return res.data
+      })
+  },
   async changeUserInfo({id,fields}) {
     return await axios.patch(`/auth/${id}`, fields)
       .then((res) => {
@@ -35,6 +41,7 @@ export const userService = {
       })
   },
 
+ 
   logout() {
     if (window.localStorage.getItem("token")) {
       window.localStorage.removeItem("token");

@@ -8,66 +8,65 @@ import AddPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { theme } from "./../../theme";
 import { useMutation } from "react-query";
 import { userService } from "../../reactQuery/auth/user.service";
-function AccountEdit({ userData }) {
+import { useAuth } from "../../hooks/useAuth";
+function AccountEdit({ userData, isLoading,isFetched }) {
+	const { data: authUserData, isAuth } = useAuth();
 	const [fullName, setFullname] = useState("");
 	const [avatarURL, setAvatarURL] = useState("");
 	const [email, setEmail] = useState("");
-	const [edit, setEdit] = useState(true);
+	const [edit, setEdit] = useState(false);
+	const [enable, setEnable] = useState(false);
 	const { id } = useParams();
 	const inputFileRef = useRef(null);
 	const changeInfo = useMutation(userService.changeUserInfo);
-	const [fileInputState, setFileInputState] = useState('');
-    const [previewSource, setPreviewSource] = useState('');
-    const [selectedFile, setSelectedFile] = useState();
-    const [successMsg, setSuccessMsg] = useState('');
-    const [errMsg, setErrMsg] = useState('');
+	const [fileInputState, setFileInputState] = useState("");
+	const [previewSource, setPreviewSource] = useState("");
+	const [selectedFile, setSelectedFile] = useState();
+	const [successMsg, setSuccessMsg] = useState("");
+	const [errMsg, setErrMsg] = useState("");
 
-
-    const handleFileInputChange = (e) => {
-        const file = e.target.files[0];
-        setSelectedFile(file);
+	const handleFileInputChange = (e) => {
+		const file = e.target.files[0];
+		setSelectedFile(file);
 		if (!selectedFile) return;
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = () => {
-            uploadImage(reader.result);
-        };
-        reader.onerror = () => {
-            setErrMsg('something went wrong!');
-        };
-        setFileInputState(e.target.value);
-    };
+		const reader = new FileReader();
+		reader.readAsDataURL(selectedFile);
+		reader.onloadend = () => {
+			uploadImage(reader.result);
+		};
+		reader.onerror = () => {
+			setErrMsg("something went wrong!");
+		};
+		setFileInputState(e.target.value);
+	};
 
-    const uploadImage = async (base64EncodedImage) => {
-        try {
-			const {data} = 	await axios.post("/upload", {data:base64EncodedImage,dest:"users"});
+	const uploadImage = async (base64EncodedImage) => {
+		try {
+			const { data } = await axios.post("/upload", {
+				data: base64EncodedImage,
+				dest: "users",
+			});
 			setAvatarURL(data);
-            setFileInputState('');
-            setPreviewSource('');
-        } catch (err) {
-            console.error(err);
-            setErrMsg('Something went wrong!');
-        }
-    };
-
+			setFileInputState("");
+			setPreviewSource("");
+		} catch (err) {
+			console.error(err);
+			setErrMsg("Something went wrong!");
+		}
+	};
+	const test = Boolean(userData._id === authUserData._id);
 	useEffect(() => {
+		if (test) {
+			console.log("edit");
+			setEnable(true);
+		}
+		else{
+			setEdit(false)
+		}
 		setEmail(userData.email);
 		setFullname(userData.fullName);
 		setAvatarURL(userData.avatarURL);
-	}, []);
-
-	// const handleChangeFile = async (e) => {
-	// 	try {
-	// 		const formData = new FormData();
-	// 		formData.append("image", e.target.files[0]);
-	// 		const { data } = await axios.post("upload", formData);
-	// 		setAvatarURL(`http://localhost:4444${data.url}`);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 		alert("Помилка при загрузці картинки");
-	// 	}
-	// };
-
+	}, [id]);
 	const updateUserInfoSubmit = async (e) => {
 		e.preventDefault();
 		const fields = {
@@ -77,12 +76,14 @@ function AccountEdit({ userData }) {
 		};
 		const passProps = {
 			fields,
-			id
-		}
-		
+			id,
+		};
+
 		changeInfo.mutateAsync(passProps);
-		setEdit(true);
+		setEdit(false);
 	};
+
+	if (isLoading) return <h3>Loading..</h3>;
 
 	return (
 		<Grid item xs={5} spacing={2}>
@@ -91,7 +92,7 @@ function AccountEdit({ userData }) {
 			</Typography>
 			<Box className={clsx(styles.root)}>
 				<form onSubmit={updateUserInfoSubmit}>
-					<div className={!edit ? styles.avatarWrapper : ""}>
+					<div className={edit ? styles.avatarWrapper : ""}>
 						<Avatar
 							alt={fullName}
 							src={avatarURL}
@@ -103,14 +104,14 @@ function AccountEdit({ userData }) {
 								onClick={() => inputFileRef.current.click()}
 								variant="text"
 								style={{ backgroundColor: "transparent" }}
-								disableRipple={true} 
+								disableRipple={true}
 								color="white"
 							>
 								<AddPhotoIcon color="inherit" fontSize="large" />
 							</Button>
 						</div>
 					</div>
-					{!edit && (
+					{edit && (
 						<input
 							type="file"
 							ref={inputFileRef}
@@ -120,32 +121,36 @@ function AccountEdit({ userData }) {
 					)}
 					<Input
 						value={fullName}
-						disabled={edit}
+						disabled={!edit}
 						className={styles.input}
 						onChange={(e) => setFullname(e.target.value)}
 					/>
 					<Input
 						value={email}
-						disabled={edit}
+						disabled={!edit}
 						className={styles.input}
 						type="email"
 						onChange={(e) => setEmail(e.target.value)}
 					/>
-					{edit && (
-						<Button onClick={(e) => setEdit(false)} variant="contained">
-							Оновити
-						</Button>
-					)}
-					{!edit && (
-						<div className={styles.wrapperUpdate}>
-							<Button variant="contained" type="submit">
-								Зберегти
-							</Button>
-							<Button onClick={(e) => setEdit(true)} variant="contained">
-								Скасувати
-							</Button>
+					{enable ? (
+						<div>
+							{!edit && (
+								<Button onClick={(e) => setEdit(true)} variant="contained">
+									Оновити
+								</Button>
+							)}
+							{edit && (
+								<div className={styles.wrapperUpdate}>
+									<Button variant="contained" type="submit">
+										Зберегти
+									</Button>
+									<Button onClick={(e) => setEdit(false)} variant="contained">
+										Скасувати
+									</Button>
+								</div>
+							)}
 						</div>
-					)}
+					) : null}
 				</form>
 			</Box>
 		</Grid>

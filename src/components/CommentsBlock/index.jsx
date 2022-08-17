@@ -38,11 +38,10 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 	const onClickRemoveComment = async (id) => {
 		await removeComment.mutateAsync(id);
 		refresh("fetch comments");
-		if (id) {
+
 		await commentById.refetch();
-		}
 	};
-	
+
 	return (
 		<SideBlock title="Коментарі">
 			<List className={clsx(styles.root)}>
@@ -53,7 +52,6 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 				)}
 				{(isLoading ? [...Array(5)] : items).map((obj, index) => {
 					const isEditable = !isLoading && user?._id === obj.author._id;
-
 					return (
 						<React.Fragment key={index}>
 							<ListItem
@@ -66,14 +64,15 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 								}
 							>
 								<div
-									onClick={(e) => navigate(`/posts/${obj.postId}`)}
+									
 									className={styles.wrapper}
 								>
-									<ListItemAvatar>
+									<ListItemAvatar onClick={(e) => navigate(`/account/${obj.author._id}`)}>
 										{isLoading ? (
 											<Skeleton variant="circular" width={40} height={40} />
 										) : (
 											<Avatar
+											className={styles.avatar}
 												alt={obj.author.fullName}
 												src={obj.author.avatarURL}
 											/>
@@ -88,6 +87,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 										<ListItemText
 											primary={obj.author.fullName}
 											secondary={obj.text}
+											onClick={(e) => navigate(`/posts/${obj.postId}`)}
 										/>
 									)}
 								</div>
@@ -103,7 +103,6 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 
 										<IconButton
 											onClick={(e) => {
-										
 												onClickRemoveComment(obj._id);
 											}}
 											color="secondary"
