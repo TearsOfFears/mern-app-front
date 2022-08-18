@@ -13,9 +13,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 export const Header = () => {
 	const refresh = useRefresh();
 	const navigate = useNavigate();
-	const { setUser } = useContext(UserContext);
 	const { refetch, isError } = useFetchUser();
-	const { data, isAuth } = useAuth();
+	const { data, isAuth,setUser } = useAuth();
 
 	const onClickLogout = () => {
 		userService.logout();
@@ -24,6 +23,7 @@ export const Header = () => {
 		if (!window.localStorage.getItem("token") && isError) {
 			setUser(null);
 			refetch();
+			navigate("/?sort=latest")
 		}
 	};
 

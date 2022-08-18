@@ -1,6 +1,6 @@
 import Container from "@mui/material/Container";
 import { useEffect,useContext } from "react";
-import {Routes,Route} from "react-router-dom"
+import {Routes,Route, useNavigate} from "react-router-dom"
 import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import { userService } from "./reactQuery/auth/user.service";
@@ -13,18 +13,19 @@ import { Account } from "./pages/Account";
 // import { Account } from "./pages/Account";
 
 function App() {
- const {data,isLoading,isError} = useFetchUser()
+ const {data,isLoading,refetch,isError} = useFetchUser()
+ const navigate = useNavigate();
  const  {setUser} = useAuth()
-
+ console.log(data);
   if(data){
+    console.log("triggerd");
     setUser(data)
     if(isLoading)
     return <Typography>Loading... </Typography>
   }
-  if(isError){
-    setUser(null)
+  else{
+    window.localStorage.getItem("token")!==null && refetch()
   }
-
   return (
     <>
       <Header />

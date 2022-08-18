@@ -6,6 +6,7 @@ import UserContext from "../../reactQuery/context"
 
 export const userService = {
   async loginUser(params) {
+    console.log(params);
     return await axios
       .post('/auth/login', params)
       .then((res) => {
@@ -22,7 +23,9 @@ export const userService = {
       })
   },
   async loginGoogle(params) {
-    return await axios.post('/auth/loginGoogle', params)
+    return await axios.post('/auth/loginGoogle', {
+        code: params
+      })
       .then((res) => {
         window.localStorage.setItem("token", res.data.token);
         return res.data
@@ -34,14 +37,17 @@ export const userService = {
         return res.data
       })
   },
-  async changeUserInfo({id,fields}) {
+  async changeUserInfo({
+    id,
+    fields
+  }) {
     return await axios.patch(`/auth/${id}`, fields)
       .then((res) => {
         return res.data
       })
   },
 
- 
+
   logout() {
     if (window.localStorage.getItem("token")) {
       window.localStorage.removeItem("token");

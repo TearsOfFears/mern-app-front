@@ -17,28 +17,28 @@ import { useMutation } from "react-query";
 import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import { useCommentsById } from "../../reactQuery/comments/comments.hooks";
 import { Typography } from "@mui/material";
+import { useAuth } from "../../hooks/useAuth";
 export const Index = ({ textEdit }) => {
-	const { user } = useContext(UserContext);
+	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
 	const { id, commentId } = useParams();
 	const navigate = useNavigate();
 	const currentComments = useCommentsById(id);
-	const createComments = useMutation(commentsSevice.createComment,{onSuccess:()=>{
-		currentComments.refetch()
-	}});
+	const createComments = useMutation(commentsSevice.createComment, {
+		onSuccess: () => {
+			currentComments.refetch();
+		},
+	});
 
 	const handleSendComment = async () => {
 		setText("");
 		if (commentId) {
 			const fields = { postId: id, text };
-			axios
-				.patch(`/comment/${commentId}`, fields)
-				.then(() => {
-					setText("");
-					navigate(`/posts/${id}`);
-					currentComments.refetch()
-				})
-
+			axios.patch(`/comment/${commentId}`, fields).then(() => {
+				setText("");
+				navigate(`/posts/${id}`);
+				currentComments.refetch();
+			});
 		} else {
 			const params = {
 				postId: id,
@@ -62,25 +62,31 @@ export const Index = ({ textEdit }) => {
 	return (
 		<>
 			<div className={styles.root}>
-				<Avatar classes={{ root: styles.avatar }} src={user.avatarURL} />
-				<div className={styles.form}>
-					<TextField
-						label="Написать комментарий"
-						variant="outlined"
-						maxRows={10}
-						multiline
-						fullWidth
-						value={text}
-						onChange={(e) => setText(e.target.value)}
-					/>
-					<Button
-						variant="contained"
-						type="submit"
-						onClick={(e) => handleSendComment()}
-					>
-						Отправить
-					</Button>
-				</div>
+				{isAuth ? (
+					<>
+						<Avatar classes={{ root: styles.avatar }} src={data.avatarURL} />
+						<div className={styles.form}>
+							<TextField
+								label="Написать комментарий"
+								variant="outlined"
+								maxRows={10}
+								multiline
+								fullWidth
+								value={text}
+								onChange={(e) => setText(e.target.value)}
+							/>
+							<Button
+								variant="contained"
+								type="submit"
+								onClick={(e) => handleSendComment()}
+							>
+								Відравити
+							</Button>
+						</div>
+					</>
+				) : (
+					<Typography variant="h6">Увійдіть щоб написати коментар</Typography>
+				)}
 			</div>
 		</>
 	);

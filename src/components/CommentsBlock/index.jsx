@@ -27,10 +27,12 @@ import { useMutation } from "react-query";
 import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import axios from "./../../axios";
 import { useRefresh } from "../../hooks/useRefresh";
+import { useAuth } from "../../hooks/useAuth";
 
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
+	const {data,isAuth} = useAuth();
 	const { id } = useParams();
 	const refresh = useRefresh();
 	const commentById = useCommentsById(id);

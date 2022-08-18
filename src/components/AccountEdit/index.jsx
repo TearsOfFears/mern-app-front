@@ -54,7 +54,7 @@ function AccountEdit({ userData, isLoading,isFetched }) {
 			setErrMsg("Something went wrong!");
 		}
 	};
-	const test = Boolean(userData._id === authUserData._id);
+	const test = isAuth && Boolean(userData._id === authUserData._id);
 	useEffect(() => {
 		if (test) {
 			console.log("edit");

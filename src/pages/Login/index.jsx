@@ -6,26 +6,32 @@ import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { userSevice } from "../../reactQuery/auth/user.service";
+import { useMutation, useQuery } from "react-query";
+import { userService } from "../../reactQuery/auth/user.service";
 import { useContext } from "react";
 import UserContext from "../../reactQuery/context";
 import { useAuth } from "../../hooks/useAuth";
-import { useLogin } from "../../reactQuery/auth/user.hooks";
-import { GoogleLogin  } from '@react-oauth/google';
+import { useFetchUser, useLogin } from "../../reactQuery/auth/user.hooks";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { Modal } from "@mui/material";
-
+import GoogleIcon from "@mui/icons-material/Google";
+import Loader from "../../components/Loader";
 export const Login = () => {
-	const [errorsPayload, setErrorsPayload] = useState("");
-	const [values, setValues] = useState();
-	const { isAuth } = useAuth();
-	// const { isLoading, data, refetch } = useQuery(
-	// 	["login user", values],
-	// 	() => userSevice.loginUser(values),
-	// 	{ enabled: false }
-	// );
-	const { data, refetch } = useLogin(values);
 	const navigate = useNavigate();
+	const [errorsPayload, setErrorsPayload] = useState("");
+	const { user, setUser } = useContext(UserContext);
+	const [values, setValues] = useState("");
+	const { isAuth } = useAuth();
+	const { refetch } = useFetchUser();
+	const { data, isLoading, isSuccess, mutateAsync } = useLogin();
+	const loginGoogle = useMutation(userService.loginGoogle);
+	const loginGoogleHook = useGoogleLogin({
+		flow: "auth-code",
+		onSuccess: async (codeResponse) => {
+			console.log(codeResponse);
+			loginGoogle.mutateAsync(codeResponse.code);
+		},
+	});
 	const {
 		register,
 		handleSubmit,
@@ -39,38 +45,43 @@ export const Login = () => {
 		mode: "onChange",
 	});
 
-	const { user, setUser } = useContext(UserContext);
-	if (data) {
-		setUser(data);
-	}
-	const onSubmit = (values) => {
-		setValues(values);
-	};
-
-	if (isAuth) {
-		return navigate("/");
-	}
-	const handleLoginGoogle = async (credentialResponse) => {
-		const values = {
-			token: credentialResponse.credential,
-		};
-		// const data = await dispatch(loginGoogle(values));
+	if (!isLoading && isSuccess && Object.keys(data).length > 0) {
 		if (!data.payload) {
-			return alert("Не вдалось зареєестурватись");
+			return alert("Не вдалось увійти");
 		}
-		if ("token" in data.payload)
+		if ("token" in data.payload) {
 			window.localStorage.setItem("token", data.payload.token);
+			setUser(data);
+			refetch();
+		}
+	}
+
+	const onSubmit = (values) => {
+		mutateAsync(values);
 	};
-	const handleLoginFail = (result) => {
-		console.log(result);
-		<Modal open={true}>
-			<Typography>{result}</Typography>
-		</Modal>;
-	};
+	if (loginGoogle.isLoading || isLoading) {
+		if (!isAuth) {
+			return (
+				<Modal open={true}>
+					<Loader />
+				</Modal>
+			);
+		} else {
+			return navigate("/");
+		}
+	}
+
+	// if (loginGoogle.isError || isError) {
+	// 	return (
+	// 		<Modal open={true}>
+	// 			<Typography>{loginGoogle.error || error}</Typography>
+	// 		</Modal>
+	// 	);
+
 	return (
 		<Paper classes={{ root: styles.root }}>
 			<Typography classes={{ root: styles.title }} variant="h5">
-				Вход в аккаунт
+				Вхід в аккаунт
 			</Typography>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<TextField
@@ -91,21 +102,24 @@ export const Login = () => {
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 				/>
-				<GoogleLogin
-					onSuccess={(credentialResponse) =>
-						handleLoginGoogle(credentialResponse)
-					}
-					onError={handleLoginFail}
-					cookiePolicy={"single_host_origin"}
-				/>
 				<Button
 					type="submit"
 					disabled={!isValid}
 					size="large"
 					variant="contained"
 					fullWidth
+					style={{ marginBottom: "20px" }}
 				>
-					Войти
+					Ввійти
+				</Button>
+				<Button
+					type="submit"
+					size="large"
+					variant="contained"
+					fullWidth
+					onClick={() => loginGoogleHook()}
+				>
+					Увійти з <GoogleIcon style={{ marginLeft: "5px" }} />
 				</Button>
 			</form>
 		</Paper>
