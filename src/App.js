@@ -1,5 +1,5 @@
 import Container from "@mui/material/Container";
-import { useEffect,useContext } from "react";
+import { useEffect,useContext,useState } from "react";
 import {Routes,Route, useNavigate} from "react-router-dom"
 import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
@@ -13,12 +13,12 @@ import { Account } from "./pages/Account";
 // import { Account } from "./pages/Account";
 
 function App() {
+  const [user, setUser] = useState(null);
  const {data,isLoading,refetch,isError} = useFetchUser()
  const navigate = useNavigate();
- const  {setUser} = useAuth()
- console.log(data);
+
+useEffect(()=>{
   if(data){
-    console.log("triggerd");
     setUser(data)
     if(isLoading)
     return <Typography>Loading... </Typography>
@@ -26,8 +26,15 @@ function App() {
   else{
     window.localStorage.getItem("token")!==null && refetch()
   }
+},[data])
+console.log(data);
   return (
     <>
+    <UserContext.Provider
+              value={{
+              user,
+              setUser
+            }}> 
       <Header />
       <Container maxWidth="lg">
         <Routes>
@@ -41,6 +48,7 @@ function App() {
           <Route path="/register" element={<Registration />}/>
         </Routes>
       </Container>
+      </UserContext.Provider>
     </>
   );
 }

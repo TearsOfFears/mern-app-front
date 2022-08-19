@@ -31,6 +31,13 @@ export const userService = {
         return res.data
       })
   },
+
+  async registrUser(params) {
+    return await axios.post('/auth/register', params)
+      .then(res =>
+        res.data
+      )
+  },
   async getCurrentUserProfile(id) {
     return await axios.get(`/auth/${id}`)
       .then((res) => {

@@ -13,25 +13,34 @@ import UserContext from "../../reactQuery/context";
 import { useAuth } from "../../hooks/useAuth";
 import { useFetchUser, useLogin } from "../../reactQuery/auth/user.hooks";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
-import { Modal } from "@mui/material";
+import { IconButton, InputAdornment, Modal } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import Loader from "../../components/Loader";
+import { useRefresh } from "../../hooks/useRefresh";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 export const Login = () => {
 	const navigate = useNavigate();
+	const [show,setShow] = useState(false);
 	const [errorsPayload, setErrorsPayload] = useState("");
 	const { user, setUser } = useContext(UserContext);
 	const [values, setValues] = useState("");
 	const { isAuth } = useAuth();
-	const { refetch } = useFetchUser();
-	const { data, isLoading, isSuccess, mutateAsync } = useLogin();
+	const { data, isError, error, isLoading, isSuccess, mutateAsync } =
+		useLogin();
 	const loginGoogle = useMutation(userService.loginGoogle);
 	const loginGoogleHook = useGoogleLogin({
 		flow: "auth-code",
 		onSuccess: async (codeResponse) => {
-			console.log(codeResponse);
 			loginGoogle.mutateAsync(codeResponse.code);
 		},
 	});
+	const handleClickShowPassword = () => {
+		setShow(!show)
+	  };
+	  const handleMouseDownPassword = (e) => {
+		e.preventDefault();
+	  };
 	const {
 		register,
 		handleSubmit,
@@ -44,20 +53,30 @@ export const Login = () => {
 		},
 		mode: "onChange",
 	});
-
-	if (!isLoading && isSuccess && Object.keys(data).length > 0) {
-		if (!data.payload) {
-			return alert("Не вдалось увійти");
+	useEffect(() => {
+		if (data && isSuccess) {
+			if (!data) {
+				return alert("Не вдалось увійти");
+			}
+			if ("token" in data) {
+				window.localStorage.setItem("token", data.token);
+				setUser(data);
+			}
 		}
-		if ("token" in data.payload) {
-			window.localStorage.setItem("token", data.payload.token);
-			setUser(data);
-			refetch();
+	}, [data]);
+	useEffect(() => {
+		if (loginGoogle.data && loginGoogle.isSuccess) {
+			if (!loginGoogle.data) {
+				return alert("Не вдалось увійти");
+			}
+			if ("token" in loginGoogle.data) {
+				window.localStorage.setItem("token", loginGoogle.data.token);
+				setUser(loginGoogle.data);
+			}
 		}
-	}
-
-	const onSubmit = (values) => {
-		mutateAsync(values);
+	}, [loginGoogle.data]);
+	const onSubmit = async (values) => {
+		await mutateAsync(values);
 	};
 	if (loginGoogle.isLoading || isLoading) {
 		if (!isAuth) {
@@ -66,18 +85,17 @@ export const Login = () => {
 					<Loader />
 				</Modal>
 			);
-		} else {
-			return navigate("/");
 		}
 	}
 
-	// if (loginGoogle.isError || isError) {
-	// 	return (
-	// 		<Modal open={true}>
-	// 			<Typography>{loginGoogle.error || error}</Typography>
-	// 		</Modal>
-	// 	);
-
+	if (loginGoogle.isError || isError) {
+		return (
+			<Modal open={true}>
+				<Typography>{loginGoogle.error || error}</Typography>
+			</Modal>
+		);
+	}
+	if (isAuth) return navigate("/");
 	return (
 		<Paper classes={{ root: styles.root }}>
 			<Typography classes={{ root: styles.title }} variant="h5">
@@ -97,10 +115,24 @@ export const Login = () => {
 					className={styles.field}
 					label="Пароль"
 					fullWidth
-					type="password"
+					type={show ? 'text' : 'password'}
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
+					InputProps={{
+						endAdornment:
+						  <InputAdornment position="end">
+							<IconButton
+							  aria-label="toggle password visibility"
+							  onClick={handleClickShowPassword}
+							  onMouseDown={handleMouseDownPassword}
+							  edge="end"
+							>
+							  {show ? <VisibilityOff /> : <Visibility />}
+							</IconButton>
+						  </InputAdornment>
+						
+					  }}
 				/>
 				<Button
 					type="submit"
@@ -108,20 +140,20 @@ export const Login = () => {
 					size="large"
 					variant="contained"
 					fullWidth
-					style={{ marginBottom: "20px" }}
+					style={{ marginBottom: "10px" }}
 				>
 					Ввійти
 				</Button>
-				<Button
-					type="submit"
-					size="large"
-					variant="contained"
-					fullWidth
-					onClick={() => loginGoogleHook()}
-				>
-					Увійти з <GoogleIcon style={{ marginLeft: "5px" }} />
-				</Button>
 			</form>
+			<Button
+				type="submit"
+				size="large"
+				variant="contained"
+				fullWidth
+				onClick={() => loginGoogleHook()}
+			>
+				Увійти з <GoogleIcon style={{ marginLeft: "5px" }} />
+			</Button>
 		</Paper>
 	);
 };

@@ -25,21 +25,15 @@ const queryClient = new QueryClient({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const Main = () => {
-  const [user, setUser] = useState(null);
+
   return (
     <CssBaseline >
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
-            <UserContext.Provider
-              value={{
-              user,
-              setUser
-            }}>
               <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_AUTH}>
               <App/>
               </GoogleOAuthProvider>
-            </UserContext.Provider>
             <ReactQueryDevtools initialIsOpen={false}/>
           </QueryClientProvider>
         </BrowserRouter>
