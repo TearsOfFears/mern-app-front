@@ -1,0 +1,19 @@
+.root{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+   .box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    margin: 0 auto;
+    width: 30%;
+    height: auto;
+    padding: 20px;
+    text-align: center;
+   }
+}

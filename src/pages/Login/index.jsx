@@ -21,7 +21,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 export const Login = () => {
 	const navigate = useNavigate();
-	const [show,setShow] = useState(false);
+	const [show, setShow] = useState(false);
 	const [errorsPayload, setErrorsPayload] = useState("");
 	const { user, setUser } = useContext(UserContext);
 	const [values, setValues] = useState("");
@@ -36,11 +36,11 @@ export const Login = () => {
 		},
 	});
 	const handleClickShowPassword = () => {
-		setShow(!show)
-	  };
-	  const handleMouseDownPassword = (e) => {
+		setShow(!show);
+	};
+	const handleMouseDownPassword = (e) => {
 		e.preventDefault();
-	  };
+	};
 	const {
 		register,
 		handleSubmit,
@@ -48,8 +48,11 @@ export const Login = () => {
 		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: {
-			email: "nazarTest6@gmail.com",
-			password: "nazar12345",
+			// email: "nazarTest6@gmail.com",
+			// password: "nazar12345",
+			// fullName: "nazartest123",
+			password: "nazartest123",
+			email: "nazardemchan@gmail.com",
 		},
 		mode: "onChange",
 	});
@@ -58,8 +61,8 @@ export const Login = () => {
 			if (!data) {
 				return alert("Не вдалось увійти");
 			}
-			if ("token" in data) {
-				window.localStorage.setItem("token", data.token);
+			if ("tokens" in data) {
+				window.localStorage.setItem("token", data.tokens.access);
 				setUser(data);
 			}
 		}
@@ -69,8 +72,8 @@ export const Login = () => {
 			if (!loginGoogle.data) {
 				return alert("Не вдалось увійти");
 			}
-			if ("token" in loginGoogle.data) {
-				window.localStorage.setItem("token", loginGoogle.data.token);
+			if ("tokens" in loginGoogle.data) {
+				window.localStorage.setItem("token", loginGoogle.data.tokens.access);
 				setUser(loginGoogle.data);
 			}
 		}
@@ -115,24 +118,24 @@ export const Login = () => {
 					className={styles.field}
 					label="Пароль"
 					fullWidth
-					type={show ? 'text' : 'password'}
+					type={show ? "text" : "password"}
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
 					{...register("password", { required: "Вкажіть пароль" })}
 					InputProps={{
-						endAdornment:
-						  <InputAdornment position="end">
-							<IconButton
-							  aria-label="toggle password visibility"
-							  onClick={handleClickShowPassword}
-							  onMouseDown={handleMouseDownPassword}
-							  edge="end"
-							>
-							  {show ? <VisibilityOff /> : <Visibility />}
-							</IconButton>
-						  </InputAdornment>
-						
-					  }}
+						endAdornment: (
+							<InputAdornment position="end">
+								<IconButton
+									aria-label="toggle password visibility"
+									onClick={handleClickShowPassword}
+									onMouseDown={handleMouseDownPassword}
+									edge="end"
+								>
+									{show ? <VisibilityOff /> : <Visibility />}
+								</IconButton>
+							</InputAdornment>
+						),
+					}}
 				/>
 				<Button
 					type="submit"

@@ -10,6 +10,7 @@ import { useFetchUser } from "./reactQuery/auth/user.hooks";
 import { Typography } from "@mui/material";
 import { useAuth } from "./hooks/useAuth";
 import { Account } from "./pages/Account";
+import Activate from "./pages/Activate";
 // import { Account } from "./pages/Account";
 
 function App() {
@@ -46,6 +47,7 @@ console.log(data);
           <Route path="/addPost" element={<AddPost />}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/register" element={<Registration />}/>
+          <Route path="/activate/:link" element={<Activate />}/>
         </Routes>
       </Container>
       </UserContext.Provider>

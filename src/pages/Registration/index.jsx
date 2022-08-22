@@ -12,19 +12,20 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useAuth } from "../../hooks/useAuth";
 import { userService } from "../../reactQuery/auth/user.service";
-import { IconButton, InputAdornment, Modal } from "@mui/material";
+import { Box, IconButton, InputAdornment, Modal } from "@mui/material";
 import Loader from "../../components/Loader";
 import { useLogin } from "../../reactQuery/auth/user.hooks";
 import { useState } from "react";
 import { useEffect } from "react";
 import UserContext from "../../reactQuery/context";
+import ModalCustom from "../../components/ModalCustom/ModalCustom";
 
 export const Registration = () => {
 	const [show, setShow] = useState(false);
-  const [dataReg, setDataReg] = useState({});
+	const [dataReg, setDataReg] = useState({});
 	const navigate = useNavigate();
 	const { isAuth } = useAuth();
-  const { user, setUser } = useContext(UserContext);
+	const { user, setUser } = useContext(UserContext);
 	const registUser = useMutation(userService.registrUser);
 	const { data, isError, error, isLoading, isSuccess, mutateAsync } =
 		useLogin();
@@ -38,55 +39,53 @@ export const Registration = () => {
 		defaultValues: {
 			fullName: "nazartest123",
 			password: "nazartest123",
-			email: "nazartest123@gmail.com",
+			email: "nazardemchan@gmail.com",
 		},
 	});
-	console.log(registUser.isSuccess);
+
 	const onSubmit = async (values) => {
 		await registUser.mutateAsync(values);
-		setDataReg(values)
+		setDataReg(values);
 	};
-console.log(dataReg);
-  useEffect(()=>{
-    if (registUser.isSuccess){
-        const { email, password } = dataReg;
-        const valuesLogin = {
-          email,
-          password,
-        };
-        mutateAsync(valuesLogin);
-        if (data && isSuccess) {
-          if (!data.token) {
-            return alert("Не вдалось зареєестурватись");
-          }
-          if ("token" in data) {
-            window.localStorage.setItem("token", data.token);
-            setUser(data);
-          }
-        }
-    }
-  },[registUser.isLoading,data])
+	// useEffect(() => {
+	// 	// const { email, password } = dataReg;
+	// 	// const valuesLogin = {
+	// 	// 	email,
+	// 	// 	password,
+	// 	// }
+	// 	if (isLoading) {
+	// 		return <ModalCustom isLoader={true} />;
+	// 	}
+	// 	// if (registUser.data && registUser.isSuccess) {
+
+	// 	// 	 else {
+	// 	// 		if ("token" in data) {
+	// 	// 			console.log(data);
+	// 	// 			window.localStorage.setItem("token", data.token);
+	// 	// 			setUser(data);
+	// 	// 		}
+	// 	// 	}
+	// 	// }
+	// }, [registUser.isLoading, data]);
+
 	const handleClickShowPassword = () => {
 		setShow(!show);
 	};
 	const handleMouseDownPassword = (e) => {
 		e.preventDefault();
 	};
-	if (registUser.isLoading && isLoading) {
+	if (registUser.isLoading || isLoading) {
 		if (!isAuth) {
-			return (
-				<Modal open={true}>
-					<Loader />
-				</Modal>
-			);
+			return <ModalCustom isLoader={true} />;
 		}
 	}
 
 	if (registUser.isError || isError) {
+		return <ModalCustom message={error} />;
+	}
+	if (registUser.isSuccess) {
 		return (
-			<Modal open={true}>
-				<Typography>{error}</Typography>
-			</Modal>
+			<ModalCustom message="Перейдіть на пошту, яку ви вказали при регістрації" />
 		);
 	}
 	if (isAuth) return navigate("/");
@@ -99,6 +98,7 @@ console.log(dataReg);
 			<div className={styles.avatar}>
 				<Avatar sx={{ width: 100, height: 100 }} />
 			</div>
+
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<TextField
 					className={styles.field}
