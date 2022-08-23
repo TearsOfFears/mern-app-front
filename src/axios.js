@@ -5,6 +5,7 @@ const instance = axios.create({
   
 })
 
+instance.defaults.withCredentials = true;
 
 instance
   .interceptors
@@ -23,15 +24,15 @@ instance
     return config
   }, async (err) => {
     const originalReaquest = err.config
-    if (err.response.status == 401 && err.config && !err.config._isRetry ) {
+    if (err.response.status == 403 && err.config && !err.config._isRetry ) {
       originalReaquest._isRetry = true;
       try {
         const refresh = await instance.get("/auth/refresh", {
-          withCredentials: true
+          withCredentials:true
         })
         window
           .localStorage
-          .setItem('token', refresh.data.accessToken)
+          .setItem('token', refresh.data.tokens.access)
         return instance.request(originalReaquest)
       } catch (err) {
         console.log("Not Auth ", err);

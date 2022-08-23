@@ -22,6 +22,7 @@ import ModalCustom from "../../components/ModalCustom/ModalCustom";
 
 export const Registration = () => {
 	const [show, setShow] = useState(false);
+	const [isOpen, setOpen] = useState(false);
 	const [dataReg, setDataReg] = useState({});
 	const navigate = useNavigate();
 	const { isAuth } = useAuth();
@@ -47,27 +48,12 @@ export const Registration = () => {
 		await registUser.mutateAsync(values);
 		setDataReg(values);
 	};
-	// useEffect(() => {
-	// 	// const { email, password } = dataReg;
-	// 	// const valuesLogin = {
-	// 	// 	email,
-	// 	// 	password,
-	// 	// }
-	// 	if (isLoading) {
-	// 		return <ModalCustom isLoader={true} />;
-	// 	}
-	// 	// if (registUser.data && registUser.isSuccess) {
-
-	// 	// 	 else {
-	// 	// 		if ("token" in data) {
-	// 	// 			console.log(data);
-	// 	// 			window.localStorage.setItem("token", data.token);
-	// 	// 			setUser(data);
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-	// }, [registUser.isLoading, data]);
-
+	useEffect(() => {
+		if (registUser.isError) {
+			setOpen(true);
+		}
+	}, [registUser.isError]);
+	console.log(isOpen);
 	const handleClickShowPassword = () => {
 		setShow(!show);
 	};
@@ -80,9 +66,6 @@ export const Registration = () => {
 		}
 	}
 
-	if (registUser.isError || isError) {
-		return <ModalCustom message={error} />;
-	}
 	if (registUser.isSuccess) {
 		return (
 			<ModalCustom message="Перейдіть на пошту, яку ви вказали при регістрації" />
@@ -92,6 +75,21 @@ export const Registration = () => {
 
 	return (
 		<Paper classes={{ root: styles.root }}>
+			{registUser.isError && (
+				<ModalCustom isOpen={isOpen}>
+					{registUser.error.response.data}
+					<Button
+						onClick={() => {
+							navigate("/register");
+							setOpen(false);
+						}}
+					>
+						{" "}
+						Back
+					</Button>
+				</ModalCustom>
+			)}
+
 			<Typography classes={{ root: styles.title }} variant="h5">
 				Створити аккаунта
 			</Typography>

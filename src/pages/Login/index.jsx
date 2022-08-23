@@ -19,9 +19,11 @@ import Loader from "../../components/Loader";
 import { useRefresh } from "../../hooks/useRefresh";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ModalCustom from "../../components/ModalCustom/ModalCustom";
 export const Login = () => {
 	const navigate = useNavigate();
 	const [show, setShow] = useState(false);
+	const [isOpen, setOpen] = useState(false);
 	const [errorsPayload, setErrorsPayload] = useState("");
 	const { user, setUser } = useContext(UserContext);
 	const [values, setValues] = useState("");
@@ -77,7 +79,11 @@ export const Login = () => {
 				setUser(loginGoogle.data);
 			}
 		}
-	}, [loginGoogle.data]);
+		if (loginGoogle.isError) {
+			setOpen(true);
+		}
+	}, [loginGoogle.data,loginGoogle.isError]);
+
 	const onSubmit = async (values) => {
 		await mutateAsync(values);
 	};
@@ -90,17 +96,25 @@ export const Login = () => {
 			);
 		}
 	}
-
-	if (loginGoogle.isError || isError) {
-		return (
-			<Modal open={true}>
-				<Typography>{loginGoogle.error || error}</Typography>
-			</Modal>
-		);
-	}
+console.log(loginGoogle.isError);
+console.log("err",loginGoogle?.error?.response.data.message);
 	if (isAuth) return navigate("/");
 	return (
 		<Paper classes={{ root: styles.root }}>
+			{loginGoogle.isError && (
+				<ModalCustom isOpen={isOpen}>
+					{loginGoogle.error.response.data.message || error.response.data}
+					<Button
+						onClick={() => {
+							navigate("/login");
+							setOpen(false);
+						}}
+					>
+						{" "}
+						Back
+					</Button>
+				</ModalCustom>
+			)}
 			<Typography classes={{ root: styles.title }} variant="h5">
 				Вхід в аккаунт
 			</Typography>

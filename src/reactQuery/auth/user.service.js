@@ -59,9 +59,13 @@ export const userService = {
       })
   },
 
-  logout() {
-    if (window.localStorage.getItem("token")) {
-      window.localStorage.removeItem("token");
-    }
+  async logout() {
+    return await axios.get(`/auth/logout`)
+    .then((res) => {
+      if (window.localStorage.getItem("token")) {
+        window.localStorage.removeItem("token");
+      }
+      return res.data
+    })
   }
 }

@@ -15,5 +15,9 @@
     height: auto;
     padding: 20px;
     text-align: center;
+    p{
+        display: flex;
+        flex-direction: column;
+    }
    }
 }

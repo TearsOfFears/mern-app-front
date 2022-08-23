@@ -8,12 +8,7 @@ const Activate = () => {
     const {link} =useParams();
     const navigate = useNavigate();
     const {data} = useQuery(["activate account",link],()=>userService.activateUserAccount(link))
-    console.log(data);
-   
     return navigate("/login")
-//   return (
-//     <Box>{link}</Box>
-//   )
 }
 
 export default Activate
