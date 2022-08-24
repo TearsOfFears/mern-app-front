@@ -23,6 +23,22 @@ $blue: #4361ee;
       border: 1px solid #dedede;
       box-shadow: none;
     }
+    .likes{
+      padding: 0px;
+      min-width: 0px ;
+      color:inherit;
+      &:disabled{
+        color:$blue ;
+      }
+    }
+    .likesDisabled{
+      padding: 0px;
+      min-width: 0px ;
+      color:inherit;
+      &:disabled{
+        color:inherit ;
+      }
+    }
   }
   .likes{
     padding: 0px;

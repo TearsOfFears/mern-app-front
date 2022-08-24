@@ -15,6 +15,7 @@ import UserContext from "../reactQuery/context";
 import { useFetchPosts, useFetchTags } from "../reactQuery/posts/posts.hooks";
 import { useComments } from "../reactQuery/comments/comments.hooks";
 import { useLayoutEffect } from "react";
+import { useFetchUser } from "../reactQuery/auth/user.hooks";
 
 export const Home = () => {
 	const params = { sort: "latest" };
@@ -24,12 +25,13 @@ export const Home = () => {
 	const { user, setUser } = useContext(UserContext);
 	const posts = useFetchPosts(queryStringSeach);
 	const tags = useFetchTags();
+	const userRefresh = useFetchUser();
 	const getAllComments = useComments();
-	const [dataComments, setState] = useState([])
+	const [dataComments, setState] = useState([]);
 	const [sort, setSort] = useState(
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
-	
+
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {
@@ -38,7 +40,9 @@ export const Home = () => {
 			return `#${tag}`;
 		}
 	});
-
+	useEffect(() => {
+		userRefresh.refetch();
+	}, []);
 	useEffect(() => {
 		searchParams.set("sort", sort);
 		setSearchParams(searchParams);
@@ -81,7 +85,7 @@ export const Home = () => {
 							<Post
 								id={data._id}
 								title={data.title}
-								imageUrl={data.imageURL ? data.imageURL : null}
+								imageUrl={data.imageURL.image ? data.imageURL.image : null}
 								authorData={data.author}
 								createdAt={data.createdAt}
 								viewsCount={data.vievsCount}

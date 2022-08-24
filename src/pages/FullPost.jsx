@@ -7,10 +7,11 @@ import ReactMarkdown from "react-markdown";
 import { useFetchCurrentPost } from "../reactQuery/posts/posts.hooks";
 import { useCommentsById } from "../reactQuery/comments/comments.hooks";
 import UserContext from "../reactQuery/context";
+import { useFetchUser } from "../reactQuery/auth/user.hooks";
 
 export const FullPost = () => {
 	const { id, idEdit } = useParams();
-
+	const userRefresh = useFetchUser();
 	const params = {
 		id: id,
 	};
@@ -22,16 +23,18 @@ export const FullPost = () => {
 			comments.refetch();
 		}
 	}, [id]);
-
+	useEffect(() => {
+		userRefresh.refetch();
+	}, []);
 	if (post.isLoading) {
 		return <Post isLoading={post.isLoading} isFullPost />;
 	}
 	return (
 		<>
 			<Post
-				id={post.data.id}
+				id={post.data._id}
 				title={post.data.title}
-				imageUrl={post.data.imageURL}
+				imageUrl={post.data.imageURL.image}
 				authorData={post.data.author}
 				createdAt={post.data.createdAt}
 				viewsCount={post.data.vievsCount}

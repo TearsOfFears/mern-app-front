@@ -3,7 +3,6 @@ import axios from "../../axios"
 
 export const postsService = {
     async getAll(params) {
-        console.log(params);
         return await axios.get(`/getPosts`, {
             params
         }).then((res) => {
@@ -31,7 +30,6 @@ export const postsService = {
             })
     },
     async deleteCurrentPost(params) {
-        console.log(params);
         return await axios.delete(`/posts/${params}`);
 
     }

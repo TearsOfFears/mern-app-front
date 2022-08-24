@@ -13,16 +13,20 @@ import { userService } from "../reactQuery/auth/user.service.js";
 export const Account = () => {
 	const { id } = useParams();
 
-	const { data: userData, isFetched,isLoading,refetch } = useQuery(
-		["fetch Current user", id],
-		() => userService.getCurrentUserProfile(id)
+	const {
+		data: userData,
+		isFetched,
+		isLoading,
+		isSuccess,
+		refetch,
+	} = useQuery(["fetch Current user", id], () =>
+		userService.getCurrentUserProfile(id)
 	);
 	const { data: posts, isLoading: isPostLoading } = useQuery(
 		["fetch post user", id],
 		() => postsService.getPostByUser(id)
 	);
-	
-	if (isLoading) return <h3>Loading..</h3>;
+
 	const configRender = {
 		isPostLoading,
 		posts,
@@ -31,15 +35,17 @@ export const Account = () => {
 	const configRenderAccount = {
 		userData,
 		isLoading,
-		isFetched
+		isFetched,
 	};
-	
-	
-
+// console.log(!isLoading && userData && isSuccess);
 	return (
 		<>
 			<Grid container spacing={3}>
-				<AccountEdit {...configRenderAccount} />
+				{!isLoading && userData && isSuccess ? (
+					<AccountEdit {...configRenderAccount} />
+				) : (
+					<h1>Loading...</h1>
+				)}
 				<RenderPosts {...configRender} />
 			</Grid>
 		</>

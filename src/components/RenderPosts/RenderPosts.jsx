@@ -34,7 +34,7 @@ const RenderPosts = ({ isPostLoading, posts, userData }) => {
 								<Post
 									id={data._id}
 									title={data.title}
-									imageUrl={data.imageURL ? data.imageURL : ""}
+									imageUrl={data.imageURL.image ? data.imageURL.image : ""}
 									authorData={data.author}
 									createdAt={data.createdAt}
 									viewsCount={data.vievsCount}

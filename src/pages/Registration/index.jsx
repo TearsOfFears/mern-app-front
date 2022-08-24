@@ -53,7 +53,6 @@ export const Registration = () => {
 			setOpen(true);
 		}
 	}, [registUser.isError]);
-	console.log(isOpen);
 	const handleClickShowPassword = () => {
 		setShow(!show);
 	};
@@ -65,7 +64,6 @@ export const Registration = () => {
 			return <ModalCustom isLoader={true} />;
 		}
 	}
-
 	if (registUser.isSuccess) {
 		return (
 			<ModalCustom message="Перейдіть на пошту, яку ви вказали при регістрації" />

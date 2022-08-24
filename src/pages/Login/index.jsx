@@ -96,8 +96,6 @@ export const Login = () => {
 			);
 		}
 	}
-console.log(loginGoogle.isError);
-console.log("err",loginGoogle?.error?.response.data.message);
 	if (isAuth) return navigate("/");
 	return (
 		<Paper classes={{ root: styles.root }}>

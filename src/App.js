@@ -27,12 +27,13 @@ useEffect(()=>{
   else{
     window.localStorage.getItem("token")!==null && refetch()
   }
-},[data])
-console.log(data);
+},[data,isLoading])
+
   return (
     <>
     <UserContext.Provider
               value={{
+                isLoading,
               user,
               setUser
             }}> 

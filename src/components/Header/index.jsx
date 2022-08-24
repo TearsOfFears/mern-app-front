@@ -14,19 +14,18 @@ export const Header = () => {
 	const refresh = useRefresh();
 	const navigate = useNavigate();
 	const { refetch, isError } = useFetchUser();
-	const { data, isAuth,setUser } = useAuth();
+	const { data, isAuth, setUser } = useAuth();
 
 	const onClickLogout = () => {
 		userService.logout();
 		setUser(null);
 		refetch();
+		navigate("/?sort=latest");
 		if (!window.localStorage.getItem("token") && isError) {
 			setUser(null);
 			refetch();
-			navigate("/?sort=latest")
 		}
 	};
-
 	return (
 		<div className={styles.root}>
 			<Container maxWidth="lg">
@@ -42,7 +41,8 @@ export const Header = () => {
 									style={{ background: "black" }}
 									onClick={(e) => navigate(`/account/${data._id}`)}
 								>
-									<AccountCircle color="inherit" />
+									{data.avatar ? <img src={data.avatar.image} alt="" style={{width:"1.8em",height:"1.8em",borderRadius:"100%"}}/> :
+									<AccountCircle color="inherit" />}
 								</Button>
 								<Link to="/addPost">
 									<Button variant="contained">Написати статтю</Button>

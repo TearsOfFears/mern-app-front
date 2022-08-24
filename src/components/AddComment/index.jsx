@@ -64,7 +64,7 @@ export const Index = ({ textEdit }) => {
 			<div className={styles.root}>
 				{isAuth ? (
 					<>
-						<Avatar classes={{ root: styles.avatar }} src={data.avatarURL} />
+						<Avatar classes={{ root: styles.avatar }} src={data.avatar.image} />
 						<div className={styles.form}>
 							<TextField
 								label="Написать комментарий"

@@ -11,58 +11,55 @@ import { useAuth } from "../../hooks/useAuth";
 import { useFetchCurrentPost } from "../../reactQuery/posts/posts.hooks";
 import axios from "./../../axios";
 import { Typography } from "@mui/material";
+import Loader from "../../components/Loader";
+import { useMutation } from "react-query";
+import { services } from "../../reactQuery/service";
 
 export const AddPost = () => {
 	const { isAuth } = useAuth();
 	const { id } = useParams();
 	const [isLoading, setIsLoading] = useState(false);
+	const {
+		data,
+		isLoading: isLoadingImage,
+		mutateAsync,
+	} = useMutation(services.postImage);
 	const [imageURL, setImageUrl] = useState("");
 	const [text, setText] = useState("");
 	const [title, setTitle] = useState("");
 	const [tags, setTags] = useState("");
-
-    const [fileInputState, setFileInputState] = useState('');
-    const [previewSource, setPreviewSource] = useState('');
-    const [selectedFile, setSelectedFile] = useState();
-    const [successMsg, setSuccessMsg] = useState('');
-    const [errMsg, setErrMsg] = useState('');
+	const [errMsg, setErrMsg] = useState("");
 
 	const navigate = useNavigate();
 
-    const handleFileInputChange = (e) => {
-        const file = e.target.files[0];
-        setSelectedFile(file);
-		if (!selectedFile) return;
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = () => {
-            uploadImage(reader.result);
-        };
-        reader.onerror = () => {
-            setErrMsg('something went wrong!');
-        };
-        setFileInputState(e.target.value);
-    };
-
-    const uploadImage = async (base64EncodedImage) => {
-        try {
-			const {data} = 	await axios.post("/upload", {data:base64EncodedImage,dest:"posts"});
-			setImageUrl(data);
-            setFileInputState('');
-            setPreviewSource('');
-        } catch (err) {
-            console.error(err);
-            setErrMsg('Something went wrong!');
-        }
-    };
-
-
+	const handleFileInputChange = async (e) => {
+		const file = e.target.files[0];
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onloadend = async () => {
+			const params = { data: reader.result, dest: "posts" };
+			await onClickRemoveImage();
+			await mutateAsync(params);
+		};
+		reader.onerror = () => {
+			setErrMsg("something went wrong!");
+		};
+	};
 	const isEdit = Boolean(id);
 	const inputFileRef = useRef(null);
-
-	const onClickRemoveImage = async (event) => {
-		setImageUrl("");
+	const onClickRemoveImage = async () => {
+		const params = { public_id: imageURL.public_id };
+		axios
+			.delete(`/upload`, { data: params })
+			.then((res) => {
+				setImageUrl("");
+				return res.data;
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
+
 	useEffect(() => {
 		if (id) {
 			const params = { id: id };
@@ -78,7 +75,10 @@ export const AddPost = () => {
 					console.log(err);
 				});
 		}
-	}, []);
+	}, [id]);
+	useEffect(() => {
+		setImageUrl({ image: data?.url, public_id: data?.public_id });
+	}, [data]);
 
 	const onSubmit = async () => {
 		try {
@@ -86,9 +86,10 @@ export const AddPost = () => {
 			const fields = {
 				title,
 				text,
-				imageURL,
+				imageURL: imageURL,
 				tags,
 			};
+			console.log(fields);
 			const { data } = isEdit
 				? await axios.patch(`/posts/${id}`, fields)
 				: await axios.post("/posts", fields);
@@ -113,7 +114,7 @@ export const AddPost = () => {
 			spellChecker: false,
 			maxHeight: "400px",
 			autofocus: true,
-			placeholder: "Введите текст...",
+			placeholder: "Введіть текст...",
 			status: false,
 			autosave: {
 				enabled: true,
@@ -126,6 +127,7 @@ export const AddPost = () => {
 	if (!isAuth) {
 		return navigate("/");
 	}
+
 	if (isLoading) return <Typography>Loading...</Typography>;
 
 	return (
@@ -139,21 +141,26 @@ export const AddPost = () => {
 				size="large"
 				onClick={() => inputFileRef.current.click()}
 			>
-				Загрузить превью
+				Завантажте превю
 			</Button>
 			<input
 				type="file"
+				accept=".png, .jpg, .jpeg"
 				ref={inputFileRef}
 				onChange={handleFileInputChange}
 				hidden
 			/>{" "}
 			{imageURL && (
 				<Button variant="contained" color="error" onClick={onClickRemoveImage}>
-					Удалить
+					Видалити
 				</Button>
 			)}
-			{imageURL && (
-				<img className={styles.image} src={imageURL} alt="Uploaded" />
+			{isLoadingImage ? (
+				<Loader />
+			) : (
+				imageURL.image && (
+					<img className={styles.image} src={imageURL.image} alt="Uploaded" />
+				)
 			)}
 			<br />
 			<br />
@@ -162,7 +169,7 @@ export const AddPost = () => {
 					root: styles.title,
 				}}
 				variant="standard"
-				placeholder="Заголовок статьи..."
+				placeholder="Заголовок статті..."
 				fullWidth
 				name="title"
 				value={title}
@@ -187,10 +194,10 @@ export const AddPost = () => {
 			/>
 			<div className={styles.buttons}>
 				<Button size="large" variant="contained" onClick={onSubmit}>
-					{isEdit ? "Зберегти" : "Опубликовать"}
+					{isEdit ? "Зберегти" : "Опублікувати"}
 				</Button>
 				<Link to="/">
-					<Button size="large">Отмена</Button>
+					<Button size="large">Відмінити</Button>
 				</Link>
 			</div>
 		</Paper>
