@@ -47,7 +47,6 @@ export const userService = {
     id,
     fields
   }) {
-    console.log("trigger");
     return await axios.patch(`/auth/${id}`, fields)
       .then((res) => {
         return res.data

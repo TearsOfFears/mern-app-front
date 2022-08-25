@@ -14,17 +14,27 @@ import { Typography } from "@mui/material";
 import Loader from "../../components/Loader";
 import { useMutation } from "react-query";
 import { services } from "../../reactQuery/service";
+import { useFetchUser } from "../../reactQuery/auth/user.hooks";
 
 export const AddPost = () => {
 	const { isAuth } = useAuth();
 	const { id } = useParams();
+	const inputFileRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const { refetch: refetchUser } = useFetchUser();
 	const {
 		data,
 		isLoading: isLoadingImage,
+		isSuccess,
 		mutateAsync,
 	} = useMutation(services.postImage);
-	const [imageURL, setImageUrl] = useState("");
+	const {
+		data: deleteImage,
+		isLoading: isLoadingDelete,
+		isSuccess: isSuccessDeleted,
+		mutateAsync: handleDelete,
+	} = useMutation(services.deleteImage);
+	const [imageURL, setImageUrl] = useState({});
 	const [text, setText] = useState("");
 	const [title, setTitle] = useState("");
 	const [tags, setTags] = useState("");
@@ -38,7 +48,6 @@ export const AddPost = () => {
 		reader.readAsDataURL(file);
 		reader.onloadend = async () => {
 			const params = { data: reader.result, dest: "posts" };
-			await onClickRemoveImage();
 			await mutateAsync(params);
 		};
 		reader.onerror = () => {
@@ -46,20 +55,11 @@ export const AddPost = () => {
 		};
 	};
 	const isEdit = Boolean(id);
-	const inputFileRef = useRef(null);
+
 	const onClickRemoveImage = async () => {
 		const params = { public_id: imageURL.public_id };
-		axios
-			.delete(`/upload`, { data: params })
-			.then((res) => {
-				setImageUrl("");
-				return res.data;
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		handleDelete(params);
 	};
-
 	useEffect(() => {
 		if (id) {
 			const params = { id: id };
@@ -77,6 +77,9 @@ export const AddPost = () => {
 		}
 	}, [id]);
 	useEffect(() => {
+		if (isSuccess) {
+			onClickRemoveImage();
+		}
 		setImageUrl({ image: data?.url, public_id: data?.public_id });
 	}, [data]);
 
@@ -99,6 +102,7 @@ export const AddPost = () => {
 			if (_id) {
 				navigate(`/posts/${_id}`);
 			}
+			refetchUser();
 		} catch (err) {
 			console.log(err);
 			alert("Помилка при створенні статті");
@@ -155,7 +159,7 @@ export const AddPost = () => {
 					Видалити
 				</Button>
 			)}
-			{isLoadingImage ? (
+			{isLoadingImage || isLoadingDelete ? (
 				<Loader />
 			) : (
 				imageURL.image && (

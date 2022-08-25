@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Grid, Typography, Avatar, Input, Box, Button } from "@mui/material";
+import { Grid, Typography, Avatar, Input, Box, Button, CircularProgress } from "@mui/material";
 import axios from "../../axios";
 import { useParams } from "react-router-dom";
 import clsx from "clsx";
@@ -21,8 +21,15 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 	const {
 		data,
 		isLoading: isLoadingImage,
+		isSuccess,
 		mutateAsync,
 	} = useMutation(services.postImage);
+	const {
+		data: deleteImage,
+		isLoading: isLoadingDelete,
+		isSuccess: isSuccessDeleted,
+		mutateAsync: handleDelete,
+	} = useMutation(services.deleteImage);
 	const { user: authUserData, isLoading: isLoadingUserData } =
 		useContext(UserContext);
 	const [fullName, setFullname] = useState("");
@@ -39,7 +46,6 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 			if (edit) {
 				await onClickRemoveImage();
 			}
-
 			await mutateAsync(params);
 		};
 		reader.onerror = () => {
@@ -49,23 +55,16 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 
 	const onClickRemoveImage = async () => {
 		const params = { public_id: avatar.public_id };
-		axios
-			.delete(`/upload`, { data: params })
-			.then((res) => {
-				setAvatarURL("");
-				return res.data;
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		handleDelete(params);
 	};
+
 	useEffect(() => {
 		if (!isLoadingUserData && authUserData) {
 			setEnable(true);
 		} else {
 			setEdit(false);
 		}
-		if (data) {
+		if (isSuccess) {
 			setAvatarURL({ image: data?.url, public_id: data?.public_id });
 			setEmail(userData.email);
 			setFullname(userData.fullName);
@@ -74,7 +73,7 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 			setFullname(userData.fullName);
 			setAvatarURL(userData.avatar);
 		}
-	}, [id,data, isLoadingUserData, authUserData]);
+	}, [id, data, isLoadingUserData, authUserData]);
 
 	if (isLoading) return <h3>Loading..</h3>;
 
@@ -101,12 +100,17 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 			<Box className={clsx(styles.root)}>
 				<form onSubmit={updateUserInfoSubmit}>
 					<div className={edit ? styles.avatarWrapper : ""}>
-						<Avatar
-							alt={fullName}
-							src={avatar.image}
-							sx={{ width: 150, height: 150 }}
-							className={!edit ? styles.avatar : ""}
-						/>
+						{isLoadingImage || isLoadingDelete ? (
+								<CircularProgress color="primary" size="150px" />
+						) : (
+							<Avatar
+								alt={fullName}
+								src={avatar.image}
+								sx={{ width: 150, height: 150 }}
+								className={!edit ? styles.avatar : ""}
+							/>
+						)}
+
 						<div className={styles.avatarChange}>
 							<Button
 								onClick={() => inputFileRef.current.click()}
