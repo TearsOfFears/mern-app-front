@@ -16,7 +16,8 @@ import { useFetchPosts, useFetchTags } from "../reactQuery/posts/posts.hooks";
 import { useComments } from "../reactQuery/comments/comments.hooks";
 import { useLayoutEffect } from "react";
 import { useFetchUser } from "../reactQuery/auth/user.hooks";
-
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import RenderPosts from "../components/RenderPosts/RenderPosts";
 export const Home = () => {
 	const params = { sort: "latest" };
 	const search = useLocation().search;
@@ -55,6 +56,12 @@ export const Home = () => {
 		},
 		{ label: "Популярні", value: "popularity" },
 	];
+	const configRender = {
+		isPostLoading: posts.isLoading,
+		posts: posts.data,
+		userData: user,
+		isUser: false,
+	};
 
 	return (
 		<>
@@ -76,9 +83,12 @@ export const Home = () => {
 					/>
 				))}
 			</Tabs>
+
 			<Grid container spacing={4}>
-				<Grid xs={8} item style={{ maxWidth: "100%" }}>
-					{(posts.isLoading ? [...Array(5)] : posts?.data).map((data, index) =>
+				<RenderPosts {...configRender} />
+
+				{/* <Grid xs={8} item style={{ maxWidth: "100%" }}>
+					{(posts.isLoading ? [...Array(2)] : posts?.data).map((data, index) =>
 						posts.isLoading ? (
 							<Post key={index} isLoading={true} />
 						) : (
@@ -98,14 +108,17 @@ export const Home = () => {
 							/>
 						)
 					)}
-				</Grid>
-				<Grid xs={4} item>
-					<TagsBlock items={tags.data} isLoading={tags.isLoading} />
-					<CommentsBlock
-						items={getAllComments.data}
-						isLoading={getAllComments.isLoading}
-					/>
-				</Grid>
+				</Grid> */}
+
+				<CSSTransition>
+					<Grid xs={4} item>
+						<TagsBlock items={tags.data} isLoading={tags.isLoading} />
+						<CommentsBlock
+							items={getAllComments.data}
+							isLoading={getAllComments.isLoading}
+						/>
+					</Grid>
+				</CSSTransition>
 			</Grid>
 		</>
 	);

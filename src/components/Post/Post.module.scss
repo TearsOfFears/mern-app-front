@@ -194,3 +194,10 @@ $blue: #4361ee;
 
 
 
+.enter {
+	opacity: 0;
+}
+.enterActive {
+	opacity: 1;
+	transition: opacity 0.5s ease-in;
+}

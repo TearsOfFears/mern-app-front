@@ -22,7 +22,7 @@ import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import { useRefresh, mutateAsync } from "../../hooks/useRefresh";
 import { useFetchUser } from "../../reactQuery/auth/user.hooks";
 import { postsService } from "../../reactQuery/posts/posts.service";
-
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 export const Post = ({
 	id,
 	title,
@@ -99,6 +99,7 @@ export const Post = ({
 	if (isLoading) {
 		return <PostSkeleton />;
 	}
+
 	return (
 		<div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
 			{isEditable && (
@@ -124,7 +125,9 @@ export const Post = ({
 				<UserInfo {...authorData} additionalText={createdAt} />
 				<div className={styles.indention}>
 					<h2
-						className={clsx(styles.title, { [styles.titleFull]: isFullPost })}
+						className={clsx(styles.title, {
+							[styles.titleFull]: isFullPost,
+						})}
 					>
 						{isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
 					</h2>

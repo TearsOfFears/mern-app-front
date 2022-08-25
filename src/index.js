@@ -6,7 +6,6 @@ import {BrowserRouter} from "react-router-dom";
 import "./index.scss";
 import {ThemeProvider} from "@mui/material";
 import {theme} from "./theme";
-import UserContext from "./reactQuery/context";
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import { GoogleOAuthProvider  } from '@react-oauth/google';

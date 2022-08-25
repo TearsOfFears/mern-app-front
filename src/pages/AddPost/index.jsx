@@ -154,7 +154,7 @@ export const AddPost = () => {
 				onChange={handleFileInputChange}
 				hidden
 			/>{" "}
-			{imageURL && (
+			{imageURL?.image && (
 				<Button variant="contained" color="error" onClick={onClickRemoveImage}>
 					Видалити
 				</Button>

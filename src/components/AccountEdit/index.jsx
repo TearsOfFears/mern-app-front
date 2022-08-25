@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Grid, Typography, Avatar, Input, Box, Button, CircularProgress } from "@mui/material";
+import {
+	Grid,
+	Typography,
+	Avatar,
+	Input,
+	Box,
+	Button,
+	CircularProgress,
+} from "@mui/material";
 import axios from "../../axios";
 import { useParams } from "react-router-dom";
 import clsx from "clsx";
@@ -75,8 +83,6 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 		}
 	}, [id, data, isLoadingUserData, authUserData]);
 
-	if (isLoading) return <h3>Loading..</h3>;
-
 	const updateUserInfoSubmit = async (e) => {
 		e.preventDefault();
 		const fields = {
@@ -91,7 +97,7 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 		changeInfo.mutateAsync(passProps);
 		setEdit(false);
 	};
-	console.log(userData.avatar);
+	if (isLoading) return <h3>Loading..</h3>;
 	return (
 		<Grid item xs={5} spacing={2}>
 			<Typography variant="h4" marginBottom={2}>
@@ -101,7 +107,7 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 				<form onSubmit={updateUserInfoSubmit}>
 					<div className={edit ? styles.avatarWrapper : ""}>
 						{isLoadingImage || isLoadingDelete ? (
-								<CircularProgress color="primary" size="150px" />
+							<CircularProgress color="primary" size="150px" />
 						) : (
 							<Avatar
 								alt={fullName}

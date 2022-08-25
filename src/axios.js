@@ -1,12 +1,11 @@
 import axios from "axios";
 
+const  {REACT_APP_API_URL} = process.env
 const instance = axios.create({
-  baseURL: "http://localhost:4444"
-  
+  baseURL: REACT_APP_API_URL
 })
 
 instance.defaults.withCredentials = true;
-
 instance
   .interceptors
   .request
@@ -24,11 +23,11 @@ instance
     return config
   }, async (err) => {
     const originalReaquest = err.config
-    if (err.response.status == 403 && err.config && !err.config._isRetry ) {
+    if (err.response.status == 403 && err.config && !err.config._isRetry) {
       originalReaquest._isRetry = true;
       try {
         const refresh = await instance.get("/auth/refresh", {
-          withCredentials:true
+          withCredentials: true
         })
         window
           .localStorage

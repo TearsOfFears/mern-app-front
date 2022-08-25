@@ -10,6 +10,7 @@ import { useQuery } from "react-query";
 import { postsService } from "../reactQuery/posts/posts.service.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { userService } from "../reactQuery/auth/user.service.js";
+import { CSSTransition } from 'react-transition-group';
 export const Account = () => {
 	const { id } = useParams();
 
@@ -31,13 +32,13 @@ export const Account = () => {
 		isPostLoading,
 		posts,
 		userData,
+		isUser:true,
 	};
 	const configRenderAccount = {
 		userData,
 		isLoading,
 		isFetched,
 	};
-// console.log(!isLoading && userData && isSuccess);
 	return (
 		<>
 			<Grid container spacing={3}>
