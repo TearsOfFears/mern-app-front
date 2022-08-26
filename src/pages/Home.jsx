@@ -62,7 +62,6 @@ export const Home = () => {
 		userData: user,
 		isUser: false,
 	};
-
 	return (
 		<>
 			<Typography variant="h4" gutterBottom={false}>
@@ -86,39 +85,13 @@ export const Home = () => {
 
 			<Grid container spacing={4}>
 				<RenderPosts {...configRender} />
-
-				{/* <Grid xs={8} item style={{ maxWidth: "100%" }}>
-					{(posts.isLoading ? [...Array(2)] : posts?.data).map((data, index) =>
-						posts.isLoading ? (
-							<Post key={index} isLoading={true} />
-						) : (
-							<Post
-								id={data._id}
-								title={data.title}
-								imageUrl={data.imageURL.image ? data.imageURL.image : null}
-								authorData={data.author}
-								createdAt={data.createdAt}
-								viewsCount={data.vievsCount}
-								commentsCount={data.commentsCount}
-								likesCount={data.likesCount}
-								disLikesCount={data.disLikesCount}
-								tags={data.tags}
-								isLoading={posts.isLoading}
-								isEditable={user?._id === data.author._id}
-							/>
-						)
-					)}
-				</Grid> */}
-
-				<CSSTransition>
-					<Grid xs={4} item>
-						<TagsBlock items={tags.data} isLoading={tags.isLoading} />
-						<CommentsBlock
-							items={getAllComments.data}
-							isLoading={getAllComments.isLoading}
-						/>
-					</Grid>
-				</CSSTransition>
+				<Grid xs={4} item>
+					<TagsBlock items={tags.data} isLoading={tags.isLoading} />
+					<CommentsBlock
+						items={getAllComments.data}
+						isLoading={getAllComments.isLoading}
+					/>
+				</Grid>
 			</Grid>
 		</>
 	);

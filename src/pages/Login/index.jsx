@@ -50,11 +50,8 @@ export const Login = () => {
 		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: {
-			// email: "nazarTest6@gmail.com",
-			// password: "nazar12345",
-			// fullName: "nazartest123",
-			password: "nazartest123",
-			email: "nazardemchan@gmail.com",
+			email: "admin@gmail.com",
+			password: "admin12345",
 		},
 		mode: "onChange",
 	});
@@ -82,7 +79,7 @@ export const Login = () => {
 		if (loginGoogle.isError) {
 			setOpen(true);
 		}
-	}, [loginGoogle.data,loginGoogle.isError]);
+	}, [loginGoogle.data, loginGoogle.isError]);
 
 	const onSubmit = async (values) => {
 		await mutateAsync(values);

@@ -21,7 +21,7 @@ export const Header = () => {
 		setUser(null);
 		refetch();
 		navigate("/?sort=latest");
-		if (!window.localStorage.getItem("token") && isError) {
+		if (!window.localStorage.getItem("token") || isError) {
 			setUser(null);
 			refetch();
 		}

@@ -8,7 +8,6 @@ $blue: #4361ee;
     background-color: #fff;
     border: 1px solid transparent;
     border-radius: 6px;
-    transition: .3s;
     &:hover {
       border: 1px solid $blue;
       box-shadow: 0 0 0 1px $blue;
@@ -48,6 +47,13 @@ $blue: #4361ee;
     transition: all 0.15s ease-in-out;
     z-index: 100;
   }
+}
+.enter {
+	opacity: 0;
+}
+.enterActive {
+	opacity: 1;
+	transition: opacity .5s ease-in;
 }
 
 

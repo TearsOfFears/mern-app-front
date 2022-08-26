@@ -33,7 +33,7 @@ useEffect(()=>{
     <>
     <UserContext.Provider
               value={{
-                isLoading,
+              isLoading,
               user,
               setUser
             }}> 

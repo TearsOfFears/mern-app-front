@@ -28,11 +28,12 @@ import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import axios from "./../../axios";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useAuth } from "../../hooks/useAuth";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
-	const {data,isAuth} = useAuth();
+	const { data, isAuth } = useAuth();
 	const { id } = useParams();
 	const refresh = useRefresh();
 	const commentById = useCommentsById(id);
@@ -43,7 +44,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 
 		await commentById.refetch();
 	};
-
+	console.log(user);
 	return (
 		<SideBlock title="Коментарі">
 			<List className={clsx(styles.root)}>
@@ -51,77 +52,99 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 					<Typography variant="h6" textAlign="center">
 						Немає коментарів
 					</Typography>
-				)}
-				{(isLoading ? [...Array(5)] : items).map((obj, index) => {
-					const isEditable = !isLoading && user?._id === obj.author._id;
-					return (
-						<React.Fragment key={index}>
-							<ListItem
-								alignItems="flex-start"
-								className={styles.item}
-								style={
-									!isLoading && obj.postId
-										? { cursor: "cursor" }
-										: { cursor: "pointer" }
-								}
-							>
-								<div
-									
-									className={styles.wrapper}
+				)}{" "}
+				<TransitionGroup>
+					{!isLoading &&
+						Array.isArray(items) &&
+						items.map((obj, index) => {
+							const isEditable = !isLoading && user?._id === obj.author._id;
+							return (
+								<CSSTransition
+									key={index}
+									in={!isLoading}
+									timeout={500}
+									classNames={{
+										enter: styles.enter,
+										enterActive: styles.enterActive,
+										enterDone: styles.enterActive,
+									}}
 								>
-									<ListItemAvatar onClick={(e) => navigate(`/account/${obj.author._id}`)}>
-										{isLoading ? (
-											<Skeleton variant="circular" width={40} height={40} />
-										) : (
-											<Avatar
-											className={styles.avatar}
-												alt={obj.author.fullName}
-												src={obj.author.avatar?.image}
-											/>
-										)}
-									</ListItemAvatar>
-									{isLoading ? (
-										<div style={{ display: "flex", flexDirection: "column" }}>
-											<Skeleton variant="text" height={25} width={120} />
-											<Skeleton variant="text" height={18} width={230} />
-										</div>
-									) : (
-										<ListItemText
-											primary={obj.author.fullName}
-											secondary={obj.text}
-											onClick={(e) => navigate(`/posts/${obj.postId}`)}
-										/>
-									)}
-								</div>
-								{!isLoading && isEditable && (
-									<div className={styles.editButtons}>
-										{id && (
-											<Link to={`/posts/${obj.postId}/${obj._id}`}>
-												<IconButton color="primary">
-													<EditIcon />
-												</IconButton>
-											</Link>
-										)}
-
-										<IconButton
-											onClick={(e) => {
-												onClickRemoveComment(obj._id);
-											}}
-											color="secondary"
+									<React.Fragment key={index}>
+										<ListItem
+											alignItems="flex-start"
+											className={styles.item}
+											style={
+												!isLoading && obj.postId
+													? { cursor: "cursor" }
+													: { cursor: "pointer" }
+											}
 										>
-											<DeleteIcon />
-										</IconButton>
-									</div>
-								)}
-							</ListItem>
-							<Divider
-								variant="inset"
-								component="li"
-								className={styles.divider}
-							/>
-						</React.Fragment>
-					);
-				})}
+											<div className={styles.wrapper}>
+												<ListItemAvatar
+													onClick={(e) =>
+														navigate(`/account/${obj.author._id}`)
+													}
+												>
+													{isLoading ? (
+														<Skeleton
+															variant="circular"
+															width={40}
+															height={40}
+														/>
+													) : (
+														<Avatar
+															className={styles.avatar}
+															alt={obj.author.fullName}
+															src={obj.author.avatar?.image}
+														/>
+													)}
+												</ListItemAvatar>
+												{isLoading ? (
+													<div
+														style={{ display: "flex", flexDirection: "column" }}
+													>
+														<Skeleton variant="text" height={25} width={120} />
+														<Skeleton variant="text" height={18} width={230} />
+													</div>
+												) : (
+													<ListItemText
+														primary={obj.author.fullName}
+														secondary={obj.text}
+														onClick={(e) => navigate(`/posts/${obj.postId}`)}
+													/>
+												)}
+											</div>
+											{!isLoading && isEditable && (
+												<div className={styles.editButtons}>
+													{id && (
+														<Link to={`/posts/${obj.postId}/${obj._id}`}>
+															<IconButton color="primary">
+																<EditIcon />
+															</IconButton>
+														</Link>
+													)}
+
+													<IconButton
+														onClick={(e) => {
+															onClickRemoveComment(obj._id);
+														}}
+														color="secondary"
+													>
+														<DeleteIcon />
+													</IconButton>
+												</div>
+											)}
+										</ListItem>
+										<Divider
+											variant="inset"
+											component="li"
+											className={styles.divider}
+										/>
+									</React.Fragment>
+								</CSSTransition>
+							);
+						})}
+				</TransitionGroup>
 			</List>
 			{children}
 		</SideBlock>
