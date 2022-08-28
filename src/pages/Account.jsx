@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import axios from "../axios.js";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchPostsByUser } from "../redux/posts/posts.actions";
 import { Grid, Typography, Item, Input } from "@mui/material";
 import RenderPosts from "../components/RenderPosts/RenderPosts";
 import AccountEdit from "../components/AccountEdit/index.jsx";

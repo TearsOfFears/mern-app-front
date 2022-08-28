@@ -11,7 +11,9 @@ import { Typography } from "@mui/material";
 import { useAuth } from "./hooks/useAuth";
 import { Account } from "./pages/Account";
 import Activate from "./pages/Activate";
-// import { Account } from "./pages/Account";
+import Admin from "./pages/Admin";
+import { WithAdmin } from "./HOC/WithRole";
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -49,6 +51,8 @@ useEffect(()=>{
           <Route path="/login" element={<Login />}/>
           <Route path="/register" element={<Registration />}/>
           <Route path="/activate/:link" element={<Activate />}/>
+      
+          <Route path="/admin" element={    <WithAdmin><Admin /></WithAdmin>}/>
         </Routes>
       </Container>
       </UserContext.Provider>

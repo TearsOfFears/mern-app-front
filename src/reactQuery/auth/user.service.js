@@ -61,11 +61,18 @@ export const userService = {
 
   async logout() {
     return await axios.get(`/auth/logout`)
-    .then((res) => {
-      if (window.localStorage.getItem("token")) {
-        window.localStorage.removeItem("token");
-      }
-      return res.data
-    })
-  }
+      .then((res) => {
+        if (window.localStorage.getItem("token")) {
+          window.localStorage.removeItem("token");
+        }
+        return res.data
+      })
+  },
+  async getAllUsers() {
+    return await axios.get(`/users`)
+      .then((res) => {
+        return res.data
+      })
+  },
+
 }

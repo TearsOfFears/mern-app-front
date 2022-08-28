@@ -14,8 +14,8 @@ export const Header = () => {
 	const refresh = useRefresh();
 	const navigate = useNavigate();
 	const { refetch, isError } = useFetchUser();
-	const { data, isAuth, setUser } = useAuth();
-
+	const { data, isAuth, setUser,isUser,isAdmin,isWritter } = useAuth();
+	const { isLoading } = useContext(UserContext);
 	const onClickLogout = () => {
 		userService.logout();
 		setUser(null);
@@ -26,6 +26,7 @@ export const Header = () => {
 			refetch();
 		}
 	};
+	console.log(data?.roles);
 	return (
 		<div className={styles.root}>
 			<Container maxWidth="lg">
@@ -34,19 +35,40 @@ export const Header = () => {
 						<div>Nazar BLOG</div>
 					</Link>
 					<div className={styles.buttons}>
-						{isAuth ? (
+						{isAuth && !isLoading ? (
 							<>
-								<Button
-									variant="contained"
-									style={{ background: "black" }}
-									onClick={(e) => navigate(`/account/${data._id}`)}
-								>
-									{data.avatar ? <img src={data.avatar.image} alt="" style={{width:"1.8em",height:"1.8em",borderRadius:"100%"}}/> :
-									<AccountCircle color="inherit" />}
-								</Button>
-								<Link to="/addPost">
-									<Button variant="contained">Написати статтю</Button>
-								</Link>
+								{isUser && (
+									<Button
+										variant="contained"
+										style={{ background: "black" }}
+										onClick={(e) => navigate(`/account/${data._id}`)}
+									>
+										{data.avatar ? (
+											<img
+												src={data.avatar.image}
+												alt=""
+												style={{
+													width: "1.8em",
+													height: "1.8em",
+													borderRadius: "100%",
+												}}
+											/>
+										) : (
+											<AccountCircle color="inherit" />
+										)}
+									</Button>
+								)}
+
+								{isWritter && (
+									<Link to="/addPost">
+										<Button variant="contained">Написати статтю</Button>
+									</Link>
+								)}
+								{isAdmin && (
+									<Link to="/admin">
+										<Button variant="contained">Панель </Button>
+									</Link>
+								)}
 								<Button
 									onClick={onClickLogout}
 									variant="contained"

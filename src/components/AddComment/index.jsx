@@ -3,13 +3,7 @@ import styles from "./AddComment.module.scss";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-	createComment,
-	fetchCommentsById,
-} from "../../redux/comments/comments.actions";
-import { fetchPosts } from "../../redux/posts/posts.actions";
 import axios from "./../../axios";
 import UserContext from "../../reactQuery/context";
 import { useRefresh } from "../../hooks/useRefresh";
