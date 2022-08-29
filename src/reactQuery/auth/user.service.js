@@ -74,5 +74,16 @@ export const userService = {
         return res.data
       })
   },
-
+  async deleteUser(id) {
+    return await axios.delete(`/users/${id}`)
+  },
+  async editUserProfile({
+    id,
+    fields
+  }) {
+    return await axios.patch(`/users/${id}`, fields)
+      .then((res) => {
+        return res.data
+      })
+  },
 }

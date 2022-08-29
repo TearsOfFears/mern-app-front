@@ -26,7 +26,6 @@ export const Header = () => {
 			refetch();
 		}
 	};
-	console.log(data?.roles);
 	return (
 		<div className={styles.root}>
 			<Container maxWidth="lg">
