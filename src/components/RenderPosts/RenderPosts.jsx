@@ -9,6 +9,8 @@ import styles from "./RenderPosts.module.scss";
 const RenderPosts = ({ isPostLoading, posts, userData, isUser }) => {
 	const { data: authUserData, isAuth } = useAuth();
 	const { id } = useParams();
+	// console.log("userData.roles",);
+	// || userData.roles.includes("admin")
 	return (
 		<>
 			<Grid item xs={isUser ? 7 : 8}>
@@ -59,7 +61,7 @@ const RenderPosts = ({ isPostLoading, posts, userData, isUser }) => {
 										disLikesCount={data.disLikesCount}
 										tags={data.tags}
 										isLoading={isPostLoading}
-										isEditable={userData?._id === data.author._id}
+										isEditable={userData?._id === data.author._id || userData?.roles.includes("admin") }
 									/>
 								</CSSTransition>
 							)

@@ -14,7 +14,7 @@ export const Header = () => {
 	const refresh = useRefresh();
 	const navigate = useNavigate();
 	const { refetch, isError } = useFetchUser();
-	const { data, isAuth, setUser,isUser,isAdmin,isWritter } = useAuth();
+	const { data, isAuth, setUser, isUser, isAdmin, isWritter } = useAuth();
 	const { isLoading } = useContext(UserContext);
 	const onClickLogout = () => {
 		userService.logout();
@@ -58,6 +58,10 @@ export const Header = () => {
 									</Button>
 								)}
 
+								<Link to="/chat">
+									<Button variant="contained">Чат</Button>
+								</Link>
+
 								{isWritter && (
 									<Link to="/addPost">
 										<Button variant="contained">Написати статтю</Button>
@@ -65,7 +69,7 @@ export const Header = () => {
 								)}
 								{isAdmin && (
 									<Link to="/admin">
-										<Button variant="contained">Панель </Button>
+										<Button variant="contained">Адмінка </Button>
 									</Link>
 								)}
 								<Button
@@ -80,6 +84,9 @@ export const Header = () => {
 							<>
 								<Link to="/login">
 									<Button variant="outlined">Ввійти</Button>
+								</Link>
+								<Link to="/chat">
+									<Button variant="contained">Чат</Button>
 								</Link>
 								<Link to="/register">
 									<Button variant="contained">Створити аккаунт</Button>

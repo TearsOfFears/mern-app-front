@@ -15,41 +15,33 @@ import EditIcon from "@mui/icons-material/Edit";
 import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import styles from "./CommentsBlock.module.scss";
+import styles from "./index.module.scss";
 import { Typography } from "@mui/material";
 import UserContext from "./../../reactQuery/context";
-import {
-	useComments,
-	useCommentsById,
-	useDeleteComment,
-} from "./../../reactQuery/comments/comments.hooks";
+import { chatService } from "../../reactQuery/chat/chat.service";
 import { useMutation } from "react-query";
-import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import axios from "./../../axios";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useAuth } from "../../hooks/useAuth";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-export const CommentsBlock = ({ items, isLoading, children }) => {
+export const ChatBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
 	const { data, isAuth } = useAuth();
 	const { id } = useParams();
 	const refresh = useRefresh();
-	const commentById = useCommentsById(id);
-	const removeComment = useMutation(commentsSevice.deleteComment);
+	const removeMessage = useMutation(chatService.deleteMessages);
 	const onClickRemoveComment = async (id) => {
-		await removeComment.mutateAsync(id);
-		refresh("fetch comments");
-
-		await commentById.refetch();
+		await removeMessage.mutateAsync(id);
+		refresh("fetch Messages");
 	};
 	return (
-		<SideBlock title="Коментарі">
+		<SideBlock title="Повідомлення">
 			<List className={clsx(styles.root)}>
 				{!isLoading && items.length === 0 && (
 					<Typography variant="h6" textAlign="center">
-						Немає коментарів
+						Немає повідомлень
 					</Typography>
 				)}{" "}
 				<TransitionGroup>
@@ -109,20 +101,13 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 													<ListItemText
 														primary={obj.author.fullName}
 														secondary={obj.text}
-														onClick={(e) => navigate(`/posts/${obj.postId}`)}
+														
+														onClick={(e) => navigate(`/chat/${obj._id}`)}
 													/>
 												)}
 											</div>
 											{!isLoading && isEditable && (
 												<div className={styles.editButtons}>
-													{id && (
-														<Link to={`/posts/${obj.postId}/${obj._id}`}>
-															<IconButton color="primary">
-																<EditIcon />
-															</IconButton>
-														</Link>
-													)}
-
 													<IconButton
 														onClick={(e) => {
 															onClickRemoveComment(obj._id);

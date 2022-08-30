@@ -35,16 +35,17 @@ const EditToolBar = ({ outputArr, editRowsModel, cell, arrDelete }) => {
 
 		await outputArr.map((data) => {
 			const fields = {
-				fullName:data.fullName,
-				roles:data.roles,
+				fullName: data.fullName,
+				roles: data.roles.split(','),
 			};
 			const passProps = {
 				fields,
-				id:data._id
+				id: data._id,
 			};
-			 return change(passProps);
+			return change(passProps);
 		});
 	};
+	console.log(editRowsModel);
 	return (
 		<Box
 			sx={{
@@ -56,19 +57,10 @@ const EditToolBar = ({ outputArr, editRowsModel, cell, arrDelete }) => {
 			<Button
 				onClick={handleSaveOrEdit}
 				//   onMouseDown={handleMouseDown}
-				disabled={editRowsModel.length === 0}
+				disabled={Array.isArray(outputArr) &&  outputArr.length === 0}
 				variant="outlined"
 			>
 				{editRowsModel && "Save"}
-			</Button>
-			<Button
-				//   onClick={handleCancel}
-				//   onMouseDown={handleMouseDown}
-				disabled={cell === "view"}
-				variant="outlined"
-				sx={{ ml: 1 }}
-			>
-				Cancel
 			</Button>
 			<Button
 				onClick={handleDelete}

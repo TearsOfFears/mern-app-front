@@ -1,67 +1,70 @@
 import React, { useState, useEffect, useContext } from "react";
-import styles from "./AddComment.module.scss";
+import styles from "./index.module.scss";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../../axios";
+import axios from "./../../axios";
 import UserContext from "../../reactQuery/context";
 import { useRefresh } from "../../hooks/useRefresh";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { commentsSevice } from "../../reactQuery/comments/comments.service";
 import { useCommentsById } from "../../reactQuery/comments/comments.hooks";
 import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
-export const Index = ({ textEdit }) => {
+import { chatService } from "../../reactQuery/chat/chat.service";
+export const AddMessage = ({ textEdit }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
-	const { id, commentId } = useParams();
+	const { id } = useParams();
 	const navigate = useNavigate();
-	const currentComments = useCommentsById(id);
-	const createComments = useMutation(commentsSevice.createComment, {
+	const allMessages = useQuery(["fetch Messages"], () =>
+		chatService.getAllMessages()
+	);
+	const createMessage = useMutation(chatService.createMessage, {
 		onSuccess: () => {
-			currentComments.refetch();
+			allMessages.refetch();
 		},
 	});
-
-	const handleSendComment = async () => {
+	const handleSendMessage = async () => {
 		setText("");
-		if (commentId) {
-			const fields = { postId: id, text };
-			axios.patch(`/comment/${commentId}`, fields).then(() => {
+		if (id) {
+			const fields = { id: id, text };
+			axios.patch(`api/messages/update/${id}`, fields).then(() => {
 				setText("");
-				navigate(`/posts/${id}`);
-				currentComments.refetch();
+				navigate("/chat")
+				allMessages.refetch();
 			});
 		} else {
 			const params = {
-				postId: id,
 				text,
+				userId: data._id,
 			};
-			await createComments.mutateAsync(params);
+			await createMessage.mutateAsync(params);
 		}
 	};
 
 	useEffect(() => {
-		if (commentId) {
-			currentComments.data
-				.filter((obj) => commentId === obj._id)
+		if (id) {
+			console.log("id", id);
+			allMessages.data
+				.filter((obj) => id === obj._id)
 				.map((data) => setText(data.text));
 		} else {
 			setText("");
 		}
-	}, [commentId]);
-	if (currentComments.isLoading) return <Typography> Loading...</Typography>;
+	}, [id]);
+	if (allMessages.isLoading) return <Typography> Loading...</Typography>;
 
 	return (
 		<>
-			<div className={styles.root}>
+			<div className={styles.rootWrite}>
 				{isAuth ? (
 					<>
 						<Avatar classes={{ root: styles.avatar }} src={data.avatar.image} />
 						<div className={styles.form}>
 							<TextField
-								label="Написати коментар"
+								label="Введіть текст тут..."
 								variant="outlined"
 								maxRows={10}
 								multiline
@@ -72,14 +75,14 @@ export const Index = ({ textEdit }) => {
 							<Button
 								variant="contained"
 								type="submit"
-								onClick={(e) => handleSendComment()}
+								onClick={(e) => handleSendMessage()}
 							>
-								Відравити
+								{id ? "Оновити" : "Відравити"}
 							</Button>
 						</div>
 					</>
 				) : (
-					<Typography variant="h6">Увійдіть щоб написати коментар</Typography>
+					<Typography variant="h6">Увійдіть щоб написати повідомлення</Typography>
 				)}
 			</div>
 		</>

@@ -75,7 +75,7 @@ const Admin = () => {
 	const [arrDelete, setArr] = useState([]);
 	const [outputArr, setOut] = useState([]);
 	const [editRowsModel, setEditRowsModel] = React.useState([]);
-	const { data, isLoading } = useQuery(["fetch Users"], () =>
+	const { data, isLoading,isFetching } = useQuery(["fetch Users"], () =>
 		userService.getAllUsers()
 	);
 
@@ -127,7 +127,7 @@ console.log(outputArr);
 				checkboxSelection
 				disableSelectionOnClick
 				autoHeight={true}
-				loading={isLoading}
+				loading={isFetching}
 				editMode="row"
 				// apiRef={apiRef}
 				editRowsModel={editRowsModel}
