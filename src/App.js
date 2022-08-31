@@ -16,11 +16,11 @@ import { WithAdmin } from "./HOC/WithRole";
 import Chat from "./pages/Chat";
 
 
+
 function App() {
   const [user, setUser] = useState(null);
  const {data,isLoading,refetch,isError} = useFetchUser()
  const navigate = useNavigate();
-
 useEffect(()=>{
   if(data){
     setUser(data)

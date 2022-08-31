@@ -91,6 +91,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 															height={40}
 														/>
 													) : (
+														
 														<Avatar
 															className={styles.avatar}
 															alt={obj.author.fullName}

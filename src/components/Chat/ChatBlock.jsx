@@ -24,6 +24,7 @@ import axios from "./../../axios";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useAuth } from "../../hooks/useAuth";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import AvatarStatus from "./AvatarStatus/AvatarStatus";
 
 export const ChatBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
@@ -34,7 +35,6 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 	const removeMessage = useMutation(chatService.deleteMessages);
 	const onClickRemoveComment = async (id) => {
 		await removeMessage.mutateAsync(id);
-		refresh("fetch Messages");
 	};
 	return (
 		<SideBlock title="Повідомлення">
@@ -83,11 +83,12 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 															height={40}
 														/>
 													) : (
-														<Avatar
-															className={styles.avatar}
-															alt={obj.author.fullName}
-															src={obj.author.avatar?.image}
-														/>
+														<AvatarStatus data =  {obj.author}/>
+														// <Avatar
+														// 	className={styles.avatar}
+														// 	alt={obj.author.fullName}
+														// 	src={obj.author.avatar?.image}
+														// />
 													)}
 												</ListItemAvatar>
 												{isLoading ? (

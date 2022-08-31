@@ -1,0 +1,35 @@
+.root {
+	position: relative;
+	.avatar {
+		margin-right: 15px;
+	}
+	.circle {
+		width: 10px;
+		height: 10px;
+		box-shadow: 0 0 0 2px white;
+        background-color: #e2dfdf;
+		position: absolute;
+		z-index: 3;
+		bottom: 0;
+		right: 15px;
+		border-radius: 50%;
+        
+	}
+	.online {
+        background-color: #44b700;
+    }
+    .offline {
+        background-color: #e2dfdf;
+    }
+}
+
+@keyframes ripple {
+	0% {
+		transform: "scale(.8)";
+		opacity: 1;
+	}
+	100% {
+		transform: "scale(2.4)";
+		opacity: 0;
+	}
+}

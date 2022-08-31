@@ -13,7 +13,7 @@ import { useCommentsById } from "../../reactQuery/comments/comments.hooks";
 import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../reactQuery/chat/chat.service";
-export const AddMessage = ({ textEdit }) => {
+export const AddMessage = ({ textEdit, socket }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
 	const { id } = useParams();
@@ -32,7 +32,7 @@ export const AddMessage = ({ textEdit }) => {
 			const fields = { id: id, text };
 			axios.patch(`api/messages/update/${id}`, fields).then(() => {
 				setText("");
-				navigate("/chat")
+				navigate("/chat");
 				allMessages.refetch();
 			});
 		} else {
@@ -40,13 +40,16 @@ export const AddMessage = ({ textEdit }) => {
 				text,
 				userId: data._id,
 			};
-			await createMessage.mutateAsync(params);
+			socket.current.emit("sendMessage", {
+				author: data._id,
+				text,
+			});
+			// await createMessage.mutateAsync(params);
 		}
 	};
 
 	useEffect(() => {
 		if (id) {
-			console.log("id", id);
 			allMessages.data
 				.filter((obj) => id === obj._id)
 				.map((data) => setText(data.text));
@@ -82,7 +85,9 @@ export const AddMessage = ({ textEdit }) => {
 						</div>
 					</>
 				) : (
-					<Typography variant="h6">Увійдіть щоб написати повідомлення</Typography>
+					<Typography variant="h6">
+						Увійдіть щоб написати повідомлення
+					</Typography>
 				)}
 			</div>
 		</>
