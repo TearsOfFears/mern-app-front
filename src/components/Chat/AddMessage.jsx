@@ -51,7 +51,11 @@ export const AddMessage = ({ textEdit, socket }) => {
 	useEffect(() => {
 		if (id) {
 			allMessages.data
-				.filter((obj) => id === obj._id)
+				.filter((obj) => {
+					{
+						return id === obj._id;
+					}
+				})
 				.map((data) => setText(data.text));
 		} else {
 			setText("");

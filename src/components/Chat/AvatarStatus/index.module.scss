@@ -1,8 +1,16 @@
+$blue: #4361ee;
 .root {
 	position: relative;
 	.avatar {
-		margin-right: 15px;
+		border: 2px solid transparent;
+		display: flex;
+		transition: 0.3s;
+		&:hover {
+			border: 2px solid $blue;
+			transition: 0.3s;
+		}
 	}
+
 	.circle {
 		width: 10px;
 		height: 10px;
@@ -13,7 +21,22 @@
 		bottom: 0;
 		right: 15px;
 		border-radius: 50%;
-        
+	}
+
+	.avatarRight{
+		margin-left:auto;
+	}
+
+	.circleRight {
+		width: 10px;
+		height: 10px;
+		box-shadow: 0 0 0 2px white;
+        background-color: #e2dfdf;
+		position: absolute;
+		z-index: 3;
+		bottom: 0;
+		left: 45px;
+		border-radius: 50%;
 	}
 	.online {
         background-color: #44b700;

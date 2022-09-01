@@ -36,8 +36,8 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 	const onClickRemoveComment = async (id) => {
 		await removeMessage.mutateAsync(id);
 	};
-	if(isLoading){
-		return <h3>Loading...</h3>
+	if (isLoading) {
+		return <h3>Loading...</h3>;
 	}
 	return (
 		<SideBlock title="Повідомлення">
@@ -51,7 +51,6 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 					{!isLoading &&
 						Array.isArray(items) &&
 						items.map((obj, index) => {
-							console.log(obj);
 							const isEditable = !isLoading && user?._id === obj.author._id;
 							return (
 								<CSSTransition
@@ -67,7 +66,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 									<React.Fragment key={index}>
 										<ListItem
 											alignItems="flex-start"
-											className={styles.item}
+											className={
+												obj.author._id === user?._id
+													? [styles.item, styles.itemReverse]
+													: [styles.item, styles.itemDisable]
+											}
 											style={
 												!isLoading && obj.postId
 													? { cursor: "cursor" }
@@ -87,7 +90,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 															height={40}
 														/>
 													) : (
-														<AvatarStatus data={obj.author} />
+														<AvatarStatus
+															direction= {obj.author._id === user?._id}
+															data={obj.author}
+															status={obj.author.status}
+														/>
 													)}
 												</ListItemAvatar>
 												{isLoading ? (
@@ -101,6 +108,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 													<ListItemText
 														primary={obj.author.fullName}
 														secondary={obj.text}
+														className={clsx({
+															[styles.noClick]: obj.author._id !== user?._id,
+															[styles.reverseTest]:
+																obj.author._id === user?._id,
+														})}
 														onClick={(e) => navigate(`/chat/${obj._id}`)}
 													/>
 												)}
@@ -121,7 +133,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 										<Divider
 											variant="inset"
 											component="li"
-											className={styles.divider}
+											className={
+												obj.author._id === user?._id
+													? styles.dividerReverse
+													: styles.divider
+											}
 										/>
 									</React.Fragment>
 								</CSSTransition>

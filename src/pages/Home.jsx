@@ -36,7 +36,7 @@ export const Home = () => {
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
 	useEffect(()=>{
-		!isLoading && socket.emit("addUser",user?._id)
+		!isLoading && user && socket.emit("addUser",user._id)
 	},[isLoading])
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");

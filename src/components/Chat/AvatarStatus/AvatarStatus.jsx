@@ -2,17 +2,20 @@ import { Avatar } from "@mui/material";
 import React from "react";
 import styles from "./index.module.scss";
 import clsx from "clsx";
-const AvatarStatus = ({ data }) => {
+const AvatarStatus = ({ data, status,direction }) => {
 	return (
 		<div className={styles.root}>
 			<span
 				className={clsx(styles.circle, {
-					[styles.online]: data.status === "online",
-					[styles.offline]: data.status === "offline",
+					[styles.circleRight]: direction,
+					[styles.online]: status === "online",
+					[styles.offline]: status === "offline",
 				})}
 			></span>
 			<Avatar
-				className={styles.avatar}
+				className={clsx (styles.avatar,{
+					[styles.avatarRight]: direction,
+				})}
 				alt={data.fullName}
 				src={data.avatar?.image}
 			/>

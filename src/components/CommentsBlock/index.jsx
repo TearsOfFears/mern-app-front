@@ -29,6 +29,7 @@ import axios from "./../../axios";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useAuth } from "../../hooks/useAuth";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import AvatarStatus from "../Chat/AvatarStatus/AvatarStatus";
 
 export const CommentsBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
@@ -41,7 +42,6 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 	const onClickRemoveComment = async (id) => {
 		await removeComment.mutateAsync(id);
 		refresh("fetch comments");
-
 		await commentById.refetch();
 	};
 	return (
@@ -91,12 +91,7 @@ export const CommentsBlock = ({ items, isLoading, children }) => {
 															height={40}
 														/>
 													) : (
-														
-														<Avatar
-															className={styles.avatar}
-															alt={obj.author.fullName}
-															src={obj.author.avatar?.image}
-														/>
+														<AvatarStatus data={obj.author} status={obj.author.status}/>
 													)}
 												</ListItemAvatar>
 												{isLoading ? (

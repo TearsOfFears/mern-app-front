@@ -11,24 +11,27 @@ import { socket } from "../reactQuery/socket.js";
 import { io } from "socket.io-client";
 import { useRef } from "react";
 import { SocketContext } from "../reactQuery/context/socket";
-const { REACT_APP_API_URL } = process.env;
 const Chat = () => {
 	const { data, isLoading } = useAuth();
 	const [messages, setMessages] = useState([]);
+	const [users, setUsers] = useState([]);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
-	const socket = useContext(SocketContext)
+	const socket = useContext(SocketContext)      
 	// const socket = useRef();
 	const allMessages = useQuery(
 		["fetch Messages"],
 		() => chatService.getAllMessages(),
 	);
+	useEffect(()=>{
+		 user && socket.emit("addUser",user._id)
+	},[])
 	useEffect(() => {
 		socket.on("getUsers", (data) => {
-				console.log(data);
+			setUsers(data);
 			});
-	}, [isLoading]);
-
+	}, []);
+console.log(users);
 	useEffect(() => {
 		const handleSetMessage = (data) => {
 			console.log("MESAGE",data);
