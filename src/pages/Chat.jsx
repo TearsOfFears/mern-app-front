@@ -6,45 +6,51 @@ import { ChatBlock } from "../components/Chat/ChatBlock";
 import { useAuth } from "../hooks/useAuth";
 import { chatService } from "../reactQuery/chat/chat.service";
 import { useComments } from "../reactQuery/comments/comments.hooks";
-import UserContext from "../reactQuery/context";
+import UserContext from "../reactQuery/context/context";
 import { socket } from "../reactQuery/socket.js";
 import { io } from "socket.io-client";
 import { useRef } from "react";
+import { SocketContext } from "../reactQuery/context/socket";
 const { REACT_APP_API_URL } = process.env;
 const Chat = () => {
 	const { data, isLoading } = useAuth();
 	const [messages, setMessages] = useState([]);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
-	// const { user } = useContext(UserContext);
-	const socket = useRef();
+	const { user } = useContext(UserContext);
+	const socket = useContext(SocketContext)
+	// const socket = useRef();
 	const allMessages = useQuery(
 		["fetch Messages"],
 		() => chatService.getAllMessages(),
-		{
-			onSuccess: (data) => {
-				setMessages(data);
-			},
-		}
 	);
 	useEffect(() => {
-		socket.current = io(REACT_APP_API_URL);
-		!isLoading && data && socket.current.emit("addUser", data._id);
-		socket.current.on("getUsers", (data) => {
-			console.log(data);
-		});
-	}, [data, isLoading]);
-	
+		socket.on("getUsers", (data) => {
+				console.log(data);
+			});
+	}, [isLoading]);
+
 	useEffect(() => {
-		socket.current.on("getMessage", (data) => {
+		const handleSetMessage = (data) => {
+			console.log("MESAGE",data);
 			setArrivalMessages(data);
-		});
-	}, [data,]);
+		}
+		socket.on("getMessage",handleSetMessage );
+		return () => {
+			socket.off("getMessage", handleSetMessage);
+		  };
+	}, []);
 	useEffect(() => {
-		arrivalMessages && setMessages((prev) => [...prev, arrivalMessages]);
+		if(!allMessages.isLoading && allMessages.data.length>0){
+			setMessages(allMessages.data);
+		}
+	}, [allMessages.data]);
+
+	useEffect(() => {
+		Object.keys(arrivalMessages).length>0 && setMessages((prev) => [...prev,arrivalMessages]);
 	}, [arrivalMessages]);
 	return (
-		<ChatBlock items={messages} isLoading={allMessages.isLoading}>
-			<AddMessage socket={socket}/>
+		<ChatBlock items={messages} isLoading={allMessages.isFetching}>
+			<AddMessage socket={socket} />
 		</ChatBlock>
 	);
 };

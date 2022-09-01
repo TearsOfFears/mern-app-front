@@ -1,5 +1,5 @@
 import {useContext} from "react"
-import UserContext from "../reactQuery/context"
+import UserContext from "../reactQuery/context/context"
 
 export const useAuth = ()=>{
     const {user,isLoading, setUser} = useContext(UserContext)

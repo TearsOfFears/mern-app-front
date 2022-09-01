@@ -2,7 +2,7 @@ import axios from "../../axios"
 import {
   useContext
 } from "react"
-import UserContext from "../context"
+import UserContext from "../context/context"
 
 export const chatService = {
   async createMessage(params) {

@@ -9,7 +9,7 @@ import Loader from "../components/Loader"
 import {
     useFetchUser
 } from "../reactQuery/auth/user.hooks"
-import UserContext from "../reactQuery/context"
+import UserContext from "../reactQuery/context/context"
 
 export default (roleCheck) => {
     const navigate = useNavigate()

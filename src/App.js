@@ -5,7 +5,7 @@ import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import { userService } from "./reactQuery/auth/user.service";
 import { useQuery } from "react-query";
-import UserContext from "./reactQuery/context";
+import UserContext from "./reactQuery/context/context";
 import { useFetchUser } from "./reactQuery/auth/user.hooks";
 import { Typography } from "@mui/material";
 import { useAuth } from "./hooks/useAuth";
@@ -14,6 +14,7 @@ import Activate from "./pages/Activate";
 import Admin from "./pages/Admin";
 import { WithAdmin } from "./HOC/WithRole";
 import Chat from "./pages/Chat";
+import { SocketContext,socket } from "./reactQuery/context/socket.js";
 
 
 
@@ -40,6 +41,7 @@ useEffect(()=>{
               user,
               setUser
             }}> 
+      <SocketContext.Provider value={socket}>
       <Header />
       <Container maxWidth="lg">
         <Routes>
@@ -57,6 +59,7 @@ useEffect(()=>{
           <Route path="/admin" element={    <WithAdmin><Admin /></WithAdmin>}/>
         </Routes>
       </Container>
+      </SocketContext.Provider>
       </UserContext.Provider>
     </>
   );

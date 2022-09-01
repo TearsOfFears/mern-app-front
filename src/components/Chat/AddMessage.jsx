@@ -5,7 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "./../../axios";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useMutation, useQuery } from "react-query";
 import { commentsSevice } from "../../reactQuery/comments/comments.service";
@@ -40,7 +40,7 @@ export const AddMessage = ({ textEdit, socket }) => {
 				text,
 				userId: data._id,
 			};
-			socket.current.emit("sendMessage", {
+			socket.emit("sendMessage", {
 				author: data._id,
 				text,
 			});

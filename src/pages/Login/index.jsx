@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { userService } from "../../reactQuery/auth/user.service";
 import { useContext } from "react";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { useAuth } from "../../hooks/useAuth";
 import { useFetchUser, useLogin } from "../../reactQuery/auth/user.hooks";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";

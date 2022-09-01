@@ -6,7 +6,7 @@ import { CommentsBlock } from "../components/CommentsBlock";
 import ReactMarkdown from "react-markdown";
 import { useFetchCurrentPost } from "../reactQuery/posts/posts.hooks";
 import { useCommentsById } from "../reactQuery/comments/comments.hooks";
-import UserContext from "../reactQuery/context";
+import UserContext from "../reactQuery/context/context";
 import { useFetchUser } from "../reactQuery/auth/user.hooks";
 
 export const FullPost = () => {

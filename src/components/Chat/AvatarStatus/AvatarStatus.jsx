@@ -3,7 +3,6 @@ import React from "react";
 import styles from "./index.module.scss";
 import clsx from "clsx";
 const AvatarStatus = ({ data }) => {
-    console.log(data.status === "online");
 	return (
 		<div className={styles.root}>
 			<span

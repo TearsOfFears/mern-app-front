@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { userService } from "./../../reactQuery/auth/user.service";
 import { useRefresh } from "../../hooks/useRefresh";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { useFetchUser } from "../../reactQuery/auth/user.hooks";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 export const Header = () => {

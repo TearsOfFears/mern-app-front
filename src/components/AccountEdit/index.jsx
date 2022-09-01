@@ -18,7 +18,7 @@ import { useMutation } from "react-query";
 import { userService } from "../../reactQuery/auth/user.service";
 import { useAuth } from "../../hooks/useAuth";
 import { useMemo } from "react";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { services } from "../../reactQuery/service";
 function AccountEdit({ userData, isLoading, isFetched }) {
 	const [email, setEmail] = useState("");

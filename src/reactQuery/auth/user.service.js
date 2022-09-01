@@ -2,7 +2,7 @@ import axios from "../../axios"
 import {
   useContext
 } from "react"
-import UserContext from "../../reactQuery/context"
+import UserContext from "../context/context"
 
 export const userService = {
   async loginUser(params) {

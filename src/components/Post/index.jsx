@@ -15,7 +15,7 @@ import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
 import { Button } from "@mui/material";
 import { useContext } from "react";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { useAuth } from "../../hooks/useAuth";
 import { useMutation, useQuery } from "react-query";
 import { commentsSevice } from "../../reactQuery/comments/comments.service";

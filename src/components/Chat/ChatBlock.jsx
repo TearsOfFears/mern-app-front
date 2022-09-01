@@ -17,7 +17,7 @@ import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import { Typography } from "@mui/material";
-import UserContext from "./../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import { chatService } from "../../reactQuery/chat/chat.service";
 import { useMutation } from "react-query";
 import axios from "./../../axios";
@@ -36,6 +36,9 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 	const onClickRemoveComment = async (id) => {
 		await removeMessage.mutateAsync(id);
 	};
+	if(isLoading){
+		return <h3>Loading...</h3>
+	}
 	return (
 		<SideBlock title="Повідомлення">
 			<List className={clsx(styles.root)}>
@@ -48,6 +51,7 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 					{!isLoading &&
 						Array.isArray(items) &&
 						items.map((obj, index) => {
+							console.log(obj);
 							const isEditable = !isLoading && user?._id === obj.author._id;
 							return (
 								<CSSTransition
@@ -83,12 +87,7 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 															height={40}
 														/>
 													) : (
-														<AvatarStatus data =  {obj.author}/>
-														// <Avatar
-														// 	className={styles.avatar}
-														// 	alt={obj.author.fullName}
-														// 	src={obj.author.avatar?.image}
-														// />
+														<AvatarStatus data={obj.author} />
 													)}
 												</ListItemAvatar>
 												{isLoading ? (
@@ -102,7 +101,6 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 													<ListItemText
 														primary={obj.author.fullName}
 														secondary={obj.text}
-														
 														onClick={(e) => navigate(`/chat/${obj._id}`)}
 													/>
 												)}

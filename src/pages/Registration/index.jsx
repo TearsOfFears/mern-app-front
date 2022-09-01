@@ -17,7 +17,7 @@ import Loader from "../../components/Loader";
 import { useLogin } from "../../reactQuery/auth/user.hooks";
 import { useState } from "react";
 import { useEffect } from "react";
-import UserContext from "../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import ModalCustom from "../../components/ModalCustom/ModalCustom";
 
 export const Registration = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useContext } from "react";
+import React, { useState, useEffect, useMemo, useContext, useRef } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
@@ -11,19 +11,22 @@ import { postsService } from "../reactQuery/posts/posts.service";
 import { commentsSevice } from "../reactQuery/comments/comments.service";
 import { Typography } from "@mui/material";
 import queryString from "query-string";
-import UserContext from "../reactQuery/context";
+import UserContext from "../reactQuery/context/context";
 import { useFetchPosts, useFetchTags } from "../reactQuery/posts/posts.hooks";
 import { useComments } from "../reactQuery/comments/comments.hooks";
 import { useLayoutEffect } from "react";
 import { useFetchUser } from "../reactQuery/auth/user.hooks";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import RenderPosts from "../components/RenderPosts/RenderPosts";
+import { SocketContext } from "../reactQuery/context/socket";
+
 export const Home = () => {
 	const params = { sort: "latest" };
 	const search = useLocation().search;
+	const socket = useContext(SocketContext)
 	const queryStringSeach = queryString.parse(useLocation().search);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const { user, setUser } = useContext(UserContext);
+	const { user, isLoading, setUser } = useContext(UserContext);
 	const posts = useFetchPosts(queryStringSeach);
 	const tags = useFetchTags();
 	const userRefresh = useFetchUser();
@@ -32,7 +35,9 @@ export const Home = () => {
 	const [sort, setSort] = useState(
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
-
+	useEffect(()=>{
+		!isLoading && socket.emit("addUser",user?._id)
+	},[isLoading])
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {

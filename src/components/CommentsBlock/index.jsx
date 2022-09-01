@@ -17,7 +17,7 @@ import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import styles from "./CommentsBlock.module.scss";
 import { Typography } from "@mui/material";
-import UserContext from "./../../reactQuery/context";
+import UserContext from "../../reactQuery/context/context";
 import {
 	useComments,
 	useCommentsById,
