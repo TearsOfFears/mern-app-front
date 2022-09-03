@@ -17,42 +17,64 @@ const Chat = () => {
 	const [users, setUsers] = useState([]);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
-	const socket = useContext(SocketContext)      
+	const socket = useContext(SocketContext);
 	// const socket = useRef();
-	const allMessages = useQuery(
-		["fetch Messages"],
-		() => chatService.getAllMessages(),
+	const allMessages = useQuery(["fetch Messages"], () =>
+		chatService.getAllMessages()
 	);
-	useEffect(()=>{
-		 user && socket.emit("addUser",user._id)
-	},[])
+	useEffect(() => {
+		user && socket.emit("addUser", user._id);
+	}, []);
 	useEffect(() => {
 		socket.on("getUsers", (data) => {
 			setUsers(data);
-			});
+		});
 	}, []);
-console.log(users);
 	useEffect(() => {
 		const handleSetMessage = (data) => {
-			console.log("MESAGE",data);
+			console.log("MESAGE", data);
 			setArrivalMessages(data);
-		}
-		socket.on("getMessage",handleSetMessage );
+		};
+		socket.on("getMessage", handleSetMessage);
 		return () => {
 			socket.off("getMessage", handleSetMessage);
-		  };
+		};
 	}, []);
 	useEffect(() => {
-		if(!allMessages.isLoading && allMessages.data.length>0){
+		const handleSetMessageUpdated = (data) => {
+			setMessages((prev) =>
+				prev.map((obj) => (obj._id === data._id ? data : obj))
+			);
+			allMessages.refetch();
+		};
+		socket.on("getUpdatedMessage", handleSetMessageUpdated);
+		return () => {
+			socket.off("getUpdatedMessage", handleSetMessageUpdated);
+		};
+	}, []);
+	useEffect(() => {
+		const handleSetMessageUpdated = (data) => {
+			setMessages((prev) => prev.filter((obj) => obj._id !== data._id));
+		};
+		socket.on("getDelatedMessage", handleSetMessageUpdated);
+		return () => {
+			socket.off("getDelatedMessage", handleSetMessageUpdated);
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!allMessages.isLoading && allMessages.data.length > 0) {
 			setMessages(allMessages.data);
 		}
 	}, [allMessages.data]);
 
 	useEffect(() => {
-		Object.keys(arrivalMessages).length>0 && setMessages((prev) => [...prev,arrivalMessages]);
+		Object.keys(arrivalMessages).length > 0 &&
+			setMessages((prev) => [...prev, arrivalMessages]);
 	}, [arrivalMessages]);
+
 	return (
-		<ChatBlock items={messages} isLoading={allMessages.isFetching}>
+		<ChatBlock items={messages} isLoading={allMessages.isLoading}>
 			<AddMessage socket={socket} />
 		</ChatBlock>
 	);

@@ -84,7 +84,18 @@ $blue: #4361ee;
 	opacity: 1;
 	transition: opacity 0.5s ease-in;
 }
-
+.exitActive {
+	opacity: 1;
+	transition: opacity 0.5s ease-in
+}
+.exitDone {
+	opacity: 0;
+	transition: opacity 0.5s ease-in;
+}
+.exi{
+	opacity: 0;
+	transition: opacity 0.5s ease-in;
+}
 .rootWrite {
 	display: flex;
 	margin-top: 10px;

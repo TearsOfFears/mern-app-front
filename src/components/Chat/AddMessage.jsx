@@ -13,10 +13,12 @@ import { useCommentsById } from "../../reactQuery/comments/comments.hooks";
 import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../reactQuery/chat/chat.service";
-export const AddMessage = ({ textEdit, socket }) => {
+import { SocketContext } from "../../reactQuery/context/socket";
+export const AddMessage = ({ textEdit }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
 	const { id } = useParams();
+	const socket = useContext(SocketContext);
 	const navigate = useNavigate();
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
@@ -30,24 +32,18 @@ export const AddMessage = ({ textEdit, socket }) => {
 		setText("");
 		if (id) {
 			const fields = { id: id, text };
-			axios.patch(`api/messages/update/${id}`, fields).then(() => {
-				setText("");
-				navigate("/chat");
-				allMessages.refetch();
+			socket.emit("updateMessage",fields,(response)=>{
+				response.status==="ok" && navigate("/chat");
 			});
 		} else {
-			const params = {
-				text,
-				userId: data._id,
-			};
 			socket.emit("sendMessage", {
 				author: data._id,
 				text,
 			});
-			// await createMessage.mutateAsync(params);
 		}
 	};
 
+	
 	useEffect(() => {
 		if (id) {
 			allMessages.data

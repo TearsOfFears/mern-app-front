@@ -25,17 +25,22 @@ import { useRefresh } from "../../hooks/useRefresh";
 import { useAuth } from "../../hooks/useAuth";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import AvatarStatus from "./AvatarStatus/AvatarStatus";
+import { SocketContext } from "../../reactQuery/context/socket";
+import moment from "moment/moment";
 
 export const ChatBlock = ({ items, isLoading, children }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
+	const socket = useContext(SocketContext);
 	const { data, isAuth } = useAuth();
 	const { id } = useParams();
 	const refresh = useRefresh();
-	const removeMessage = useMutation(chatService.deleteMessages);
 	const onClickRemoveComment = async (id) => {
-		await removeMessage.mutateAsync(id);
+		socket.emit("deleteMessage", id, (res) => {
+			res.status === "ok" && refresh("fetch Messages");
+		});
 	};
+
 	if (isLoading) {
 		return <h3>Loading...</h3>;
 	}
@@ -61,6 +66,9 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 										enter: styles.enter,
 										enterActive: styles.enterActive,
 										enterDone: styles.enterActive,
+										exitActive:styles.exitActive,
+										exitDone:styles.exitDone,
+										exit:styles.exitDone
 									}}
 								>
 									<React.Fragment key={index}>
@@ -91,7 +99,7 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 														/>
 													) : (
 														<AvatarStatus
-															direction= {obj.author._id === user?._id}
+															direction={obj.author._id === user?._id}
 															data={obj.author}
 															status={obj.author.status}
 														/>
@@ -116,6 +124,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 														onClick={(e) => navigate(`/chat/${obj._id}`)}
 													/>
 												)}
+												{
+													<h6>
+														{moment(obj.createdAt).format("DD.MM, HH:MM")}
+													</h6>
+												}
 											</div>
 											{!isLoading && isEditable && (
 												<div className={styles.editButtons}>
