@@ -45,7 +45,7 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 		return <h3>Loading...</h3>;
 	}
 	return (
-		<SideBlock title="Повідомлення">
+		<SideBlock title="Повідомлення" style={{display:"flex",flexDirection:"row"}}>
 			<List className={clsx(styles.root)}>
 				{!isLoading && items.length === 0 && (
 					<Typography variant="h6" textAlign="center">

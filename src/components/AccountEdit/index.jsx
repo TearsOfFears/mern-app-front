@@ -69,8 +69,9 @@ function AccountEdit({ userData, isLoading, isFetched }) {
 	useEffect(() => {
 		if (!isLoadingUserData && authUserData) {
 			setEnable(true);
-		} else {
-			setEdit(false);
+		}
+		if (!isLoadingUserData && authUserData._id !== id) {
+			setEnable(false);
 		}
 		if (isSuccess) {
 			setAvatarURL({ image: data?.url, public_id: data?.public_id });

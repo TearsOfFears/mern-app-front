@@ -11,6 +11,8 @@ import { socket } from "../reactQuery/socket.js";
 import { io } from "socket.io-client";
 import { useRef } from "react";
 import { SocketContext } from "../reactQuery/context/socket";
+import { Grid } from "@mui/material";
+import ChatUser from "../components/Chat/ChatUser";
 const Chat = () => {
 	const { data, isLoading } = useAuth();
 	const [messages, setMessages] = useState([]);
@@ -74,9 +76,17 @@ const Chat = () => {
 	}, [arrivalMessages]);
 
 	return (
-		<ChatBlock items={messages} isLoading={allMessages.isLoading}>
-			<AddMessage socket={socket} />
-		</ChatBlock>
+		<Grid container columnGap={2}>
+			<Grid sm={3}>
+				<ChatUser users={users} isLoading={allMessages.isLoading} />{" "}
+			</Grid>
+			<Grid sm={8}>
+				<ChatBlock items={messages} isLoading={allMessages.isLoading}>
+				<AddMessage socket={socket} />
+			</ChatBlock>
+			</Grid>
+		
+		</Grid>
 	);
 };
 

@@ -1,6 +1,7 @@
 $blue: #4361ee;
 .root {
 	position: relative;
+	width: 55px;
 	.avatar {
 		border: 2px solid transparent;
 		display: flex;
@@ -8,6 +9,7 @@ $blue: #4361ee;
 		&:hover {
 			border: 2px solid $blue;
 			transition: 0.3s;
+			cursor: pointer;
 		}
 	}
 
@@ -19,7 +21,7 @@ $blue: #4361ee;
 		position: absolute;
 		z-index: 3;
 		bottom: 0;
-		right: 15px;
+		right:15px;
 		border-radius: 50%;
 	}
 
@@ -35,7 +37,7 @@ $blue: #4361ee;
 		position: absolute;
 		z-index: 3;
 		bottom: 0;
-		left: 45px;
+		right:  0px;
 		border-radius: 50%;
 	}
 	.online {
