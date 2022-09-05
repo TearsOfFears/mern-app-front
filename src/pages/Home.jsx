@@ -23,7 +23,7 @@ import { SocketContext } from "../reactQuery/context/socket";
 export const Home = () => {
 	const params = { sort: "latest" };
 	const search = useLocation().search;
-	const socket = useContext(SocketContext)
+	const { socket, userOnline, setOnline } = useContext(SocketContext);
 	const queryStringSeach = queryString.parse(useLocation().search);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const { user, isLoading, setUser } = useContext(UserContext);
@@ -35,9 +35,16 @@ export const Home = () => {
 	const [sort, setSort] = useState(
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
-	useEffect(()=>{
-		!isLoading && user && socket.emit("addUser",user._id)
-	},[isLoading])
+	useEffect(() => {
+		user && socket.emit("addUser", user._id);
+	}, [user]);
+	useEffect(() => {
+		const handleGetUser = (data) => {
+			setOnline(data);
+		};
+		socket.on("getUsers", handleGetUser);
+	}, [user]);
+	console.log(userOnline);
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {
@@ -46,6 +53,7 @@ export const Home = () => {
 			return `#${tag}`;
 		}
 	});
+
 	useEffect(() => {
 		userRefresh.refetch();
 	}, []);

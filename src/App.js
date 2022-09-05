@@ -20,6 +20,7 @@ import { SocketContext,socket } from "./reactQuery/context/socket.js";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [userOnline, setOnline] = useState([]);
  const {data,isLoading,refetch,isError} = useFetchUser()
  const navigate = useNavigate();
 useEffect(()=>{
@@ -41,7 +42,7 @@ useEffect(()=>{
               user,
               setUser
             }}> 
-      <SocketContext.Provider value={socket}>
+      <SocketContext.Provider value={{socket,userOnline,setOnline}}>
       <Header />
       <Container maxWidth="lg">
         <Routes>

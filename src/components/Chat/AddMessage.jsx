@@ -18,7 +18,7 @@ export const AddMessage = ({ textEdit }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
 	const { id } = useParams();
-	const socket = useContext(SocketContext);
+	const { socket } = useContext(SocketContext);
 	const navigate = useNavigate();
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
@@ -32,18 +32,25 @@ export const AddMessage = ({ textEdit }) => {
 		setText("");
 		if (id) {
 			const fields = { id: id, text };
-			socket.emit("updateMessage",fields,(response)=>{
-				response.status==="ok" && navigate("/chat");
+			socket.emit("updateMessage", fields, (response) => {
+				response.status === "ok" && navigate("/chat");
+			});
+			window.scrollTo({
+				bottom: 1000,
+				behavior: "smooth",
 			});
 		} else {
 			socket.emit("sendMessage", {
 				author: data._id,
 				text,
 			});
+			window.scrollTo({
+				bottom: 1000,
+				behavior: "smooth",
+			});
 		}
 	};
 
-	
 	useEffect(() => {
 		if (id) {
 			allMessages.data

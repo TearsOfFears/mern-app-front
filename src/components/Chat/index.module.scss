@@ -2,6 +2,8 @@ $blue: #4361ee;
 
 .root {
 	padding: 20px 40px !important;
+	overflow-y: auto;
+	height: 30vh;
 	.itemDisable {
 		&:hover {
 			border: 1px solid #dedede !important;
@@ -31,7 +33,7 @@ $blue: #4361ee;
 			display: flex;
 			flex-direction: row;
 		}
-		.avatarWrapper{
+		.avatarWrapper {
 			margin-right: 0;
 		}
 		.editButtons {
@@ -44,7 +46,7 @@ $blue: #4361ee;
 			transition: all 0.15s ease-in-out;
 			z-index: 100;
 		}
-		.avatarWrapper{
+		.avatarWrapper {
 			margin-right: 0px;
 		}
 	}
@@ -73,7 +75,7 @@ $blue: #4361ee;
 			transition: all 0.15s ease-in-out;
 			z-index: 100;
 		}
-		.avatarWrapper{
+		.avatarWrapper {
 			margin-left: 10px;
 		}
 	}
@@ -87,7 +89,7 @@ $blue: #4361ee;
 	}
 }
 .rootChat {
-	padding: 10px !important; 
+	padding: 10px !important;
 	.item {
 		position: relative;
 		background-color: #fff;
@@ -107,7 +109,7 @@ $blue: #4361ee;
 			}
 		}
 
-		.avatarWrapper{
+		.avatarWrapper {
 			margin-right: 0;
 		}
 	}
@@ -118,11 +120,20 @@ $blue: #4361ee;
 		align-items: center;
 		justify-content: flex-start;
 		flex-wrap: nowrap;
+		&:hover {
+			cursor: pointer;
+		}
 	}
 	.divider {
-		margin-left: 0px ;
-		margin-right: 0px ;
+		margin-left: 0px;
+		margin-right: 0px;
 	}
+}
+.toogleConv {
+	border:1px solid $blue;
+	position: absolute;
+	right: 0px;
+	top: 25px;
 }
 .enter {
 	opacity: 0;
@@ -133,13 +144,13 @@ $blue: #4361ee;
 }
 .exitActive {
 	opacity: 1;
-	transition: opacity 0.5s ease-in
+	transition: opacity 0.5s ease-in;
 }
 .exitDone {
 	opacity: 0;
 	transition: opacity 0.5s ease-in;
 }
-.exi{
+.exit {
 	opacity: 0;
 	transition: opacity 0.5s ease-in;
 }

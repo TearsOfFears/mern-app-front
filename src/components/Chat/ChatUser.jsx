@@ -1,40 +1,57 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import ListItemText from "@mui/material/ListItemText";
+
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import Skeleton from "@mui/material/Skeleton";
 import clsx from "clsx";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Clear";
-import EditIcon from "@mui/icons-material/Edit";
-import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Paper, Typography } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import AvatarStatus from "./AvatarStatus/AvatarStatus";
 
 import styles from "./index.module.scss";
 import { faIR } from "@mui/x-data-grid";
+import { useRef } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useContext } from "react";
+import { SocketContext } from "../../reactQuery/context/socket";
 const ChatUser = ({ users, isLoading }) => {
+	const [view, setView] = useState(false);
+	const socket = useContext(SocketContext)
+	const {data} = useAuth()
+	const ref = useRef(null);
 	const navigate = useNavigate();
-	console.log(users);
+	const startChat = (userId) => {
+		console.log(userId);
+		console.log("userId",data._id);
+	};
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (ref.current && !ref.current.contains(event.target)) {
+				setView(false);
+			}
+		};
+		document.addEventListener("click", handleClickOutside, true);
+		return () => {
+			document.removeEventListener("click", handleClickOutside, true);
+		};
+	}, [ref]);
+
 	return (
 		<Paper>
 			<List className={clsx(styles.rootChat)}>
-				{!isLoading && users === 0 && (
+				{users.length === 0 && (
 					<Typography variant="h6" textAlign="center">
-						Немає повідомлень
+						Немає Користувачів
 					</Typography>
 				)}{" "}
 				<TransitionGroup>
 					{!isLoading &&
 						Array.isArray(users) &&
 						users.map((obj, index) => {
-							console.log(obj.user);
 							return (
 								<CSSTransition
 									key={index}
@@ -50,7 +67,10 @@ const ChatUser = ({ users, isLoading }) => {
 									}}
 								>
 									<React.Fragment key={index}>
-										<ListItem alignItems="flex-start">
+										<ListItem
+											alignItems="flex-start"
+											onClick={() => setView(true)}
+										>
 											<div className={styles.wrapper}>
 												{/* {obj.userId} */}
 												<ListItemAvatar
@@ -75,6 +95,14 @@ const ChatUser = ({ users, isLoading }) => {
 												</ListItemAvatar>
 												<Typography>{obj.user.fullName}</Typography>
 											</div>
+											{view && (
+												<Paper className={styles.toogleConv} ref={ref}>
+													{" "}
+													<Button onClick={() => startChat(obj.user._id)}>
+														Start Chat
+													</Button>
+												</Paper>
+											)}
 										</ListItem>
 										<Divider
 											variant="inset"

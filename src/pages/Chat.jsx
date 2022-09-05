@@ -13,28 +13,34 @@ import { useRef } from "react";
 import { SocketContext } from "../reactQuery/context/socket";
 import { Grid } from "@mui/material";
 import ChatUser from "../components/Chat/ChatUser";
+import { SignalCellularNullSharp } from "@mui/icons-material";
+import { useMemo } from "react";
 const Chat = () => {
-	const { data, isLoading } = useAuth();
 	const [messages, setMessages] = useState([]);
-	const [users, setUsers] = useState([]);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
-	const socket = useContext(SocketContext);
-	// const socket = useRef();
+	const ref = useRef(null);
+	const { socket, userOnline, setOnline } = useContext(SocketContext);
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
 	useEffect(() => {
 		user && socket.emit("addUser", user._id);
-	}, []);
+		allMessages.refetch();
+	}, [user]);
+
 	useEffect(() => {
-		socket.on("getUsers", (data) => {
-			setUsers(data);
-		});
-	}, []);
+		const handleGetUser = (data) => {
+			setOnline(data);
+		};
+		socket.on("getUsers", handleGetUser);
+		return () => {
+			socket.off("getUsers", handleGetUser);
+		};
+	}, [userOnline]);
+
 	useEffect(() => {
 		const handleSetMessage = (data) => {
-			console.log("MESAGE", data);
 			setArrivalMessages(data);
 		};
 		socket.on("getMessage", handleSetMessage);
@@ -42,6 +48,16 @@ const Chat = () => {
 			socket.off("getMessage", handleSetMessage);
 		};
 	}, []);
+	useEffect(() => {
+		if (ref && ref.current) {
+			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
+			ref.current.scrollTo({
+				top: -scroll,
+				behavior: "smooth",
+			});
+		}
+	}, [arrivalMessages, messages]);
+
 	useEffect(() => {
 		const handleSetMessageUpdated = (data) => {
 			setMessages((prev) =>
@@ -78,14 +94,17 @@ const Chat = () => {
 	return (
 		<Grid container columnGap={2}>
 			<Grid sm={3}>
-				<ChatUser users={users} isLoading={allMessages.isLoading} />{" "}
+				<ChatUser users={userOnline} isLoading={allMessages.isLoading} />
 			</Grid>
 			<Grid sm={8}>
-				<ChatBlock items={messages} isLoading={allMessages.isLoading}>
-				<AddMessage socket={socket} />
-			</ChatBlock>
+				<ChatBlock
+					items={messages}
+					isLoading={allMessages.isLoading}
+					refScroll={ref}
+				>
+					<AddMessage socket={socket} />
+				</ChatBlock>
 			</Grid>
-		
 		</Grid>
 	);
 };

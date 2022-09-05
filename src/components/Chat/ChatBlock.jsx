@@ -28,10 +28,10 @@ import AvatarStatus from "./AvatarStatus/AvatarStatus";
 import { SocketContext } from "../../reactQuery/context/socket";
 import moment from "moment/moment";
 
-export const ChatBlock = ({ items, isLoading, children }) => {
+export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
-	const socket = useContext(SocketContext);
+	const { socket } = useContext(SocketContext);
 	const { data, isAuth } = useAuth();
 	const { id } = useParams();
 	const refresh = useRefresh();
@@ -45,8 +45,11 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 		return <h3>Loading...</h3>;
 	}
 	return (
-		<SideBlock title="Повідомлення" style={{display:"flex",flexDirection:"row"}}>
-			<List className={clsx(styles.root)}>
+		<SideBlock
+			title="Повідомлення"
+			style={{ display: "flex", flexDirection: "row" }}
+		>
+			<List className={clsx(styles.root)} ref={refScroll}>
 				{!isLoading && items.length === 0 && (
 					<Typography variant="h6" textAlign="center">
 						Немає повідомлень
@@ -66,9 +69,9 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 										enter: styles.enter,
 										enterActive: styles.enterActive,
 										enterDone: styles.enterActive,
-										exitActive:styles.exitActive,
-										exitDone:styles.exitDone,
-										exit:styles.exitDone
+										exitActive: styles.exitActive,
+										exitDone: styles.exitDone,
+										exit: styles.exitDone,
 									}}
 								>
 									<React.Fragment key={index}>
@@ -157,6 +160,7 @@ export const ChatBlock = ({ items, isLoading, children }) => {
 							);
 						})}
 				</TransitionGroup>
+			
 			</List>
 			{children}
 		</SideBlock>
