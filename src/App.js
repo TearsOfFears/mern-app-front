@@ -16,13 +16,12 @@ import { WithAdmin } from "./HOC/WithRole";
 import Chat from "./pages/Chat";
 import { SocketContext,socket } from "./reactQuery/context/socket.js";
 
-
-
 function App() {
   const [user, setUser] = useState(null);
   const [userOnline, setOnline] = useState([]);
  const {data,isLoading,refetch,isError} = useFetchUser()
  const navigate = useNavigate();
+
 useEffect(()=>{
   if(data){
     setUser(data)
@@ -34,6 +33,17 @@ useEffect(()=>{
   }
 },[data,isLoading])
 
+useEffect(()=>{
+  const handleGetUser = (data) => {
+    setOnline(data);
+  };
+  socket.on("getUsers", handleGetUser);
+  user && socket.emit("addUser", user._id);
+  return () => {
+    socket.off("getUsers", handleGetUser);
+  };
+},[user])
+console.log(userOnline);
   return (
     <>
     <UserContext.Provider

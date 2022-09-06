@@ -15,8 +15,10 @@ import { Grid } from "@mui/material";
 import ChatUser from "../components/Chat/ChatUser";
 import { SignalCellularNullSharp } from "@mui/icons-material";
 import { useMemo } from "react";
+import { useCallback } from "react";
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
+	const [allowScroll, setAllowScroll] = useState(true);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
 	const ref = useRef(null);
@@ -24,40 +26,36 @@ const Chat = () => {
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
-	useEffect(() => {
-		user && socket.emit("addUser", user._id);
-		allMessages.refetch();
-	}, [user]);
 
-	useEffect(() => {
-		const handleGetUser = (data) => {
-			setOnline(data);
-		};
-		socket.on("getUsers", handleGetUser);
-		return () => {
-			socket.off("getUsers", handleGetUser);
-		};
-	}, [userOnline]);
+	// useEffect(() => {
+	// 	const handleGetUser = (data) => {
+	// 		setOnline(data);
+	// 	};
+	// 	socket.on("getUsers", handleGetUser);
+	// 	return () => {
+	// 		socket.off("getUsers", handleGetUser);
+	// 	};
+	// }, [userOnline,user]);
 
-	useEffect(() => {
-		const handleSetMessage = (data) => {
-			setArrivalMessages(data);
-		};
-		socket.on("getMessage", handleSetMessage);
-		return () => {
-			socket.off("getMessage", handleSetMessage);
-		};
-	}, []);
-	useEffect(() => {
-		if (ref && ref.current) {
+	const handleScroll = useCallback(() => {
+		if (ref && ref.current && allowScroll) {
 			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
 			ref.current.scrollTo({
 				top: -scroll,
 				behavior: "smooth",
 			});
 		}
-	}, [arrivalMessages, messages]);
-
+	}, [allowScroll]);
+	useEffect(() => {
+		const handleSetMessage = (data) => {
+			setArrivalMessages(data);
+			handleScroll();
+		};
+		socket.on("getMessage", handleSetMessage);
+		return () => {
+			socket.off("getMessage", handleSetMessage);
+		};
+	}, []);
 	useEffect(() => {
 		const handleSetMessageUpdated = (data) => {
 			setMessages((prev) =>
@@ -71,6 +69,31 @@ const Chat = () => {
 		};
 	}, []);
 	useEffect(() => {
+		const handleHoverInSide = () => {
+			if (ref.current) {
+				setAllowScroll(false);
+			}
+		};
+		const handleHoverOutSide = () => {
+			if (ref.current) {
+				setAllowScroll(true);
+			}
+		};
+		if (ref.current && ref) {
+			ref.current.addEventListener("mouseover", handleHoverInSide);
+			ref.current.addEventListener("mouseout", handleHoverOutSide);
+		}
+		return () => {
+			if (ref.current && ref) {
+				ref.current.removeEventListener("mouseover", handleHoverInSide, false);
+				ref.current.removeEventListener("mouseout", handleHoverOutSide, false);
+			}
+		};
+	}, [ref]);
+	useEffect(() => {
+		handleScroll();
+	}, [arrivalMessages, messages]);
+	useEffect(() => {
 		const handleSetMessageUpdated = (data) => {
 			setMessages((prev) => prev.filter((obj) => obj._id !== data._id));
 		};
@@ -79,13 +102,11 @@ const Chat = () => {
 			socket.off("getDelatedMessage", handleSetMessageUpdated);
 		};
 	}, []);
-
 	useEffect(() => {
 		if (!allMessages.isLoading && allMessages.data.length > 0) {
 			setMessages(allMessages.data);
 		}
 	}, [allMessages.data]);
-
 	useEffect(() => {
 		Object.keys(arrivalMessages).length > 0 &&
 			setMessages((prev) => [...prev, arrivalMessages]);
@@ -102,7 +123,7 @@ const Chat = () => {
 					isLoading={allMessages.isLoading}
 					refScroll={ref}
 				>
-					<AddMessage socket={socket} />
+					<AddMessage socket={socket} handleScroll={handleScroll} />
 				</ChatBlock>
 			</Grid>
 		</Grid>

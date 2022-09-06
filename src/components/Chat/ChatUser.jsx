@@ -19,19 +19,22 @@ import { useAuth } from "../../hooks/useAuth";
 import { useContext } from "react";
 import { SocketContext } from "../../reactQuery/context/socket";
 const ChatUser = ({ users, isLoading }) => {
-	const [view, setView] = useState(false);
-	const socket = useContext(SocketContext)
-	const {data} = useAuth()
-	const ref = useRef(null);
+	const [view, setView] = useState({ id: "", isOpen: false });
+	const socket = useContext(SocketContext);
+	const { data } = useAuth();
+	const ref = useRef([]);
 	const navigate = useNavigate();
 	const startChat = (userId) => {
 		console.log(userId);
-		console.log("userId",data._id);
+		console.log("userId", data._id);
+	};
+	const handleSetView = (id) => {
+		setView({ id: id, isOpen: true });
 	};
 	useEffect(() => {
 		const handleClickOutside = (event) => {
 			if (ref.current && !ref.current.contains(event.target)) {
-				setView(false);
+				setView({ id: "", isOpen: false });
 			}
 		};
 		document.addEventListener("click", handleClickOutside, true);
@@ -39,9 +42,11 @@ const ChatUser = ({ users, isLoading }) => {
 			document.removeEventListener("click", handleClickOutside, true);
 		};
 	}, [ref]);
-
 	return (
 		<Paper>
+			<Typography variant="h6" textAlign="left" pt={2} pl={2}>
+				Користувачі в онлайні:
+			</Typography>
 			<List className={clsx(styles.rootChat)}>
 				{users.length === 0 && (
 					<Typography variant="h6" textAlign="center">
@@ -69,10 +74,10 @@ const ChatUser = ({ users, isLoading }) => {
 									<React.Fragment key={index}>
 										<ListItem
 											alignItems="flex-start"
-											onClick={() => setView(true)}
+											onClick={() => handleSetView(obj.user._id)}
+											className={obj.user._id === data._id && styles.noClick}
 										>
 											<div className={styles.wrapper}>
-												{/* {obj.userId} */}
 												<ListItemAvatar
 													onClick={(e) => navigate(`/account/${obj.user._id}`)}
 												>
@@ -93,9 +98,12 @@ const ChatUser = ({ users, isLoading }) => {
 														/>
 													)}
 												</ListItemAvatar>
-												<Typography>{obj.user.fullName}</Typography>
+												<Typography>
+													{obj.user.fullName}
+													{obj.user._id === data._id && " (you)"}
+												</Typography>
 											</div>
-											{view && (
+											{view.isOpen && view.id === obj.user._id && (
 												<Paper className={styles.toogleConv} ref={ref}>
 													{" "}
 													<Button onClick={() => startChat(obj.user._id)}>

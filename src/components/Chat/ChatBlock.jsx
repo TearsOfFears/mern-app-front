@@ -40,13 +40,12 @@ export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 			res.status === "ok" && refresh("fetch Messages");
 		});
 	};
-
 	if (isLoading) {
 		return <h3>Loading...</h3>;
 	}
 	return (
 		<SideBlock
-			title="Повідомлення"
+			title="Повідомлення:"
 			style={{ display: "flex", flexDirection: "row" }}
 		>
 			<List className={clsx(styles.root)} ref={refScroll}>
@@ -110,7 +109,10 @@ export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 												</ListItemAvatar>
 												{isLoading ? (
 													<div
-														style={{ display: "flex", flexDirection: "column" }}
+														style={{
+															display: "flex",
+															flexDirection: "column",
+														}}
 													>
 														<Skeleton variant="text" height={25} width={120} />
 														<Skeleton variant="text" height={18} width={230} />
@@ -160,7 +162,6 @@ export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 							);
 						})}
 				</TransitionGroup>
-			
 			</List>
 			{children}
 		</SideBlock>

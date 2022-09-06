@@ -14,7 +14,7 @@ import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../reactQuery/chat/chat.service";
 import { SocketContext } from "../../reactQuery/context/socket";
-export const AddMessage = ({ textEdit }) => {
+export const AddMessage = ({ textEdit, handleScroll }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
 	const { id } = useParams();
@@ -28,6 +28,7 @@ export const AddMessage = ({ textEdit }) => {
 			allMessages.refetch();
 		},
 	});
+
 	const handleSendMessage = async () => {
 		setText("");
 		if (id) {
@@ -35,22 +36,19 @@ export const AddMessage = ({ textEdit }) => {
 			socket.emit("updateMessage", fields, (response) => {
 				response.status === "ok" && navigate("/chat");
 			});
-			window.scrollTo({
-				bottom: 1000,
-				behavior: "smooth",
-			});
 		} else {
 			socket.emit("sendMessage", {
 				author: data._id,
 				text,
 			});
-			window.scrollTo({
-				bottom: 1000,
-				behavior: "smooth",
-			});
+			allMessages.refetch();
+			handleScroll();
 		}
 	};
-
+	useEffect(() => {
+		handleScroll();
+	}, [allMessages.isLoading]);
+	
 	useEffect(() => {
 		if (id) {
 			allMessages.data
