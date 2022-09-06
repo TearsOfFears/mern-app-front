@@ -18,15 +18,17 @@ import { useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useContext } from "react";
 import { SocketContext } from "../../reactQuery/context/socket";
-const ChatUser = ({ users, isLoading }) => {
+import axios from "./../../axios.js";
+const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 	const [view, setView] = useState({ id: "", isOpen: false });
 	const socket = useContext(SocketContext);
 	const { data } = useAuth();
 	const ref = useRef([]);
 	const navigate = useNavigate();
-	const startChat = (userId) => {
-		console.log(userId);
-		console.log("userId", data._id);
+	const startChat = async (userId) => {
+		await axios
+			.post(`api/conversation/create/${data._id}/${userId}`)
+			.finally(() => navigate(`/convers/${data._id}/${userId}`));
 	};
 	const handleSetView = (id) => {
 		setView({ id: id, isOpen: true });
@@ -45,18 +47,19 @@ const ChatUser = ({ users, isLoading }) => {
 	return (
 		<Paper>
 			<Typography variant="h6" textAlign="left" pt={2} pl={2}>
-				Користувачі в онлайні:
+				{isOnlineBlock ? "Користувачі онлайн:" : "Чати:"}
 			</Typography>
 			<List className={clsx(styles.rootChat)}>
 				{users.length === 0 && (
 					<Typography variant="h6" textAlign="center">
-						Немає Користувачів
+						Немає чатів
 					</Typography>
 				)}{" "}
 				<TransitionGroup>
 					{!isLoading &&
 						Array.isArray(users) &&
 						users.map((obj, index) => {
+							console.log(obj);
 							return (
 								<CSSTransition
 									key={index}
@@ -73,13 +76,17 @@ const ChatUser = ({ users, isLoading }) => {
 								>
 									<React.Fragment key={index}>
 										<ListItem
+											style={{ paddingLeft: "10px" }}
 											alignItems="flex-start"
-											onClick={() => handleSetView(obj.user._id)}
-											className={obj.user._id === data._id && styles.noClick}
+											onClick={() =>  handleSetView(obj._id)}
+											className={clsx({
+												[styles.noClick]: obj._id === data._id,
+												// [styles.noClick]: !sideBlockChat,
+											})}
 										>
 											<div className={styles.wrapper}>
 												<ListItemAvatar
-													onClick={(e) => navigate(`/account/${obj.user._id}`)}
+													onClick={(e) => navigate(`/account/${obj._id}`)}
 												>
 													{isLoading ? (
 														<Skeleton
@@ -91,22 +98,24 @@ const ChatUser = ({ users, isLoading }) => {
 														<AvatarStatus
 															direction={false}
 															data={{
-																fullName: obj.user.fullName,
-																avatar: obj.user.avatar,
+																fullName: obj.fullName,
+																avatar: obj.avatar,
 															}}
-															status={obj.user.status}
+															status={obj.status}
 														/>
 													)}
 												</ListItemAvatar>
 												<Typography>
-													{obj.user.fullName}
-													{obj.user._id === data._id && " (you)"}
+													{obj.fullName.length > 11
+														? obj.fullName.slice(0, 10) + "..."
+														: obj.fullName}
+													{obj._id === data._id && " (you)"}
 												</Typography>
 											</div>
-											{view.isOpen && view.id === obj.user._id && (
+											{view.isOpen && view.id === obj._id && (
 												<Paper className={styles.toogleConv} ref={ref}>
 													{" "}
-													<Button onClick={() => startChat(obj.user._id)}>
+													<Button onClick={() => startChat(obj._id)}>
 														Start Chat
 													</Button>
 												</Paper>

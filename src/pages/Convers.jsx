@@ -16,16 +16,22 @@ import ChatUser from "../components/Chat/ChatUser";
 import { SignalCellularNullSharp } from "@mui/icons-material";
 import { useMemo } from "react";
 import { useCallback } from "react";
-const Chat = () => {
+import { useParams } from "react-router-dom";
+const Convers = () => {
 	const [messages, setMessages] = useState([]);
 	const [allowScroll, setAllowScroll] = useState(true);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
+	const { senderId } = useParams();
 	const ref = useRef(null);
 	const { socket, userOnline, setOnline } = useContext(SocketContext);
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
+	const getUserConver = useQuery(["fetch Users", senderId], () =>
+		chatService.getUserConvers(senderId)
+	);
+
 	const handleScroll = useCallback(() => {
 		if (ref && ref.current && allowScroll) {
 			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
@@ -100,12 +106,14 @@ const Chat = () => {
 		Object.keys(arrivalMessages).length > 0 &&
 			setMessages((prev) => [...prev, arrivalMessages]);
 	}, [arrivalMessages]);
-
-	console.log("userOnline",userOnline.map(obj=>obj.user));
 	return (
 		<Grid container columnGap={1}>
 			<Grid sm={3}>
-				<ChatUser users={userOnline.map(obj=>obj.user)} isLoading={allMessages.isLoading} isOnlineBlock={false} sideBlockChat={true}/>
+				<ChatUser
+					users={userOnline.map((obj) => obj.user)}
+					isLoading={allMessages.isLoading}
+					isOnlineBlock={false}
+				/>
 			</Grid>
 			<Grid sm={6}>
 				<ChatBlock
@@ -117,10 +125,15 @@ const Chat = () => {
 				</ChatBlock>
 			</Grid>
 			<Grid sm={2}>
-				<ChatUser users={userOnline.map(obj=>obj.user)} isLoading={allMessages.isLoading} isOnlineBlock={false}/>
+				<ChatUser
+					users={userOnline.map((obj) => obj.user)}
+					isLoading={allMessages.isLoading}
+					isOnlineBlock={true}
+					sideBlockChat={true}
+				/>
 			</Grid>
 		</Grid>
 	);
 };
 
-export default Chat;
+export default Convers;

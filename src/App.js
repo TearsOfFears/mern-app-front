@@ -15,6 +15,7 @@ import Admin from "./pages/Admin";
 import { WithAdmin } from "./HOC/WithRole";
 import Chat from "./pages/Chat";
 import { SocketContext,socket } from "./reactQuery/context/socket.js";
+import Convers from "./pages/Convers";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,7 +33,6 @@ useEffect(()=>{
     window.localStorage.getItem("token")!==null && refetch()
   }
 },[data,isLoading])
-
 useEffect(()=>{
   const handleGetUser = (data) => {
     setOnline(data);
@@ -43,7 +43,6 @@ useEffect(()=>{
     socket.off("getUsers", handleGetUser);
   };
 },[user])
-console.log(userOnline);
   return (
     <>
     <UserContext.Provider
@@ -67,6 +66,7 @@ console.log(userOnline);
           <Route path="/activate/:link" element={<Activate />}/>
           <Route path="/chat" element={<Chat />}/>
           <Route path="/chat/:id" element={<Chat />}/>
+          <Route path="/convers/:senderId/:receivedId" element={<Convers />}/>
           <Route path="/admin" element={    <WithAdmin><Admin /></WithAdmin>}/>
         </Routes>
       </Container>

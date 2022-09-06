@@ -19,6 +19,13 @@ export const chatService = {
         return res.data
       })
   },
+  async getUserConvers(id) {
+    return await axios
+      .get(`/api/conversation/get/${id}`)
+      .then((res) => {
+        return res.data
+      })
+  },
   async deleteMessages(id) {
     return await axios
       .delete(`/api/messages/delete/${id}`)

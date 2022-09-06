@@ -35,15 +35,6 @@ export const Home = () => {
 	const [sort, setSort] = useState(
 		searchParams.get("sort") === null ? "latest" : searchParams.get("sort")
 	);
-	// useEffect(() => {
-	// 	user && socket.emit("addUser", user._id);
-	// }, [user,userOnline]);
-	// useEffect(() => {
-	// 	const handleGetUser = (data) => {
-	// 		setOnline(data);
-	// 	};
-	// 	socket.on("getUsers", handleGetUser);
-	// }, [user]);
 	const getTag = useMemo(() => {
 		const tag = searchParams.get("tag");
 		if (tag === null || tag === "") {
