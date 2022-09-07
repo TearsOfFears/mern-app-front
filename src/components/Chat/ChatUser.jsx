@@ -28,7 +28,7 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 	const startChat = async (userId) => {
 		await axios
 			.post(`api/conversation/create/${data._id}/${userId}`)
-			.finally(() => navigate(`/convers/${data._id}/${userId}`));
+			.then((res) => navigate(`/chat/convers/${res.data._id}`));
 	};
 	const handleSetView = (id) => {
 		setView({ id: id, isOpen: true });
@@ -44,13 +44,14 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 			document.removeEventListener("click", handleClickOutside, true);
 		};
 	}, [ref]);
+
 	return (
 		<Paper>
 			<Typography variant="h6" textAlign="left" pt={2} pl={2}>
 				{isOnlineBlock ? "Користувачі онлайн:" : "Чати:"}
 			</Typography>
 			<List className={clsx(styles.rootChat)}>
-				{users.length === 0 && (
+				{!isLoading && Array.isArray(users) && users.length === 0 && (
 					<Typography variant="h6" textAlign="center">
 						Немає чатів
 					</Typography>
@@ -59,7 +60,6 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 					{!isLoading &&
 						Array.isArray(users) &&
 						users.map((obj, index) => {
-							console.log(obj);
 							return (
 								<CSSTransition
 									key={index}
@@ -78,7 +78,7 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 										<ListItem
 											style={{ paddingLeft: "10px" }}
 											alignItems="flex-start"
-											onClick={() =>  handleSetView(obj._id)}
+											onClick={() => handleSetView(obj._id)}
 											className={clsx({
 												[styles.noClick]: obj._id === data._id,
 												// [styles.noClick]: !sideBlockChat,

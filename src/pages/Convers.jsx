@@ -22,16 +22,20 @@ const Convers = () => {
 	const [allowScroll, setAllowScroll] = useState(true);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
-	const { senderId } = useParams();
+	// const { senderId } = useParams();
 	const ref = useRef(null);
+	const { conversId } = useParams();
 	const { socket, userOnline, setOnline } = useContext(SocketContext);
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
-	const getUserConver = useQuery(["fetch Users", senderId], () =>
-		chatService.getUserConvers(senderId)
+	const getUserConver = useQuery(["fetch Users", conversId], () =>
+		chatService.getUserConvers(conversId),{
+			select:(res)=>{
+				 return res.members;
+			}
+		}
 	);
-
 	const handleScroll = useCallback(() => {
 		if (ref && ref.current && allowScroll) {
 			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
@@ -106,6 +110,8 @@ const Convers = () => {
 		Object.keys(arrivalMessages).length > 0 &&
 			setMessages((prev) => [...prev, arrivalMessages]);
 	}, [arrivalMessages]);
+	console.log(getUserConver.data);
+	// console.log((getUserConver.isLoading && getUserConver.data).map((obj) => obj?.members));
 	return (
 		<Grid container columnGap={1}>
 			<Grid sm={3}>
@@ -121,13 +127,17 @@ const Convers = () => {
 					isLoading={allMessages.isLoading}
 					refScroll={ref}
 				>
-					<AddMessage socket={socket} handleScroll={handleScroll} />
+					<AddMessage
+						socket={socket}
+						handleScroll={handleScroll}
+			
+					/>
 				</ChatBlock>
 			</Grid>
 			<Grid sm={2}>
 				<ChatUser
-					users={userOnline.map((obj) => obj.user)}
-					isLoading={allMessages.isLoading}
+					users={getUserConver.data}
+					isLoading={getUserConver.isLoading}
 					isOnlineBlock={true}
 					sideBlockChat={true}
 				/>

@@ -14,10 +14,10 @@ import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../reactQuery/chat/chat.service";
 import { SocketContext } from "../../reactQuery/context/socket";
-export const AddMessage = ({ textEdit, handleScroll }) => {
+export const AddMessage = ({ textEdit, handleScroll,dataConvers }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
-	const { id } = useParams();
+	const { id,conversId } = useParams();
 	const { socket } = useContext(SocketContext);
 	const navigate = useNavigate();
 	const allMessages = useQuery(["fetch Messages"], () =>
@@ -40,6 +40,7 @@ export const AddMessage = ({ textEdit, handleScroll }) => {
 			socket.emit("sendMessage", {
 				author: data._id,
 				text,
+				conversationId:conversId
 			});
 			allMessages.refetch();
 			handleScroll();

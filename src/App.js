@@ -66,7 +66,7 @@ useEffect(()=>{
           <Route path="/activate/:link" element={<Activate />}/>
           <Route path="/chat" element={<Chat />}/>
           <Route path="/chat/:id" element={<Chat />}/>
-          <Route path="/convers/:senderId/:receivedId" element={<Convers />}/>
+          <Route path="/chat/convers/:conversId" element={<Convers />}/>
           <Route path="/admin" element={    <WithAdmin><Admin /></WithAdmin>}/>
         </Routes>
       </Container>
