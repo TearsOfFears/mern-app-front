@@ -19,7 +19,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useContext } from "react";
 import { SocketContext } from "../../reactQuery/context/socket";
 import axios from "./../../axios.js";
-const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
+const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat,isOnlineConvers,isChat }) => {
 	const [view, setView] = useState({ id: "", isOpen: false });
 	const socket = useContext(SocketContext);
 	const { data } = useAuth();
@@ -48,7 +48,9 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat }) => {
 	return (
 		<Paper>
 			<Typography variant="h6" textAlign="left" pt={2} pl={2}>
-				{isOnlineBlock ? "Користувачі онлайн:" : "Чати:"}
+				{isOnlineBlock && "Користувачі онлайн:"}
+				{isChat && "Чати:"}
+				{isOnlineConvers && "Користувачів в бесіді:"}
 			</Typography>
 			<List className={clsx(styles.rootChat)}>
 				{!isLoading && Array.isArray(users) && users.length === 0 && (

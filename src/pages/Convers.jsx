@@ -29,11 +29,13 @@ const Convers = () => {
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
-	const getUserConver = useQuery(["fetch Users", conversId], () =>
-		chatService.getUserConvers(conversId),{
-			select:(res)=>{
-				 return res.members;
-			}
+	const getUserConver = useQuery(
+		["fetch Users", conversId],
+		() => chatService.getUserConvers(conversId),
+		{
+			select: (res) => {
+				return res.members;
+			},
 		}
 	);
 	const handleScroll = useCallback(() => {
@@ -119,6 +121,7 @@ const Convers = () => {
 					users={userOnline.map((obj) => obj.user)}
 					isLoading={allMessages.isLoading}
 					isOnlineBlock={false}
+					isChat={true}
 				/>
 			</Grid>
 			<Grid sm={6}>
@@ -127,19 +130,16 @@ const Convers = () => {
 					isLoading={allMessages.isLoading}
 					refScroll={ref}
 				>
-					<AddMessage
-						socket={socket}
-						handleScroll={handleScroll}
-			
-					/>
+					<AddMessage socket={socket} handleScroll={handleScroll} />
 				</ChatBlock>
 			</Grid>
 			<Grid sm={2}>
 				<ChatUser
 					users={getUserConver.data}
 					isLoading={getUserConver.isLoading}
-					isOnlineBlock={true}
+					isOnlineBlock={false}
 					sideBlockChat={true}
+					isOnlineConvers={true}
 				/>
 			</Grid>
 		</Grid>

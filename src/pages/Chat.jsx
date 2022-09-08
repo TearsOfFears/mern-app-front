@@ -101,11 +101,20 @@ const Chat = () => {
 			setMessages((prev) => [...prev, arrivalMessages]);
 	}, [arrivalMessages]);
 
-	console.log("userOnline",userOnline.map(obj=>obj.user));
+	console.log(
+		"userOnline",
+		userOnline.map((obj) => obj.user)
+	);
 	return (
 		<Grid container columnGap={1}>
 			<Grid sm={3}>
-				<ChatUser users={userOnline.map(obj=>obj.user)} isLoading={allMessages.isLoading} isOnlineBlock={false} sideBlockChat={true}/>
+				<ChatUser
+					users={userOnline.map((obj) => obj.user)}
+					isLoading={allMessages.isLoading}
+					isChat={true}
+					isOnlineBlock={false}
+					sideBlockChat={true}
+				/>
 			</Grid>
 			<Grid sm={6}>
 				<ChatBlock
@@ -117,7 +126,11 @@ const Chat = () => {
 				</ChatBlock>
 			</Grid>
 			<Grid sm={2}>
-				<ChatUser users={userOnline.map(obj=>obj.user)} isLoading={allMessages.isLoading} isOnlineBlock={false}/>
+				<ChatUser
+					users={userOnline.map((obj) => obj.user)}
+					isLoading={allMessages.isLoading}
+					isOnlineBlock={true}
+				/>
 			</Grid>
 		</Grid>
 	);
