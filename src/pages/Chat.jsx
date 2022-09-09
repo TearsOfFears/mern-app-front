@@ -26,6 +26,11 @@ const Chat = () => {
 	const allMessages = useQuery(["fetch Messages"], () =>
 		chatService.getAllMessages()
 	);
+	const getConvers = useQuery(
+		["fetch Convers"],
+		() => chatService.getAllConvers(),
+	);
+
 	const handleScroll = useCallback(() => {
 		if (ref && ref.current && allowScroll) {
 			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
@@ -100,17 +105,13 @@ const Chat = () => {
 		Object.keys(arrivalMessages).length > 0 &&
 			setMessages((prev) => [...prev, arrivalMessages]);
 	}, [arrivalMessages]);
-
-	console.log(
-		"userOnline",
-		userOnline.map((obj) => obj.user)
-	);
+	console.log(userOnline.map((obj) => obj.user));
 	return (
 		<Grid container columnGap={1}>
 			<Grid sm={3}>
 				<ChatUser
-					users={userOnline.map((obj) => obj.user)}
-					isLoading={allMessages.isLoading}
+					users={getConvers.data}
+					isLoading={getConvers.isLoading}
 					isChat={true}
 					isOnlineBlock={false}
 					sideBlockChat={true}
@@ -130,6 +131,7 @@ const Chat = () => {
 					users={userOnline.map((obj) => obj.user)}
 					isLoading={allMessages.isLoading}
 					isOnlineBlock={true}
+					isChat={false}
 				/>
 			</Grid>
 		</Grid>

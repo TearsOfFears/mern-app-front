@@ -8,7 +8,7 @@ import Skeleton from "@mui/material/Skeleton";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, ListItemText, Paper, Typography } from "@mui/material";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import AvatarStatus from "./AvatarStatus/AvatarStatus";
 
@@ -19,10 +19,17 @@ import { useAuth } from "../../hooks/useAuth";
 import { useContext } from "react";
 import { SocketContext } from "../../reactQuery/context/socket";
 import axios from "./../../axios.js";
-const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat,isOnlineConvers,isChat }) => {
+const ChatUser = ({
+	users,
+	isLoading,
+	isOnlineBlock,
+	sideBlockChat,
+	isOnlineConvers,
+	isChat,
+}) => {
 	const [view, setView] = useState({ id: "", isOpen: false });
 	const socket = useContext(SocketContext);
-	const { data } = useAuth();
+	const { data,isLoading:dataisLoading } = useAuth();
 	const ref = useRef([]);
 	const navigate = useNavigate();
 	const startChat = async (userId) => {
@@ -44,7 +51,8 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat,isOnlineConve
 			document.removeEventListener("click", handleClickOutside, true);
 		};
 	}, [ref]);
-
+	console.log(users);
+	if (isLoading) return "Loading..";
 	return (
 		<Paper>
 			<Typography variant="h6" textAlign="left" pt={2} pl={2}>
@@ -62,10 +70,11 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat,isOnlineConve
 					{!isLoading &&
 						Array.isArray(users) &&
 						users.map((obj, index) => {
+							console.log(obj.received);
 							return (
 								<CSSTransition
 									key={index}
-									in={!isLoading}
+									in={isLoading}
 									timeout={500}
 									classNames={{
 										enter: styles.enter,
@@ -75,54 +84,128 @@ const ChatUser = ({ users, isLoading, isOnlineBlock, sideBlockChat,isOnlineConve
 										exitDone: styles.exitDone,
 										exit: styles.exitDone,
 									}}
+									mountOnEnter
+									unmountOnExit
 								>
 									<React.Fragment key={index}>
-										<ListItem
-											style={{ paddingLeft: "10px" }}
-											alignItems="flex-start"
-											onClick={() => handleSetView(obj._id)}
-											className={clsx({
-												[styles.noClick]: obj._id === data._id,
-												// [styles.noClick]: !sideBlockChat,
-											})}
-										>
-											<div className={styles.wrapper}>
-												<ListItemAvatar
-													onClick={(e) => navigate(`/account/${obj._id}`)}
-												>
-													{isLoading ? (
-														<Skeleton
-															variant="circular"
-															width={40}
-															height={40}
-														/>
-													) : (
-														<AvatarStatus
-															direction={false}
-															data={{
-																fullName: obj.fullName,
-																avatar: obj.avatar,
+										{isChat ? (
+											<ListItem
+												style={{ paddingLeft: "10px" }}
+												alignItems="flex-start"
+												onClick={() => handleSetView(obj.received._id)}
+												className={clsx({
+													[styles.noClick]: obj.sender._id === data?._id,
+												})}
+											>
+												<div className={styles.wrapper}>
+													<ListItemAvatar
+														onClick={(e) =>
+															navigate(`/account/${obj.received._id}`)
+														}
+													>
+														{isLoading ? (
+															<Skeleton
+																variant="circular"
+																width={40}
+																height={40}
+															/>
+														) : (
+															<AvatarStatus
+																direction={false}
+																data={{
+																	fullName: obj.received.fullName,
+																	avatar: obj.received.avatar,
+																}}
+																status={obj.received.status}
+															/>
+														)}
+													</ListItemAvatar>
+													<Typography>
+														{obj.received.fullName.length > 11
+															? obj.received.fullName.slice(0, 10) + "..."
+															: obj.received.fullName}
+														{obj.received._id === data?._id && " (you)"}
+													</Typography>
+													{isLoading && isChat ? (
+														<div
+															style={{
+																display: "flex",
+																flexDirection: "column",
 															}}
-															status={obj.status}
-														/>
+														>
+															<Skeleton
+																variant="text"
+																height={25}
+																width={120}
+															/>
+															<Skeleton
+																variant="text"
+																height={18}
+																width={230}
+															/>
+														</div>
+													) : (
+														<ListItemText secondary={obj?.lastMessage?.text} />
 													)}
-												</ListItemAvatar>
-												<Typography>
-													{obj.fullName.length > 11
-														? obj.fullName.slice(0, 10) + "..."
-														: obj.fullName}
-													{obj._id === data._id && " (you)"}
-												</Typography>
-											</div>
-											{view.isOpen && view.id === obj._id && (
-												<Paper className={styles.toogleConv} ref={ref}>
-													{" "}
-													<Button onClick={() => startChat(obj._id)}>
-														Start Chat
-													</Button>
-												</Paper>
-											)}
-										</ListItem>
+												</div>
+												{view.isOpen && view.id === obj.received._id && (
+													<Paper className={styles.toogleConv} ref={ref}>
+														{" "}
+														<Button onClick={() => startChat(obj.received._id)}>
+															Start Chat
+														</Button>
+													</Paper>
+												)}
+											</ListItem>
+										) : (
+											<ListItem
+												style={{ paddingLeft: "10px" }}
+												alignItems="flex-start"
+												onClick={() => handleSetView(obj._id)}
+												className={clsx({
+													[styles.noClick]: obj._id === data?._id,
+												})}
+											>
+												<div className={styles.wrapper}>
+													<ListItemAvatar
+														onClick={(e) =>
+															navigate(`/account/${obj._id}`)
+														}
+													>
+														{isLoading ? (
+															<Skeleton
+																variant="circular"
+																width={40}
+																height={40}
+															/>
+														) : (
+															<AvatarStatus
+																direction={false}
+																data={{
+																	fullName: obj.fullName,
+																	avatar: obj.avatar,
+																}}
+																status={obj.status}
+															/>
+														)}
+													</ListItemAvatar>
+													<Typography>
+														{obj.fullName.length > 11
+															? obj.fullName.slice(0, 10) + "..."
+															: obj.fullName}
+														{obj._id === data?._id && " (you)"}
+													</Typography>
+												</div>
+												{view.isOpen && view.id === obj._id && (
+													<Paper className={styles.toogleConv} ref={ref}>
+														{" "}
+														<Button onClick={() => startChat(obj._id)}>
+															Start Chat
+														</Button>
+													</Paper>
+												)}
+											</ListItem>
+										)}
 										<Divider
 											variant="inset"
 											component="li"
