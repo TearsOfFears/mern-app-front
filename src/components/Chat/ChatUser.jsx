@@ -29,7 +29,7 @@ const ChatUser = ({
 }) => {
 	const [view, setView] = useState({ id: "", isOpen: false });
 	const socket = useContext(SocketContext);
-	const { data,isLoading:dataisLoading } = useAuth();
+	const { data, isLoading: dataisLoading } = useAuth();
 	const ref = useRef([]);
 	const navigate = useNavigate();
 	const startChat = async (userId) => {
@@ -61,16 +61,23 @@ const ChatUser = ({
 				{isOnlineConvers && "Користувачів в бесіді:"}
 			</Typography>
 			<List className={clsx(styles.rootChat)}>
-				{!isLoading && Array.isArray(users) && users.length === 0 && (
-					<Typography variant="h6" textAlign="center">
-						Немає чатів
-					</Typography>
-				)}{" "}
+				{!isLoading &&
+					Array.isArray(users) &&
+					users.length === 0 &&
+					(isChat ? (
+						<Typography variant="h6" textAlign="center">
+							Немає чатів
+						</Typography>
+					) : (
+						<Typography variant="h6" textAlign="center">
+							Немає користувачів
+						</Typography>
+					))}{" "}
 				<TransitionGroup>
 					{!isLoading &&
 						Array.isArray(users) &&
 						users.map((obj, index) => {
-							console.log(obj.received);
+							// console.log("obj.received",obj.sender._id === data?._id);
 							return (
 								<CSSTransition
 									key={index}
@@ -93,60 +100,93 @@ const ChatUser = ({
 												style={{ paddingLeft: "10px" }}
 												alignItems="flex-start"
 												onClick={() => handleSetView(obj.received._id)}
-												className={clsx({
-													[styles.noClick]: obj.sender._id === data?._id,
-												})}
+												// className={clsx({
+												// 	[styles.noClick]: obj.sender._id === data?._id,
+												// })}
 											>
 												<div className={styles.wrapper}>
-													<ListItemAvatar
-														onClick={(e) =>
-															navigate(`/account/${obj.received._id}`)
-														}
-													>
-														{isLoading ? (
-															<Skeleton
-																variant="circular"
-																width={40}
-																height={40}
-															/>
-														) : (
-															<AvatarStatus
-																direction={false}
-																data={{
-																	fullName: obj.received.fullName,
-																	avatar: obj.received.avatar,
+													{obj.sender._id === data?._id ? (
+														<ListItemAvatar
+															onClick={(e) =>
+																navigate(`/account/${obj.received._id}`)
+															}
+														>
+															{isLoading ? (
+																<Skeleton
+																	variant="circular"
+																	width={40}
+																	height={40}
+																/>
+															) : (
+																<AvatarStatus
+																	direction={false}
+																	data={{
+																		fullName: obj.received.fullName,
+																		avatar: obj.received.avatar,
+																	}}
+																	status={obj.received.status}
+																/>
+															)}
+														</ListItemAvatar>
+													) : (
+														<ListItemAvatar
+															onClick={(e) =>
+																navigate(`/account/${obj.sender._id}`)
+															}
+														>
+															{isLoading ? (
+																<Skeleton
+																	variant="circular"
+																	width={40}
+																	height={40}
+																/>
+															) : (
+																<AvatarStatus
+																	direction={false}
+																	data={{
+																		fullName: obj.sender.fullName,
+																		avatar: obj.sender.avatar,
+																	}}
+																	status={obj.sender.status}
+																/>
+															)}
+														</ListItemAvatar>
+													)}
+													<div>
+														<Typography>
+															{obj.sender._id === data?._id
+																? obj.received.fullName.length > 11
+																	? obj.received.fullName.slice(0, 10) + "..."
+																	: obj.received.fullName
+																: obj.sender.fullName.length > 11
+																? obj.sender.fullName.slice(0, 10) + "..."
+																: obj.sender.fullName}
+															{!isChat && obj.received._id === data?._id && " (you)"}
+														</Typography>
+														{isLoading && isChat ? (
+															<div
+																style={{
+																	display: "flex",
+																	flexDirection: "column",
 																}}
-																status={obj.received.status}
+															>
+																<Skeleton
+																	variant="text"
+																	height={25}
+																	width={120}
+																/>
+																<Skeleton
+																	variant="text"
+																	height={18}
+																	width={230}
+																/>
+															</div>
+														) : (
+															<ListItemText
+																secondary={obj?.lastMessage?.text}
 															/>
 														)}
-													</ListItemAvatar>
-													<Typography>
-														{obj.received.fullName.length > 11
-															? obj.received.fullName.slice(0, 10) + "..."
-															: obj.received.fullName}
-														{obj.received._id === data?._id && " (you)"}
-													</Typography>
-													{isLoading && isChat ? (
-														<div
-															style={{
-																display: "flex",
-																flexDirection: "column",
-															}}
-														>
-															<Skeleton
-																variant="text"
-																height={25}
-																width={120}
-															/>
-															<Skeleton
-																variant="text"
-																height={18}
-																width={230}
-															/>
-														</div>
-													) : (
-														<ListItemText secondary={obj?.lastMessage?.text} />
-													)}
+													</div>
 												</div>
 												{view.isOpen && view.id === obj.received._id && (
 													<Paper className={styles.toogleConv} ref={ref}>
@@ -168,9 +208,7 @@ const ChatUser = ({
 											>
 												<div className={styles.wrapper}>
 													<ListItemAvatar
-														onClick={(e) =>
-															navigate(`/account/${obj._id}`)
-														}
+														onClick={(e) => navigate(`/account/${obj._id}`)}
 													>
 														{isLoading ? (
 															<Skeleton

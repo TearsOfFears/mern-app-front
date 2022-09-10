@@ -33,7 +33,7 @@ export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 	const { user } = useContext(UserContext);
 	const { socket } = useContext(SocketContext);
 	const { data, isAuth } = useAuth();
-	const { id } = useParams();
+	const { id, conversId } = useParams();
 	const refresh = useRefresh();
 	const onClickRemoveComment = async (id) => {
 		socket.emit("deleteMessage", id, (res) => {
@@ -42,6 +42,20 @@ export const ChatBlock = ({ items, isLoading, children, refScroll }) => {
 	};
 	if (isLoading) {
 		return <h3>Loading...</h3>;
+	}
+	if (!conversId) {
+		return (
+			<SideBlock
+				title="Повідомлення:"
+				style={{ display: "flex", flexDirection: "row" }}
+			>
+				{" "}
+				<List className={clsx(styles.root)} ref={refScroll}>
+					{" "}
+					Відкрийте чат
+				</List>
+			</SideBlock>
+		);
 	}
 	return (
 		<SideBlock
