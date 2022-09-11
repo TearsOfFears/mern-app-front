@@ -12,9 +12,9 @@ export const chatService = {
         return res.data
       })
   },
-  async getAllMessages() {
+  async getAllMessages(id) {
     return await axios
-      .get('/api/messages/getAll')
+      .get(`/api/messages/getAll/${id}`)
       .then((res) => {
         return res.data
       })
@@ -26,9 +26,9 @@ export const chatService = {
         return res.data
       })
   },
-  async getAllConvers() {
+  async getAllConversUser(data) {
     return await axios
-      .get(`/api/conversation/getAllConvers`)
+      .get(`/api/conversation/getAllConversUser/${data._id}`)
       .then((res) => {
         return res.data
       })

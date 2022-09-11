@@ -20,14 +20,15 @@ import { useParams } from "react-router-dom";
 const Convers = () => {
 	const [messages, setMessages] = useState([]);
 	const [allowScroll, setAllowScroll] = useState(true);
+	const [allowReceive, setAllowReceive] = useState(false);
 	const [arrivalMessages, setArrivalMessages] = useState([]);
 	const { user } = useContext(UserContext);
-	// const { senderId } = useParams();
+	const { data, isLoading } = useAuth();
 	const ref = useRef(null);
 	const { conversId } = useParams();
 	const { socket, userOnline, setOnline } = useContext(SocketContext);
-	const allMessages = useQuery(["fetch Messages"], () =>
-		chatService.getAllMessages()
+	const allMessages = useQuery(["fetch Messages", conversId], () =>
+		chatService.getAllMessages(conversId)
 	);
 	const getUserConver = useQuery(
 		["fetch Users", conversId],
@@ -38,19 +39,10 @@ const Convers = () => {
 			},
 		}
 	);
-	const getconverMessage = useQuery(
-		["fetch Users", conversId],
-		() => chatService.getUserConvers(conversId),
-		{
-			select: (res) => {
-				return res.members;
-			},
-		}
+	const getConvers = useQuery(["fetch Convers", data], () =>
+		chatService.getAllConversUser(data)
 	);
-	const getConvers = useQuery(
-		["fetch Convers"],
-		() => chatService.getAllConvers(),
-	);
+
 	const handleScroll = useCallback(() => {
 		if (ref && ref.current && allowScroll) {
 			const scroll = ref.current.clientHeight - ref.current.scrollHeight;
@@ -122,10 +114,17 @@ const Convers = () => {
 		}
 	}, [allMessages.data]);
 	useEffect(() => {
-		Object.keys(arrivalMessages).length > 0 &&
+		!getUserConver.isLoading &&
+			setAllowReceive(
+				getUserConver.data
+					.map((obj) => obj._id)
+					.includes(arrivalMessages.author._id)
+			);
+		allowReceive &&
+			Object.keys(arrivalMessages).length > 0 &&
 			setMessages((prev) => [...prev, arrivalMessages]);
-	}, [arrivalMessages]);
-
+	}, [arrivalMessages, allowReceive, conversId, getUserConver.isLoading]);
+	console.log("allowReceive", allowReceive);
 	return (
 		<Grid container columnGap={1}>
 			<Grid sm={3}>

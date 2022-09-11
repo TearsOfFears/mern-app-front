@@ -14,21 +14,24 @@ import { Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../reactQuery/chat/chat.service";
 import { SocketContext } from "../../reactQuery/context/socket";
-export const AddMessage = ({ textEdit, handleScroll,dataConvers }) => {
+export const AddMessage = ({ textEdit, handleScroll, dataConvers }) => {
 	const { data, isAuth } = useAuth();
 	const [text, setText] = useState("");
-	const { id,conversId } = useParams();
+	const { id, conversId } = useParams();
 	const { socket } = useContext(SocketContext);
 	const navigate = useNavigate();
-	const allMessages = useQuery(["fetch Messages"], () =>
-		chatService.getAllMessages()
+	const getUserConvers = useQuery(["fetch Users Convers", conversId], () =>
+		chatService.getUserConvers(conversId)
+	);
+	
+	const allMessages = useQuery(["fetch Messages",conversId], () =>
+		chatService.getAllMessages(conversId)
 	);
 	const createMessage = useMutation(chatService.createMessage, {
 		onSuccess: () => {
 			allMessages.refetch();
 		},
 	});
-
 	const handleSendMessage = async () => {
 		setText("");
 		if (id) {
@@ -39,8 +42,12 @@ export const AddMessage = ({ textEdit, handleScroll,dataConvers }) => {
 		} else {
 			socket.emit("sendMessage", {
 				author: data._id,
+				receiverId:
+					getUserConvers.data.received._id === data._id
+						? getUserConvers.data.sender._id
+						: getUserConvers.data.received._id,
 				text,
-				conversationId:conversId
+				conversationId: conversId,
 			});
 			allMessages.refetch();
 			handleScroll();
@@ -49,7 +56,7 @@ export const AddMessage = ({ textEdit, handleScroll,dataConvers }) => {
 	useEffect(() => {
 		handleScroll();
 	}, [allMessages.isLoading]);
-	
+
 	useEffect(() => {
 		if (id) {
 			allMessages.data

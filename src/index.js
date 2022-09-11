@@ -33,7 +33,6 @@ const Main = () => {
               <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_AUTH}>
               <App/>
               </GoogleOAuthProvider>
-            <ReactQueryDevtools initialIsOpen={false}/>
           </QueryClientProvider>
         </BrowserRouter>
       </ThemeProvider>

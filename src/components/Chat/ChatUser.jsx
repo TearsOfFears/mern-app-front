@@ -51,7 +51,6 @@ const ChatUser = ({
 			document.removeEventListener("click", handleClickOutside, true);
 		};
 	}, [ref]);
-	console.log(users);
 	if (isLoading) return "Loading..";
 	return (
 		<Paper>
